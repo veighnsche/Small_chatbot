@@ -1,0 +1,25 @@
+{
+  "assistantConversation": {
+    "users": {
+      "[collection: user_uid]": {
+        "conversations": {
+          "[collection: onversation_uid]": {
+            "name": "Conversation name",
+            "updated": "2018-10-31T15:00:00.000Z",
+            "messages": {
+              "[collection: message_ts]": {
+                "role": "user | assistant",
+                "content": "Message content",
+                "parent_message": "[message_ts]",
+                "function_call?": {
+                  "name": "Function name",
+                  "arguments": "{ \"arg1\": \"value1\", \"arg2\": \"value2\" }"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
