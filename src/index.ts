@@ -1,7 +1,7 @@
 import express from "express";
+import { setupAppMiddlewares } from "./middlewares/app";
 import { PORT } from "./services/environmentVariables";
 import { initializeFirebase } from "./services/firebase";
-import { setupMiddlewares } from "./services/middlewares";
 import { setupRoutes } from "./services/routes";
 
 const port = PORT;
@@ -10,7 +10,7 @@ const app = express();
 
 initializeFirebase();
 
-setupMiddlewares(app);
+setupAppMiddlewares(app);
 
 setupRoutes(app);
 

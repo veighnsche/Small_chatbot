@@ -29,7 +29,7 @@ export async function* callAssistantStream(chatMessages: AppChatMessage[]): Asyn
 }
 
 
-export const callNamingAssistant = async (chatMessages: AppChatMessage[]): Promise<string> => {
+export const callChatTitleAssistant = async (chatMessages: AppChatMessage[]): Promise<string> => {
   const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessages(chatMessages);
 
   const completion = await openai().chat.completions.create({
@@ -67,8 +67,6 @@ export const callNamingAssistant = async (chatMessages: AppChatMessage[]): Promi
   if (!message.function_call) {
     throw new Error("No function call was returned from the naming assistant.");
   }
-
-  console.log(message.function_call)
 
   const args = JSON.parse(message.function_call.arguments);
   if (!args.title) {

@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import { getDatabase } from "../services/firebase";
 import { AppChat } from "../types/chat";
 
-export class ChatColRepo {
+export class ChatCollectionRepository {
   private db: admin.firestore.Firestore;
   private chatCol: admin.firestore.CollectionReference;
 
@@ -11,8 +11,8 @@ export class ChatColRepo {
 
     this.chatCol = this.db
       .collection("assistantChat")
-      .doc("users")
-      .collection(userId);
+      .doc(userId)
+      .collection("chats");
   }
 
   async newChat(title: string): Promise<string> {

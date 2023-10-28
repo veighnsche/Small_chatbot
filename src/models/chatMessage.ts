@@ -54,6 +54,7 @@ export class AppChatMessage implements IAppChatMessage {
   toChatCompletionMessage(): ChatCompletionMessage {
     if (this.function_call) {
       const args = JSON.parse(this.function_call.arguments);
+
       const newArgs = {
         ...args,
         content: this.content,

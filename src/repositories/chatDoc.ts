@@ -2,7 +2,7 @@ import * as admin from "firebase-admin";
 import { AppChatMessage } from "../models/chatMessage";
 import { getDatabase } from "../services/firebase";
 
-export class ChatDocRepo {
+export class ChatDocumentRepository {
   private db: admin.firestore.Firestore;
   private chatDoc: admin.firestore.DocumentReference;
   private messagesCol: admin.firestore.CollectionReference;
@@ -12,8 +12,8 @@ export class ChatDocRepo {
 
     this.chatDoc = this.db
       .collection("assistantChat")
-      .doc("users")
-      .collection(userId)
+      .doc(userId)
+      .collection("chats")
       .doc(conversationId);
 
     this.messagesCol = this.chatDoc.collection("messages");

@@ -5,7 +5,7 @@ import { ENVIRONMENT } from "./environmentVariables";
 
 export const authenticateRequest: AuthMiddleware = async (req, res, next) => {
   if (ENVIRONMENT === "development") {
-    req.user = { uid: "test_user" } as DecodedIdToken;
+    req.user = { uid: "test_user_2" } as DecodedIdToken;
     return next();
   }
 

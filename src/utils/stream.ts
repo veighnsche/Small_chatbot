@@ -2,7 +2,7 @@ import OpenAI from "openai";
 import { ChatCompletionChunk, ChatCompletionMessage } from "openai/resources/chat";
 import ChatCompletionRole = OpenAI.ChatCompletionRole;
 
-export function combineDeltasIntoSingleMessage(deltas: ChatCompletionChunk.Choice.Delta[]): ChatCompletionMessage {
+export function combineChatDeltasIntoSingleMsg(deltas: ChatCompletionChunk.Choice.Delta[]): ChatCompletionMessage {
   const role = findLastRole(deltas);
   const functionCallName: string | undefined = findFunctionCallName(deltas);
 
