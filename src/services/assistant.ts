@@ -1,6 +1,7 @@
 import { JSONSchema7 } from "json-schema";
 import { OpenAI } from "openai";
 import { Chat, ChatCompletionChunk, ChatCompletionMessage } from "openai/resources/chat";
+import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
 import { AppChatMessage } from "../models/chatMessage";
 import { OPEN_AI_API_KEY } from "./environmentVariables";
 import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
@@ -9,19 +10,15 @@ const openai = () => new OpenAI({
   apiKey: OPEN_AI_API_KEY,
 });
 
-export async function* callAssistantStream(chatMessages: AppChatMessage[]): AsyncGenerator<ChatCompletionChunk.Choice.Delta> {
-  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessages(chatMessages);
-
+export async function* callAssistantStream(assistantParams: ChatCompletionCreateParamsBase): AsyncGenerator<ChatCompletionChunk.Choice> {
   const completionStreamResult = await openai().chat.completions.create({
-    messages,
-    model: "gpt-3.5-turbo-0613", // todo: make this configurable
-    // functions: functionCallInfosWithDefaultParameters([]),
+    ...assistantParams,
     stream: true,
   });
 
   if (typeof completionStreamResult[Symbol.asyncIterator] === "function") {
     for await (const chunk of completionStreamResult) {
-      yield chunk.choices[0].delta;
+      yield chunk.choices[0];
     }
   } else {
     throw new Error("The completion stream result is not iterable.");
@@ -30,7 +27,7 @@ export async function* callAssistantStream(chatMessages: AppChatMessage[]): Asyn
 
 
 export const callChatTitleAssistant = async (chatMessages: AppChatMessage[]): Promise<string> => {
-  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessages(chatMessages);
+  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessagesParam(chatMessages);
 
   const completion = await openai().chat.completions.create({
     messages: [
@@ -41,7 +38,7 @@ export const callChatTitleAssistant = async (chatMessages: AppChatMessage[]): Pr
       ...messages,
     ],
     model: "gpt-3.5-turbo",
-    max_tokens: 25,
+    max_tokens: 50,
     function_call: { name: "set_title" },
     functions: [
       {

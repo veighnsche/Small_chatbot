@@ -1,18 +1,30 @@
 import { NextFunction, Request, Response } from "express";
+import { AuthMiddleware } from "../types/auth";
 
+/**
+ * Handles errors by sending a 500 response.
+ */
 export const errorHandler = (err: Error, _: Request, res: Response, next: NextFunction) => {
-  console.trace(err);
-  if (res.headersSent) {
-    return next(err);
-  }
+  console.error(err.message);
+
   if (res.locals.sse.initialized) {
-    res.write(`event: error\ndata: ${JSON.stringify(err)}\n\n`);
-    res.end();
+    res.write(`event: error\ndata: ${JSON.stringify({ message: err.message })}\n\n`);
+    return res.end();
+  } else if (res.headersSent) {
+    return next(err);
   } else {
-    res.status(500).json({ error: err.message });
+    return res.status(500).json({ error: err.message });
   }
 };
 
-export default (fn: Function) => (req: Request, res: Response, next: NextFunction) => {
-  fn(req, res, next).catch(next);
+/**
+ * Wraps an async function in a try/catch block.
+ */
+export default (fn: AuthMiddleware) => (req: Request, res: Response, next: NextFunction) => {
+  try {
+    fn(req, res, next);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
 };

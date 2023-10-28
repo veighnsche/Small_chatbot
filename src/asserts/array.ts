@@ -1,4 +1,4 @@
-export function assertArray(array: any): void {
+export function assertArray<T>(array: T[]): asserts array is T[] {
   if (!array) {
     throw new Error("Missing array");
   }

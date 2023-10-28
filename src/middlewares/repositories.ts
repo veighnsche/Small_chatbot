@@ -1,7 +1,14 @@
+import { ChatCollectionRepository } from "../repositories/chatCol";
 import { ChatDocumentRepository } from "../repositories/chatDoc";
-import { AuthMiddleware } from "../types/auth";
+import { AuthMiddleware, AuthResponse } from "../types/auth";
 
-const initializeChatDoc: AuthMiddleware = (req, res, next) => {
+/**
+ * Initializes res.locals.chatDocRepo to a ChatDocumentRepository instance.
+ */
+const initializeChatDoc: AuthMiddleware = (req, res: AuthResponse<{
+  chatId?: string,
+  chatDocRepo?: ChatDocumentRepository,
+}>, next) => {
   const userUid = req.user!.uid;
   const chatId = res.locals.chatId || req.params.chatId;
 
@@ -13,8 +20,22 @@ const initializeChatDoc: AuthMiddleware = (req, res, next) => {
   next();
 };
 
+/**
+ * Initializes res.locals.chatColRepo to a ChatCollectionRepository instance.
+ */
+const initializeChatCol: AuthMiddleware = (req, res: AuthResponse<{
+  chatColRepo?: ChatCollectionRepository,
+}>, next) => {
+  const userUid = req.user!.uid;
+  res.locals.chatColRepo = new ChatCollectionRepository(userUid);
+  next();
+}
+
 export default {
   chatDoc: {
     initialize: initializeChatDoc,
+  },
+  chatCol: {
+    initialize: initializeChatCol,
   }
 }

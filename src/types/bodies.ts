@@ -1,4 +1,4 @@
-import { ChatCompletionMessage } from "openai/src/resources/chat/completions";
+import { ChatCompletionCreateParamsBase, ChatCompletionMessage } from "openai/src/resources/chat/completions";
 import { AppChatMessage } from "../models/chatMessage";
 
 export interface NewMessagesBody {
@@ -7,4 +7,12 @@ export interface NewMessagesBody {
 
 export interface MessagesBody {
   messages: AppChatMessage[],
+}
+
+export interface EditChatTitleBody {
+  title: string,
+}
+
+export interface AssistantParamsBody {
+  assistantParams: Omit<ChatCompletionCreateParamsBase, "messages" | "stream" | "n">,
 }

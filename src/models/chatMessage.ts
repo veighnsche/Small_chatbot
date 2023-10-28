@@ -1,9 +1,10 @@
 import OpenAI from "openai";
-import { ChatCompletionMessage } from "openai/resources/chat";
+import { Chat, ChatCompletionMessage } from "openai/resources/chat";
 import { IAppChatMessage } from "../types/chat";
 import { removeKeys } from "../utils/object";
 import { getTimeStamp } from "../utils/time";
 import ChatCompletionRole = OpenAI.ChatCompletionRole;
+import ChatCompletionMessageParam = Chat.ChatCompletionMessageParam;
 
 export class AppChatMessage implements IAppChatMessage {
   constructor(
@@ -51,7 +52,7 @@ export class AppChatMessage implements IAppChatMessage {
     return results;
   }
 
-  toChatCompletionMessage(): ChatCompletionMessage {
+  toChatCompletionMessageParam(): ChatCompletionMessageParam {
     if (this.function_call) {
       const args = JSON.parse(this.function_call.arguments);
 
@@ -78,8 +79,8 @@ export class AppChatMessage implements IAppChatMessage {
     throw new Error("toChatCompletionMessage: Message must have content or function call");
   }
 
-  static toChatCompletionMessages(messages: AppChatMessage[]): ChatCompletionMessage[] {
-    return messages.map((message) => message.toChatCompletionMessage());
+  static toChatCompletionMessagesParam(messages: AppChatMessage[]): ChatCompletionMessageParam[] {
+    return messages.map((message) => message.toChatCompletionMessageParam());
   }
 
   toRecord(): IAppChatMessage {
