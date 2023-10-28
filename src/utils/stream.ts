@@ -1,36 +1,58 @@
+import OpenAI from "openai";
 import { ChatCompletionChunk, ChatCompletionMessage } from "openai/resources/chat";
+import ChatCompletionRole = OpenAI.ChatCompletionRole;
 
 export function combineDeltasIntoSingleMessage(deltas: ChatCompletionChunk.Choice.Delta[]): ChatCompletionMessage {
-  let combinedContent = "";
-  let combinedFunctionCalls: ChatCompletionMessage.FunctionCall[] = [];
-  let role: ChatCompletionMessage["role"] | undefined;
+  const role = findLastRole(deltas);
+  const functionCallName: string | undefined = findFunctionCallName(deltas);
 
-  deltas.forEach(delta => {
-    if (delta.content) {
-      combinedContent += delta.content;
-    }
-
-    if (delta.function_call) {
-      combinedFunctionCalls.push({
-        name: delta.function_call.name || "",
-        arguments: delta.function_call.arguments || "",
-      });
-    }
-
-    if (delta.role) {
-      role = delta.role;
-    }
-  });
-
-  const finalMessage: ChatCompletionMessage = {
-    content: combinedContent || null,
-    role: role || "system", // Defaulting to 'system', you can adjust based on your system's design.
-  };
-
-  if (combinedFunctionCalls.length > 0) {
-    // Assuming you want the latest function call if there are multiple.
-    finalMessage.function_call = combinedFunctionCalls[combinedFunctionCalls.length - 1];
+  if (!functionCallName) {
+    return {
+      role,
+      content: deltas.reduce((acc, delta) => {
+        if (!delta.content) {
+          return acc;
+        }
+        return acc + delta.content;
+      }, ""),
+    };
   }
 
-  return finalMessage;
+  if (functionCallName) {
+    return {
+      role,
+      content: null,
+      function_call: {
+        name: functionCallName,
+        arguments: deltas.reduce((acc, delta) => {
+          if (!delta.function_call) {
+            return acc;
+          }
+          return acc + delta.function_call.arguments;
+        }, ""),
+      },
+    };
+  }
+
+  throw new Error("combineDeltasIntoSingleMessage: Invalid delta");
+}
+
+function findLastRole(deltas: ChatCompletionChunk.Choice.Delta[]): ChatCompletionRole {
+  const lastRole = deltas.reduce<ChatCompletionRole>((acc, delta) => delta.role || acc, "assistant");
+
+  if (!lastRole) {
+    throw new Error("findLastRole: Invalid delta");
+  }
+
+  return lastRole;
+}
+
+function findFunctionCallName(deltas: ChatCompletionChunk.Choice.Delta[]): string | undefined {
+  return deltas.reduce<string | undefined>((acc, delta) => {
+    if (delta.function_call) {
+      return delta.function_call.name;
+    }
+
+    return acc;
+  }, undefined);
 }

@@ -6,4 +6,4 @@ export interface AuthRequest<T = any> extends Request<ParamsDictionary, any, T> 
   user?: DecodedIdToken;
 }
 
-export type AuthMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => void;
+export type AuthMiddleware<T = any> = (req: AuthRequest<T>, res: Response, next: NextFunction) => void;

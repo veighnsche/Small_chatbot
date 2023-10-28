@@ -4,6 +4,7 @@ import { ChatCompletionMessage } from "openai/src/resources/chat/completions";
 import { AppChatMessage } from "../models/chatMessage";
 import { ChatColRepo } from "../repositories/chatCol";
 import { ChatDocRepo } from "../repositories/chatDoc";
+import { assertBody, CreateChatBody } from "../services/assertBody";
 import { callAssistantStream, callNamingAssistant } from "../services/assistant";
 import { AuthRequest } from "../types/auth";
 import { IAppChatMessage } from "../types/chat";
@@ -20,16 +21,21 @@ router.use((req: AuthRequest, res, next) => {
   next();
 });
 
-router.post("/", setupSSE, async (req: AuthRequest<{ messages: ChatCompletionMessage[] }>, res) => {
-  try {
-    const chatColRepo = new ChatColRepo(req.user!.uid);
-    const chatId = await chatColRepo.newChat("New chat");
-    res.write(`data: ${JSON.stringify({ chatId })}\n\n`);
-    await handleChatCompletion(req, res, chatId);
-  } catch (err) {
-    await handleErrorStream(res, err);
-  }
-});
+
+router.post(
+  "/",
+  assertBody.createChat,
+  setupSSE,
+  async (req: AuthRequest<CreateChatBody>, res) => {
+    try {
+      const chatColRepo = new ChatColRepo(req.user!.uid);
+      const chatId = await chatColRepo.newChat("New chat");
+      res.write(`data: ${JSON.stringify({ chatId })}\n\n`);
+      await handleChatCompletion(req, res, chatId);
+    } catch (err) {
+      await handleErrorStream(res, err as Error);
+    }
+  });
 
 router.post("/:chatId", setupSSE, async (req: AuthRequest<{
   prevMessages: IAppChatMessage[],
@@ -38,7 +44,7 @@ router.post("/:chatId", setupSSE, async (req: AuthRequest<{
   try {
     await handleChatCompletion(req, res, req.params.chatId);
   } catch (err) {
-    await handleErrorStream(res, err);
+    await handleErrorStream(res, err as Error);
   }
 });
 
@@ -46,20 +52,22 @@ export default router;
 
 async function handleChatCompletion(req: AuthRequest<{
   prevMessages?: IAppChatMessage[],
-  messages: ChatCompletionMessage[]
+  messages: ChatCompletionMessage[],
 }>, res: Response, chatId: string) {
   const userUid = req.user!.uid;
   const chatDocRepo = new ChatDocRepo(userUid, chatId);
   const prevMessagesRecords = req.body.prevMessages || [];
   const prevMessages = AppChatMessage.fromRecords(prevMessagesRecords);
 
-  const newMessages = await AppChatMessage.fromChatCompletionMessages(req.body.messages, getLastId(prevMessages));
+  const parentId = prevMessages.length > 0 ? getLastId(prevMessages) : "-1";
+
+  const newMessages = await AppChatMessage.fromChatCompletionMessages(req.body.messages, parentId);
   await chatDocRepo.addMessages(newMessages);
 
   const deltas: ChatCompletionChunk.Choice.Delta[] = [];
   for await (const delta of callAssistantStream([...prevMessages, ...newMessages])) {
     deltas.push(delta);
-    res.write(`data: ${JSON.stringify({ delta })}\n\n`);
+    res.write(`data: ${JSON.stringify(delta)}\n\n`);
   }
 
   const combinedAssistantMessage = combineDeltasIntoSingleMessage(deltas);
@@ -74,9 +82,9 @@ async function handleChatCompletion(req: AuthRequest<{
   res.end();
 }
 
-async function handleErrorStream(res: Response, err: unknown) {
+async function handleErrorStream(res: Response, err: Error) {
   console.trace(err);
-  res.write(`event: error\ndata: ${JSON.stringify({ message: err instanceof Error ? err.message : "Unknown error" })}\n\n`);
+  res.write(`event: error\ndata: ${JSON.stringify(err)}\n\n`);
 
   res.end();
 }

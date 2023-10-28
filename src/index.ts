@@ -1,5 +1,5 @@
 import express from "express";
-import { PORT } from "./constants";
+import { PORT } from "./services/environmentVariables";
 import { initializeFirebase } from "./services/firebase";
 import { setupMiddlewares } from "./services/middlewares";
 import { setupRoutes } from "./services/routes";

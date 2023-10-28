@@ -29,11 +29,6 @@ export class ChatColRepo {
     }
   }
 
-  async fetchChatHistory(): Promise<AppChat[]> {
-    const snapshot = await this.chatCol.orderBy("updated", "desc").get();
-    return snapshot.docs.map(doc => doc.data() as AppChat);
-  }
-
   async deleteAllChats(): Promise<void> {
     const snapshot = await this.chatCol.get();
     const batch = this.db.batch();
@@ -46,5 +41,4 @@ export class ChatColRepo {
   async editCustomInstructions(custom_instructions: string): Promise<void> {
     await this.chatCol.doc("custom_instructions").update({ custom_instructions });
   }
-
 }

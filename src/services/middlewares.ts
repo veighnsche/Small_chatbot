@@ -1,10 +1,8 @@
 import express from "express";
 import cors from "cors";
-import { CORS_ORIGIN } from "../constants";
+import { CORS_ORIGIN } from "./environmentVariables";
 import { authenticateRequest } from "./auth";
 import { getRateLimiter } from "./rateLimiter";
-
-// import { authenticateRequest } from './auth';
 
 export function setupMiddlewares(app: express.Application) {
   // CORS setup
