@@ -34,6 +34,9 @@ const addMessages: AuthMiddleware = async (req: AuthRequest<NewMessagesBody>, re
   next();
 };
 
+/**
+ * Deletes all chats.
+ */
 const deleteAllChats: AuthMiddleware = async (_, res: AuthResponse<{
   chatColRepo?: ChatCollectionRepository,
 }>, next) => {
@@ -45,6 +48,9 @@ const deleteAllChats: AuthMiddleware = async (_, res: AuthResponse<{
   next();
 };
 
+/**
+ * Deletes the chat.
+ */
 const deleteChat: AuthMiddleware = async (_, res: AuthResponse<{
   chatDocRepo?: ChatDocumentRepository,
 }>, next) => {
@@ -56,6 +62,9 @@ const deleteChat: AuthMiddleware = async (_, res: AuthResponse<{
   next();
 };
 
+/**
+ * Edits the chat's title.
+ */
 const editTitle: AuthMiddleware = async (req: AuthRequest<EditChatTitleBody>, res: AuthResponse<{
   chatDocRepo?: ChatDocumentRepository,
 }>, next) => {
