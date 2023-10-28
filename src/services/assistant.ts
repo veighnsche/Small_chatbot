@@ -1,34 +1,16 @@
+import { JSONSchema7 } from "json-schema";
 import { OpenAI } from "openai";
-import { ChatCompletionMessage } from "openai/resources/chat";
-import { addMessage, updateChatName } from "../repositories/chat";
-import { ChatMessage } from "../types/chat";
-import {
-  functionCallInfosWithDefaultParameters,
-  removeDefaultParameters,
-  toChatCompletionFunctionCall,
-} from "../utils/assistant";
+import { Chat, ChatCompletionChunk, ChatCompletionMessage } from "openai/resources/chat";
+import { AppChatMessage } from "../models/chatMessage";
+import { functionCallInfosWithDefaultParameters } from "../utils/assistant";
+import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
 
 const openai = () => new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-export const callAssistant = async (userUid: string, chatId: string, ChatMessages: ChatMessage[]): Promise<ChatCompletionMessage> => {
-  const messages: ChatCompletionMessage[] = [
-    ...ChatMessages.map((message) => {
-      if (message.function_call) {
-        return ({
-          role: message.role,
-          content: null,
-          function_call: toChatCompletionFunctionCall(message),
-        });
-      }
-
-      return ({
-        role: message.role,
-        content: message.content,
-      });
-    }),
-  ];
+export async function callAssistant(chatMessages: AppChatMessage[]): Promise<ChatCompletionMessage> {
+  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessages(chatMessages);
 
   const completion = await openai().chat.completions.create({
     messages,
@@ -36,46 +18,76 @@ export const callAssistant = async (userUid: string, chatId: string, ChatMessage
     functions: functionCallInfosWithDefaultParameters([]),
   });
 
-  if (completion.choices[0].message.content) {
-    await addMessage({
-      userUid: userUid,
-      chatId: chatId,
-      content: completion.choices[0].message.content,
-      role: "assistant",
-    });
-  } else if (completion.choices[0].message.function_call) {
-    const functionCall = completion.choices[0].message.function_call;
-
-    const args = JSON.parse(functionCall.arguments);
-
-    await addMessage({
-      userUid: userUid,
-      chatId: chatId,
-      content: args.content,
-      role: "assistant",
-      functionName: functionCall.name,
-      functionArgs: removeDefaultParameters(args),
-    });
-  }
-
   return completion.choices[0].message;
-};
+}
 
-export const callNamingAssistant = async (userUid: string, chatId: string, content: string, assistantMessage: ChatCompletionMessage) => {
+export async function* callAssistantStream(chatMessages: AppChatMessage[]): AsyncGenerator<ChatCompletionChunk.Choice.Delta> {
+  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessages(chatMessages);
+
+  const completionStreamResult = await openai().chat.completions.create({
+    messages,
+    model: "gpt-3.5-turbo-0613", // todo: make this configurable
+    functions: functionCallInfosWithDefaultParameters([]),
+    stream: true,
+  });
+
+  if (typeof completionStreamResult[Symbol.asyncIterator] === "function") {
+    for await (const chunk of completionStreamResult) {
+      yield chunk.choices[0].delta;
+    }
+  } else {
+    console.error("The result is not an asynchronous iterable");
+  }
+}
+
+
+export const callNamingAssistant = async (chatMessages: AppChatMessage[]): Promise<string> => {
+  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessages(chatMessages);
+
   const completion = await openai().chat.completions.create({
     messages: [
-      { role: "user", content },
-      assistantMessage,
+      {
+        role: "system",
+        content: "You are a title generator. Your goal is to generate a title for the following conversation.",
+      },
+      ...messages,
       {
         role: "user",
-        content: "We're on a limited token budget. Transform our conversation into three short words.",
+        content: "We're on a strict limited token budget. Transform our conversation into only a three short words title.",
       },
     ],
     model: "gpt-3.5-turbo",
     max_tokens: 10,
+    function_call: { name: "set_title" },
+    functions: [
+      {
+        name: "set_title",
+        description: "Set a 3 worded title of the conversation.",
+        parameters: <JSONSchema7>{
+          type: "object",
+          properties: {
+            title: {
+              type: "string",
+              description: "The title of the conversation.",
+            },
+          },
+          required: [
+            "title",
+          ],
+        } as ChatCompletionCreateParams.Function["parameters"],
+      },
+    ],
   });
 
-  if (completion.choices[0].message.content) {
-    await updateChatName(userUid, chatId, completion.choices[0].message.content);
+  const message = completion.choices[0].message;
+  if (!message.function_call) {
+    throw new Error("No function call was returned from the naming assistant.");
   }
+
+  const args = JSON.parse(message.function_call.arguments);
+  if (!args.title) {
+    throw new Error("No title was returned from the naming assistant.");
+  }
+
+  return args.title;
 };

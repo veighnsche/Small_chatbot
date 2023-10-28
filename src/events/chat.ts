@@ -1,50 +1,82 @@
-import express from "express";
+import express, { Response } from "express";
+import { ChatCompletionChunk } from "openai/resources/chat";
 import { ChatCompletionMessage } from "openai/src/resources/chat/completions";
-import { addMessage, newChat } from "../repositories/chat";
-import { callAssistant, callNamingAssistant } from "../services/assistant";
+import { AppChatMessage } from "../models/chatMessage";
+import { ChatColRepo } from "../repositories/chatCol";
+import { ChatDocRepo } from "../repositories/chatDoc";
+import { callAssistantStream, callNamingAssistant } from "../services/assistant";
 import { AuthRequest } from "../types/auth";
-import { ChatMessage } from "../types/chat";
-import { jsonToYaml } from "../utils/json";
+import { IAppChatMessage } from "../types/chat";
+import { getLastId } from "../utils/messages";
+import { setupSSE } from "../utils/sse";
+import { combineDeltasIntoSingleMessage } from "../utils/stream";
 
 const router = express.Router();
 
-router.post("/", async (req: AuthRequest<{
-  chatId?: string,
-  message: string,
-  messages: ChatMessage[],
-  systemContent?: string
-}>, res) => {
-  const userUid = req.user?.uid;
-
-  if (!userUid) {
-    return res.status(400).send("UID not found.");
+router.use((req: AuthRequest, res, next) => {
+  if (!req.user?.uid) {
+    return res.status(401).send("UID not found.");
   }
+  next();
+});
 
-  const { chatId, message: content, messages, systemContent: systemContentJson } = req.body;
-
-  const systemContent = systemContentJson ? jsonToYaml(systemContentJson) : undefined;
-  const systemDataMessage: ChatMessage | undefined = systemContent ? {
-    role: "system",
-    content: systemContent,
-  } : undefined;
-
-  const combinedMessages = [...messages, ...(systemDataMessage ? [systemDataMessage] : [])];
-
+router.post("/", setupSSE, async (req: AuthRequest<{ messages: ChatCompletionMessage[] }>, res) => {
   try {
-    if (!chatId) {
-      const { chatId: newChatId, chatMessage } = await newChat({ userUid, content }, systemContent);
-      res.status(200).json({ chatId: newChatId });
-      const assistantMessage: ChatCompletionMessage = await callAssistant(userUid, newChatId, [...messages, chatMessage]);
-      await callNamingAssistant(userUid, newChatId, content, assistantMessage);
-    } else {
-      const chatMessage = await addMessage({ userUid, chatId, content });
-      res.status(204).send();
-      await callAssistant(userUid, chatId, [...combinedMessages, chatMessage]);
-    }
+    const chatColRepo = new ChatColRepo(req.user!.uid);
+    const chatId = await chatColRepo.newChat("New chat");
+    res.write(`data: ${JSON.stringify({ chatId })}\n\n`);
+    await handleChatCompletion(req, res, chatId);
   } catch (err) {
-    console.error(err);
-    res.status(500).send("Internal server error.");
+    await handleErrorStream(res, err);
+  }
+});
+
+router.post("/:chatId", setupSSE, async (req: AuthRequest<{
+  prevMessages: IAppChatMessage[],
+  messages: ChatCompletionMessage[]
+}>, res) => {
+  try {
+    await handleChatCompletion(req, res, req.params.chatId);
+  } catch (err) {
+    await handleErrorStream(res, err);
   }
 });
 
 export default router;
+
+async function handleChatCompletion(req: AuthRequest<{
+  prevMessages?: IAppChatMessage[],
+  messages: ChatCompletionMessage[]
+}>, res: Response, chatId: string) {
+  const userUid = req.user!.uid;
+  const chatDocRepo = new ChatDocRepo(userUid, chatId);
+  const prevMessagesRecords = req.body.prevMessages || [];
+  const prevMessages = AppChatMessage.fromRecords(prevMessagesRecords);
+
+  const newMessages = await AppChatMessage.fromChatCompletionMessages(req.body.messages, getLastId(prevMessages));
+  await chatDocRepo.addMessages(newMessages);
+
+  const deltas: ChatCompletionChunk.Choice.Delta[] = [];
+  for await (const delta of callAssistantStream([...prevMessages, ...newMessages])) {
+    deltas.push(delta);
+    res.write(`data: ${JSON.stringify({ delta })}\n\n`);
+  }
+
+  const combinedAssistantMessage = combineDeltasIntoSingleMessage(deltas);
+  const newAssistantMessage = await AppChatMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId([...prevMessages, ...newMessages]));
+  await chatDocRepo.addMessage(newAssistantMessage);
+
+  if (!prevMessagesRecords.length) {
+    const newTitle = await callNamingAssistant([...newMessages, newAssistantMessage]);
+    await chatDocRepo.editTitle(newTitle);
+  }
+
+  res.end();
+}
+
+async function handleErrorStream(res: Response, err: unknown) {
+  console.trace(err);
+  res.write(`event: error\ndata: ${JSON.stringify({ message: err instanceof Error ? err.message : "Unknown error" })}\n\n`);
+
+  res.end();
+}
