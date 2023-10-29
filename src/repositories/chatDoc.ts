@@ -42,16 +42,4 @@ export class ChatDocumentRepository {
   async editTitle(title: string): Promise<void> {
     await this.chatDoc.update({ title });
   }
-
-  async addError(error: Error): Promise<void> {
-    await this.chatDoc.update({
-      error: error.message,
-    });
-  }
-
-  async removeError(): Promise<void> {
-    await this.chatDoc.update({
-      error: admin.firestore.FieldValue.delete(),
-    });
-  }
 }

@@ -37,8 +37,4 @@ export class ChatCollectionRepository {
     });
     await batch.commit();
   }
-
-  async editCustomInstructions(custom_instructions: string): Promise<void> {
-    await this.chatCol.doc("custom_instructions").update({ custom_instructions });
-  }
 }
