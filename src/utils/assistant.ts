@@ -4,13 +4,13 @@ import ChatCompletionCreateParams = OpenAI.ChatCompletionCreateParams;
 
 
 export const functionCallMetadataProperties: Record<string, unknown> = {
-  content: <JSONSchema>{
+  explanation: <JSONSchema>{
     type: "string",
-    description: "From the assistants perspective, what is the purpose of this function call?",
+    description: "From the assistants perspective, explain your reasoning for choosing this function call.",
   },
 };
 
-export const functionCallInfosWithDefaultParameters = (functionDefinitions: ChatCompletionCreateParams.Function[]): ChatCompletionCreateParams.Function[] => functionDefinitions.map((functionCallInfo) => {
+export const withDefaultParameters = (functionDefinitions: ChatCompletionCreateParams.Function[]): ChatCompletionCreateParams.Function[] => functionDefinitions.map((functionCallInfo) => {
   // Merge the original properties with the metadata properties
   const mergedProperties = {
     ...functionCallMetadataProperties,
@@ -19,7 +19,7 @@ export const functionCallInfosWithDefaultParameters = (functionDefinitions: Chat
 
   // Merge the original required properties with the metadata properties
   const mergedRequired = [
-    "content",
+    "explanation",
     ...functionCallInfo.parameters.required as [],
   ];
 

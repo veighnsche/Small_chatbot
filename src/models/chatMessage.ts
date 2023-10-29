@@ -23,13 +23,13 @@ export class AppChatMessage implements IAppChatMessage {
       return new AppChatMessage(message.content, timestamp, parentId, message.role);
     } else if (message.function_call) {
       const args = JSON.parse(message.function_call.arguments);
-      const newArgs = removeKeys(args, ["content"])
+      const newArgs = removeKeys(args, ["explanation"])
       const newFunctionCall = {
         name: message.function_call.name,
         arguments: JSON.stringify(newArgs),
       };
 
-      return new AppChatMessage(args.content, timestamp, parentId, message.role, newFunctionCall);
+      return new AppChatMessage(args.explanation, timestamp, parentId, message.role, newFunctionCall);
     }
 
     throw new Error("fromChatCompletionMessage: Message must have content or function call");
@@ -58,7 +58,7 @@ export class AppChatMessage implements IAppChatMessage {
 
       const newArgs = {
         ...args,
-        content: this.content,
+        explanation: this.content,
       };
 
       return {

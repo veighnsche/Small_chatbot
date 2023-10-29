@@ -10,7 +10,6 @@ export const authenticateRequest: AuthMiddleware = async (req, res, next) => {
   }
 
   const token = req.headers.authorization?.split("Bearer ")[1];
-  // console.log(req.path, "Token:", token);
   if (!token) {
     console.error("Someone tried to access a protected route without a token.")
     return res.status(401).send("Authentication required.");

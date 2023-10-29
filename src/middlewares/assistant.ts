@@ -5,6 +5,7 @@ import type { ChatDocumentRepository } from "../repositories/chatDoc";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AuthMiddleware, AuthRequest, AuthResponse } from "../types/auth";
 import { AssistantParamsBody } from "../types/bodies";
+import { withDefaultParameters } from "../utils/assistant";
 import { getLastId } from "../utils/messages";
 import { combineChatDeltasIntoSingleMsg } from "../utils/stream";
 
@@ -20,10 +21,12 @@ const streamAssistantResponse: AuthMiddleware = async (req: AuthRequest<Assistan
   }
 
   const messages = res.locals.messages;
+  const functions = req.body.assistantParams.functions;
 
   const assistantParams: ChatCompletionCreateParamsBase = {
     ...req.body.assistantParams,
     messages: AppChatMessage.toChatCompletionMessagesParam(messages),
+    functions: functions ? withDefaultParameters(functions) : undefined,
   };
 
   res.write(`event: start\ndata: ${JSON.stringify({ name: "assistant" })}\n\n`);

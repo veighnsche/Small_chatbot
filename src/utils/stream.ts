@@ -49,7 +49,7 @@ function findLastRole(deltas: ChatCompletionChunk.Choice.Delta[]): ChatCompletio
 
 function findFunctionCallName(deltas: ChatCompletionChunk.Choice.Delta[]): string | undefined {
   return deltas.reduce<string | undefined>((acc, delta) => {
-    if (delta.function_call) {
+    if (delta.function_call?.name) {
       return delta.function_call.name;
     }
 
