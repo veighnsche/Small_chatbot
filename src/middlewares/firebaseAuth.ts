@@ -1,9 +1,13 @@
 import admin from "firebase-admin";
 import { DecodedIdToken } from "firebase-admin/lib/auth";
 import { AuthMiddleware } from "../types/auth";
-import { ENVIRONMENT } from "./environmentVariables";
+import { ENVIRONMENT } from "../services/environmentVariables";
 
-export const authenticateRequest: AuthMiddleware = async (req, res, next) => {
+/**
+ * Authenticate a request using a Firebase ID token.
+ * Then, add the user to the request.
+ */
+const authenticateRequest: AuthMiddleware = async (req, res, next) => {
   if (ENVIRONMENT === "development") {
     req.user = { uid: "test_user_2" } as DecodedIdToken;
     return next();
@@ -16,10 +20,17 @@ export const authenticateRequest: AuthMiddleware = async (req, res, next) => {
   }
 
   try {
+    /**
+     * Verify the token and add the user to the request.
+     */
     req.user = await admin.auth().verifyIdToken(token);
     next();
   } catch (error) {
     console.error("Someone tried to access a protected route with an invalid token.")
-    res.status(401).send("Invalid token.");
+    return res.status(401).send("Invalid token.");
   }
 };
+
+export default {
+  protect: authenticateRequest,
+}

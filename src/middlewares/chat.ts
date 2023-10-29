@@ -1,6 +1,6 @@
 import { AppChatMessage } from "../models/chatMessage";
-import { ChatCollectionRepository } from "../repositories/chatCol";
-import { ChatDocumentRepository } from "../repositories/chatDoc";
+import { ChatCollectionRepository } from "../repositories/firebase/chatCol";
+import { ChatDocumentRepository } from "../repositories/firebase/chatDoc";
 import { AuthMiddleware, AuthRequest, AuthResponse } from "../types/auth";
 import { EditChatTitleBody, NewMessagesBody } from "../types/bodies";
 import { getLastId } from "../utils/messages";

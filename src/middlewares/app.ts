@@ -1,6 +1,5 @@
 import cors from "cors";
-import express from "express";
-import { authenticateRequest } from "../services/auth";
+import express, { type Application } from "express";
 import { CORS_ORIGIN } from "../services/environmentVariables";
 import { getRateLimiter } from "../services/rateLimiter";
 
@@ -12,9 +11,8 @@ const corsOptions = {
   credentials: true,
 };
 
-export function setupAppMiddlewares(app: express.Application) {
+export function setupAppMiddlewares(app: Application) {
   app.use(cors(corsOptions));
   app.use(express.json());
   app.use(getRateLimiter());
-  app.use(authenticateRequest);
 }

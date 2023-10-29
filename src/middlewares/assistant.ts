@@ -1,7 +1,7 @@
 import { ChatCompletionChunk } from "openai/resources/chat";
 import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
 import { AppChatMessage } from "../models/chatMessage";
-import type { ChatDocumentRepository } from "../repositories/chatDoc";
+import type { ChatDocumentRepository } from "../repositories/firebase/chatDoc";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AuthMiddleware, AuthRequest, AuthResponse } from "../types/auth";
 import { AssistantParamsBody } from "../types/bodies";

@@ -1,5 +1,5 @@
-import { ChatCollectionRepository } from "../repositories/chatCol";
-import { ChatDocumentRepository } from "../repositories/chatDoc";
+import { ChatCollectionRepository } from "../repositories/firebase/chatCol";
+import { ChatDocumentRepository } from "../repositories/firebase/chatDoc";
 import { AuthMiddleware, AuthResponse } from "../types/auth";
 
 /**

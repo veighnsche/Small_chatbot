@@ -3,19 +3,24 @@ import asserts from "./asserts";
 import assistant from "./assistant";
 import chat from "./chat";
 import error from "./error";
+import firebaseAuth from "./firebaseAuth";
+import firebaseRepositories from "./firebaseRepositories";
 import messages from "./messages";
-import repositories from "./repositories";
 import sse from "./sse";
 
-export const mw = {
+export default {
+  auth: {
+    firebase: firebaseAuth,
+  },
   asserts,
   try: error,
   messages,
-  repositories,
+  repositories: {
+    firestore: firebaseRepositories,
+  },
   sse,
   chat,
   assistant,
-  204: ((_, res) => {
-    return res.status(204).send();
-  }) as AuthMiddleware,
+  200: (data: any) => <AuthMiddleware>((_, res) => res.status(200).send(data)),
+  204: <AuthMiddleware>((_, res) => res.status(204).send()),
 };

@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
-import { AppChatMessage } from "../models/chatMessage";
-import { getDatabase } from "../services/firebase";
+import { AppChatMessage } from "../../models/chatMessage";
+import { getDatabase } from "../../services/firebase";
 
 export class ChatDocumentRepository {
   private db: admin.firestore.Firestore;

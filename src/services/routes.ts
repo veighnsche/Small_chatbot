@@ -2,8 +2,10 @@ import express from "express";
 import swaggerJsDoc from "swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 import chatRouter from "../api/chat";
+import pingRouter from "../api/ping";
 import { errorHandler } from "../middlewares/error";
 import swaggerOptions from "../swaggerOptions";
+import { ENVIRONMENT } from "./environmentVariables";
 
 
 const specs = swaggerJsDoc(swaggerOptions);
@@ -14,6 +16,11 @@ export const setupRoutes = (app: express.Application) => {
 
   // Chat routes
   app.use("/api/v1/chat", chatRouter);
+
+  // Dev routes
+  if (ENVIRONMENT === "development") {
+    app.use("/api/v1/ping", pingRouter);
+  }
 
   app.use(errorHandler);
 };

@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
-import { getDatabase } from "../services/firebase";
-import { AppChat } from "../types/chat";
+import { getDatabase } from "../../services/firebase";
+import { AppChat } from "../../types/chat";
 
 export class ChatCollectionRepository {
   private db: admin.firestore.Firestore;
