@@ -5,7 +5,8 @@ const router = express.Router();
 
 router.get(
   "/",
-  mw[200]({ message: "pong" }),
+  mw.log("ping"),
+  mw[200]("pong"),
 );
 
 export default router;

@@ -1,5 +1,5 @@
 import { ChatCompletionMessage } from "openai/resources/chat";
-import { IAppChatMessage } from "../types/chat";
+import { ILlamaMessage } from "../types/chat";
 
 export function assertChatCompletionMessage(obj: any): asserts obj is ChatCompletionMessage {
   if (!obj) throw new Error("Object is null or undefined");
@@ -20,7 +20,7 @@ export function assertChatCompletionMessage(obj: any): asserts obj is ChatComple
   }
 }
 
-export function assertAppChatMessage(obj: any): asserts obj is IAppChatMessage {
+export function assertAppChatMessage(obj: any): asserts obj is ILlamaMessage {
   if (!obj) throw new Error("Object is null or undefined");
 
   const hasValidId = typeof obj.id === 'string';

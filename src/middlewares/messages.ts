@@ -1,15 +1,18 @@
-import { AppChatMessage } from "../models/chatMessage";
-import { AuthMiddleware, AuthRequest, AuthResponse } from "../types/auth";
-import { MessagesBody } from "../types/bodies";
+import { LlamaMessage } from "../models/chatMessage";
+import { AuthMiddleware, ReqBody, ResLocals } from "../types/auth";
+import { ThreadBody } from "../types/bodies";
+import { ThreadLocals } from "../types/locals";
 
 /**
  * Initializes res.locals.messages to req.body.messages or an empty array.
  */
-const initializeMessages: AuthMiddleware = (req: AuthRequest<Partial<MessagesBody>>, res: AuthResponse<{
-  messages?: AppChatMessage[],
-}>, next) => {
-  const messages = req.body.messages || [];
-  res.locals.messages = AppChatMessage.fromRecords(messages);
+const initializeMessages: AuthMiddleware = (
+  req: ReqBody<Partial<ThreadBody>>,
+  res: ResLocals<ThreadLocals>,
+  next,
+) => {
+  const messages = req.body.thread || [];
+  res.locals.thread = LlamaMessage.fromRecords(messages);
   next();
 };
 

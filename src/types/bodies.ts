@@ -1,12 +1,13 @@
-import { ChatCompletionCreateParamsBase, ChatCompletionMessage } from "openai/src/resources/chat/completions";
-import { AppChatMessage } from "../models/chatMessage";
+import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
+import { ChatCompletionMessage } from "openai/src/resources/chat/completions";
+import { LlamaMessage } from "../models/chatMessage";
 
 export interface NewMessagesBody {
   newMessages: ChatCompletionMessage[],
 }
 
-export interface MessagesBody {
-  messages: AppChatMessage[],
+export interface ThreadBody {
+  thread: LlamaMessage[],
 }
 
 export interface EditChatTitleBody {
@@ -14,5 +15,5 @@ export interface EditChatTitleBody {
 }
 
 export interface AssistantParamsBody {
-  assistantParams: Omit<ChatCompletionCreateParamsBase, "messages" | "stream" | "n">,
+  assistantParams: Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n">,
 }

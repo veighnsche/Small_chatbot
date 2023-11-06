@@ -5,6 +5,7 @@ import chat from "./chat";
 import error from "./error";
 import firebaseAuth from "./firebaseAuth";
 import firebaseRepositories from "./firebaseRepositories";
+import log from "./logging";
 import messages from "./messages";
 import sse from "./sse";
 
@@ -14,6 +15,7 @@ export default {
   },
   asserts,
   try: error,
+  log,
   messages,
   repositories: {
     firestore: firebaseRepositories,

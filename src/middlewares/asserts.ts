@@ -1,8 +1,8 @@
 import { assertArray } from "../asserts/array";
 import { assertModel } from "../asserts/assistant";
 import { assertAppChatMessage, assertChatCompletionMessage } from "../asserts/message";
-import { AuthMiddleware, AuthRequest } from "../types/auth";
-import { NewMessagesBody, MessagesBody, AssistantParamsBody } from "../types/bodies";
+import { AuthMiddleware, ReqBody } from "../types/auth";
+import { NewMessagesBody, ThreadBody, AssistantParamsBody } from "../types/bodies";
 
 /**
  * Asserts that req.user.uid is a string.
@@ -17,7 +17,7 @@ const userUid: AuthMiddleware = (req, res, next) => {
 /**
  * Asserts that req.body.newMessages is an array of ChatCompletionMessages.
  */
-const newMessages: AuthMiddleware = (req: AuthRequest<NewMessagesBody>, res, next) => {
+const newMessages: AuthMiddleware = (req: ReqBody<NewMessagesBody>, res, next) => {
   try {
     assertArray(req.body.newMessages);
   } catch (err) {
@@ -37,14 +37,14 @@ const newMessages: AuthMiddleware = (req: AuthRequest<NewMessagesBody>, res, nex
 /**
  * Asserts that req.body.messages is an array of AppChatMessages.
  */
-const messages: AuthMiddleware = (req: AuthRequest<MessagesBody>, res, next) => {
+const thread: AuthMiddleware = (req: ReqBody<ThreadBody>, res, next) => {
   try {
-    assertArray(req.body.messages);
+    assertArray(req.body.thread);
   } catch (err) {
     return res.status(400).send(`req.body.prevMessages: ${(err as Error).message}`);
   }
 
-  for (const message of req.body.messages) {
+  for (const message of req.body.thread) {
     try {
       assertAppChatMessage(message);
     } catch (err) {
@@ -57,7 +57,7 @@ const messages: AuthMiddleware = (req: AuthRequest<MessagesBody>, res, next) => 
 /**
  * Asserts that req.body.editChatTitle is a string.
  */
-const assistantParams: AuthMiddleware = (req: AuthRequest<AssistantParamsBody>, res, next) => {
+const assistantParams: AuthMiddleware = (req: ReqBody<AssistantParamsBody>, res, next) => {
   try {
     assertModel(req.body.assistantParams.model);
   } catch (err) {
@@ -89,7 +89,7 @@ const chatId: AuthMiddleware = (req, res, next) => {
 export default {
   body: {
     newMessages,
-    messages,
+    thread,
     assistantParams,
     editChatTitle,
   },

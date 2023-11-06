@@ -1,35 +1,32 @@
 import { ChatCompletionChunk } from "openai/resources/chat";
 import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
-import { AppChatMessage } from "../models/chatMessage";
-import type { ChatDocumentRepository } from "../repositories/firebase/chatDoc";
+import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
-import { AuthMiddleware, AuthRequest, AuthResponse } from "../types/auth";
+import { AuthMiddleware, ReqBody, ResLocals } from "../types/auth";
 import { AssistantParamsBody } from "../types/bodies";
+import { ChatDocLocals, ThreadLocals } from "../types/locals";
 import { withDefaultParameters } from "../utils/assistant";
 import { getLastId } from "../utils/messages";
-import { combineChatDeltasIntoSingleMsg } from "../utils/stream";
+import { combineChatDeltasIntoSingleMsg, createEventData } from "../utils/stream";
 
 /**
  * Streams the assistant's response to the client.
  */
-const streamAssistantResponse: AuthMiddleware = async (req: AuthRequest<AssistantParamsBody>, res: AuthResponse<{
-  messages?: AppChatMessage[],
-  chatDocRepo?: ChatDocumentRepository
-}>, next) => {
-  if (!res.locals.messages || !res.locals.chatDocRepo) {
+const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantParamsBody>, res: ResLocals<ThreadLocals & ChatDocLocals>, next) => {
+  if (!res.locals.thread || !res.locals.chatDocRepo) {
     throw new Error("The messages and chatDocRepo must be initialized before calling the assistant.");
   }
 
-  const messages = res.locals.messages;
+  const messages = res.locals.thread;
   const functions = req.body.assistantParams.functions;
 
   const assistantParams: ChatCompletionCreateParamsBase = {
     ...req.body.assistantParams,
-    messages: AppChatMessage.toChatCompletionMessagesParam(messages),
+    messages: LlamaMessage.toChatCompletionMessagesParam(messages),
     functions: functions ? withDefaultParameters(functions) : undefined,
   };
 
-  res.write(`event: start\ndata: ${JSON.stringify({ name: "assistant" })}\n\n`);
+  res.write(`event: START\ndata: ${createEventData("assistant: start", { status: "start", name: "assistant" })}\n\n`);
 
   const deltas: ChatCompletionChunk.Choice.Delta[] = [];
   try {
@@ -38,19 +35,28 @@ const streamAssistantResponse: AuthMiddleware = async (req: AuthRequest<Assistan
         deltas.push(delta);
         res.write(`data: ${JSON.stringify(delta)}\n\n`);
       } else {
-        res.write(`event: finish\ndata: ${JSON.stringify({ name: "assistant", finish_reason })}\n\n`);
+        res.write(`event: STOP\ndata: ${createEventData("assistant: stop", {
+          name: "assistant",
+          status: "finish",
+          finish_reason,
+        })}\n\n`);
       }
     }
   } catch (err) {
     next(err);
+    res.write(`event: ERROR\ndata: ${createEventData("assistant: error", {
+      name: "assistant",
+      status: "finish",
+      finish_reason: "error",
+    })}\n\n`);
     return;
   }
 
   const combinedAssistantMessage = combineChatDeltasIntoSingleMsg(deltas);
-  const assistantMessage = await AppChatMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
+  const assistantMessage = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
 
   await res.locals.chatDocRepo.addMessage(assistantMessage);
-  res.locals.messages.push(assistantMessage);
+  res.locals.thread.push(assistantMessage);
 
   next();
 };
@@ -58,15 +64,12 @@ const streamAssistantResponse: AuthMiddleware = async (req: AuthRequest<Assistan
 /**
  * Generates a new title for the chat.
  */
-const generateTitle: AuthMiddleware = async (_, res: AuthResponse<{
-  messages?: AppChatMessage[],
-  chatDocRepo?: ChatDocumentRepository
-}>, next) => {
-  if (!res.locals.messages || !res.locals.chatDocRepo) {
+const generateTitle: AuthMiddleware = async (_, res: ResLocals<ThreadLocals & ChatDocLocals>, next) => {
+  if (!res.locals.thread || !res.locals.chatDocRepo) {
     throw new Error("The messages and chatDocRepo must be initialized before calling the assistant.");
   }
 
-  const messages = res.locals.messages;
+  const messages = res.locals.thread;
 
   const newTitle = await callChatTitleAssistant(messages);
   await res.locals.chatDocRepo.editTitle(newTitle);

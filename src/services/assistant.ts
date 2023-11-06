@@ -2,7 +2,7 @@ import { JSONSchema7 } from "json-schema";
 import { OpenAI } from "openai";
 import { Chat, ChatCompletionChunk, ChatCompletionMessage } from "openai/resources/chat";
 import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
-import { AppChatMessage } from "../models/chatMessage";
+import { LlamaMessage } from "../models/chatMessage";
 import { OPEN_AI_API_KEY } from "./environmentVariables";
 import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
 
@@ -26,8 +26,8 @@ export async function* callAssistantStream(assistantParams: ChatCompletionCreate
 }
 
 
-export const callChatTitleAssistant = async (chatMessages: AppChatMessage[]): Promise<string> => {
-  const messages: ChatCompletionMessage[] = AppChatMessage.toChatCompletionMessagesParam(chatMessages);
+export const callChatTitleAssistant = async (chatMessages: LlamaMessage[]): Promise<string> => {
+  const messages: ChatCompletionMessage[] = LlamaMessage.toChatCompletionMessagesParam(chatMessages);
 
   const completion = await openai().chat.completions.create({
     messages: [

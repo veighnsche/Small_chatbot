@@ -1,5 +1,5 @@
 import * as admin from "firebase-admin";
-import { AppChatMessage } from "../../models/chatMessage";
+import { LlamaMessage } from "../../models/chatMessage";
 import { getDatabase } from "../../services/firebase";
 
 export class ChatDocumentRepository {
@@ -19,12 +19,12 @@ export class ChatDocumentRepository {
     this.messagesCol = this.chatDoc.collection("messages");
   }
 
-  async addMessage(message: AppChatMessage): Promise<void> {
+  async addMessage(message: LlamaMessage): Promise<void> {
     await this.messagesCol.doc(message.id).set(message.toRecord());
     await this.chatDoc.update({ updated: new Date() });
   }
 
-  async addMessages(messages: AppChatMessage[]): Promise<void> {
+  async addMessages(messages: LlamaMessage[]): Promise<void> {
     const batch = this.db.batch();
 
     messages.forEach((message) => {

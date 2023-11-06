@@ -56,3 +56,12 @@ function findFunctionCallName(deltas: ChatCompletionChunk.Choice.Delta[]): strin
     return acc;
   }, undefined);
 }
+
+export function createEventData(type: string, data: Record<string, any>) {
+  const eventData = {
+    "EVENT_TYPE": type,
+    "EVENT_DATA": data,
+  }
+
+  return JSON.stringify(eventData);
+}

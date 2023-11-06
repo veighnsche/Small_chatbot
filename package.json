@@ -1,5 +1,6 @@
 {
-  "name": "io-gpt-assistant",
+  "name": "llama-tree-api",
+  "description": "An API for calling an assistant with OpenAI, then saves the conversation in Firebase. Tree-like structure for conversations.",
   "version": "1.0.0",
   "dependencies": {
     "cors": "^2.8.5",

@@ -1,12 +1,12 @@
 import OpenAI from "openai";
 import { Chat, ChatCompletionMessage } from "openai/resources/chat";
-import { IAppChatMessage } from "../types/chat";
+import { ILlamaMessage } from "../types/chat";
 import { removeKeys } from "../utils/object";
 import { getTimeStamp } from "../utils/time";
 import ChatCompletionRole = OpenAI.ChatCompletionRole;
 import ChatCompletionMessageParam = Chat.ChatCompletionMessageParam;
 
-export class AppChatMessage implements IAppChatMessage {
+export class LlamaMessage implements ILlamaMessage {
   constructor(
     public content: string | null,
     public id: string,
@@ -16,11 +16,11 @@ export class AppChatMessage implements IAppChatMessage {
   ) {
   }
 
-  static async fromChatCompletionMessage(message: ChatCompletionMessage, parentId: string): Promise<AppChatMessage> {
+  static async fromChatCompletionMessage(message: ChatCompletionMessage, parentId: string): Promise<LlamaMessage> {
     const timestamp = await getTimeStamp();
 
     if (message.content) {
-      return new AppChatMessage(message.content, timestamp, parentId, message.role);
+      return new LlamaMessage(message.content, timestamp, parentId, message.role);
     } else if (message.function_call) {
       const args = JSON.parse(message.function_call.arguments);
       const newArgs = removeKeys(args, ["explanation"])
@@ -29,23 +29,23 @@ export class AppChatMessage implements IAppChatMessage {
         arguments: JSON.stringify(newArgs),
       };
 
-      return new AppChatMessage(args.explanation, timestamp, parentId, message.role, newFunctionCall);
+      return new LlamaMessage(args.explanation, timestamp, parentId, message.role, newFunctionCall);
     }
 
     throw new Error("fromChatCompletionMessage: Message must have content or function call");
   }
 
-  static async fromChatCompletionMessages(messages: ChatCompletionMessage[], parentId: string): Promise<AppChatMessage[]> {
+  static async fromChatCompletionMessages(messages: ChatCompletionMessage[], parentId: string): Promise<LlamaMessage[]> {
     if (messages.length === 0) {
       throw new Error("fromChatCompletionMessages: Messages must not be empty");
     }
 
-    const results: AppChatMessage[] = [];
+    const results: LlamaMessage[] = [];
 
     // used for...of to ensure that the messages are processed in order
     for (const message of messages) {
       const newParentId = results.length > 0 ? results[results.length - 1].id : parentId;
-      const appChatMessage = await AppChatMessage.fromChatCompletionMessage(message, newParentId);
+      const appChatMessage = await LlamaMessage.fromChatCompletionMessage(message, newParentId);
       results.push(appChatMessage);
     }
 
@@ -79,11 +79,11 @@ export class AppChatMessage implements IAppChatMessage {
     throw new Error("toChatCompletionMessage: Message must have content or function call");
   }
 
-  static toChatCompletionMessagesParam(messages: AppChatMessage[]): ChatCompletionMessageParam[] {
+  static toChatCompletionMessagesParam(messages: LlamaMessage[]): ChatCompletionMessageParam[] {
     return messages.map((message) => message.toChatCompletionMessageParam());
   }
 
-  toRecord(): IAppChatMessage {
+  toRecord(): ILlamaMessage {
     if (this.function_call) {
       return {
         id: this.id,
@@ -104,8 +104,8 @@ export class AppChatMessage implements IAppChatMessage {
     throw new Error("toRecord: Message must have content or function call");
   }
 
-  static fromRecord(record: IAppChatMessage): AppChatMessage {
-    return new AppChatMessage(
+  static fromRecord(record: ILlamaMessage): LlamaMessage {
+    return new LlamaMessage(
       record.content,
       record.id,
       record.parent_id,
@@ -114,7 +114,7 @@ export class AppChatMessage implements IAppChatMessage {
     );
   }
 
-  static fromRecords(records: IAppChatMessage[]): AppChatMessage[] {
-    return records.map((record) => AppChatMessage.fromRecord(record));
+  static fromRecords(records: ILlamaMessage[]): LlamaMessage[] {
+    return records.map((record) => LlamaMessage.fromRecord(record));
   }
 }

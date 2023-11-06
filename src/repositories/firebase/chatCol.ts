@@ -1,6 +1,6 @@
 import * as admin from "firebase-admin";
 import { getDatabase } from "../../services/firebase";
-import { AppChat } from "../../types/chat";
+import { LlamaChat } from "../../types/chat";
 
 export class ChatCollectionRepository {
   private db: admin.firestore.Firestore;
@@ -16,7 +16,7 @@ export class ChatCollectionRepository {
   }
 
   async newChat(title: string): Promise<string> {
-    const conversation: AppChat = {
+    const conversation: LlamaChat = {
       title,
       updated: new Date(),
     };

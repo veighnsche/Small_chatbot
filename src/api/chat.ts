@@ -24,7 +24,7 @@ router.post(
 router.post(
   "/:chatId",
   mw.asserts.params.chatId,
-  mw.asserts.body.messages,
+  mw.asserts.body.thread,
   mw.asserts.body.newMessages,
   mw.asserts.body.assistantParams,
   mw.sse.initialize,
@@ -37,8 +37,9 @@ router.post(
 
 router.post(
   "/:chatId/regenerate",
+  mw.log("Regenerating chat..."),
   mw.asserts.params.chatId,
-  mw.asserts.body.messages,
+  mw.asserts.body.thread,
   mw.asserts.body.assistantParams,
   mw.sse.initialize,
   mw.messages.initialize,
