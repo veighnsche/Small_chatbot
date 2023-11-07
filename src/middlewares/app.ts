@@ -18,6 +18,10 @@ export function setupAppMiddlewares(app: Application) {
   console.log(path.join(__dirname, "../public"));
   app.use(express.static(path.join(__dirname, "../public")));
 
+  app.use(express.static(path.join(__dirname, "../../widgets/chat/build")));
+  app.get("/widgets/v1/chat", (req, res) => {
+    res.sendFile(path.join(__dirname, "../../widgets/chat/build", "index.html"));
+  });
 
   app.use(express.json());
   app.use(getRateLimiter());
