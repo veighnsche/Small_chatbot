@@ -1,5 +1,5 @@
 {
-  "name": "chat-widget-large",
+  "name": "chat-widget",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
