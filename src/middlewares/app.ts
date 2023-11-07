@@ -15,12 +15,11 @@ const corsOptions = {
 export function setupAppMiddlewares(app: Application) {
   app.use(cors(corsOptions));
 
-  console.log(path.join(__dirname, "../public"));
   app.use(express.static(path.join(__dirname, "../public")));
 
   app.use(express.static(path.join(__dirname, "../../widgets/chat/build")));
   app.get("/widgets/v1/chat", (req, res) => {
-    res.sendFile(path.join(__dirname, "../../widgets/chat/build", "index.html"));
+    res.sendFile(path.join(__dirname, "../../widgets/chat", "sandbox.html"));
   });
 
   app.use(express.json());
