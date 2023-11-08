@@ -24,6 +24,27 @@ const ChatWidget: React.FC<LlamaTreeProps> = ({ url, firebaseConfig, user, onFun
     { id: 4, user: "User2", text: "What are you up to today?" },
   ]);
 
+  // const tester = process.env.REACT_APP_TESTER;
+  //
+  // console.log(tester);
+  useEffect(() => {
+    const tester = process.env.REACT_APP_TESTER;
+
+    console.log(tester);
+
+    const superTester = process.env.REACT_APP_SUPER_TESTER;
+
+    console.log(superTester);
+    // const app = initializeApp(firebaseConfig);
+    //
+    // const db = getFirestore(app);
+    //
+    // const userDocRef = doc(db, "assistantChat", user.uid);
+    //
+    // console.log(userDocRef);
+  }, []);
+
+
   const addMessage = (message: string) => {
     setMessages((messages) => {
       const newMessage: Message = {

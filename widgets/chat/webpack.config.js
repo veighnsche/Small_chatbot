@@ -1,5 +1,9 @@
 // webpack.config.js
 const path = require('path');
+const dotenv = require('dotenv');
+const webpack = require('webpack');
+
+dotenv.config();
 
 module.exports = {
   mode: 'production',
@@ -37,4 +41,9 @@ module.exports = {
     react: 'React',
     'react-dom': 'ReactDOM',
   },
+  plugins: [
+    new webpack.DefinePlugin({
+      'process.env': JSON.stringify(process.env)
+    })
+  ]
 };
