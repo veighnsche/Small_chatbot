@@ -1,4 +1,5 @@
 import express from "express";
+import "reflect-metadata";
 import { setupAppMiddlewares } from "./middlewares/app";
 import { setupWidgets } from "./middlewares/app/widgets";
 import { PORT } from "./services/environmentVariables";

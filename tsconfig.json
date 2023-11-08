@@ -1,5 +1,11 @@
 {
   "compilerOptions": {
+    "noEmitOnError": false,
+
+    "strict": false,
+    "noImplicitAny": false,
+    "strictNullChecks": false,
+
     "allowSyntheticDefaultImports": true,
     "emitDecoratorMetadata": true,
     "esModuleInterop": true,
@@ -15,13 +21,9 @@
     "resolveJsonModule": true,
     "rootDir": "./src",
     "skipLibCheck": true,
-    "strict": true,
     "target": "es6",
     "typeRoots": [
       "./node_modules/@types"
-    ],
-    "types": [
-      "reflect-metadata"
     ]
   },
   "exclude": [
