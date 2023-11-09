@@ -1,9 +1,9 @@
 // webpack.config.js
-const path = require('path');
-const dotenv = require('dotenv');
-const webpack = require('webpack');
+const path = require('path')
+const dotenv = require('dotenv')
+const webpack = require('webpack')
 
-dotenv.config();
+dotenv.config()
 
 module.exports = {
   mode: 'production',
@@ -36,6 +36,11 @@ module.exports = {
   },
   resolve: {
     extensions: ['.tsx', '.ts', '.js', '.jsx'],
+    fallback: {
+      'path': false,
+      'os': false,
+      'crypto': false,
+    },
   },
   externals: {
     react: 'React',
@@ -43,7 +48,7 @@ module.exports = {
   },
   plugins: [
     new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env)
-    })
-  ]
-};
+      'process.env': JSON.stringify(process.env),
+    }),
+  ],
+}

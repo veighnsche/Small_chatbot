@@ -1,11 +1,12 @@
-import { FirebaseOptions } from "firebase/app";
+import { FirebaseOptions, initializeApp } from "firebase/app";
 import { User } from "firebase/auth";
+import { collection, doc, getFirestore, onSnapshot } from "firebase/firestore";
 import React, { useEffect, useState } from "react";
+import firebaseConfig from "../firebase-config";
 import { eventBus } from "../services/EventBus";
 
 export interface LlamaTreeProps {
   url: string;
-  firebaseConfig: FirebaseOptions;
   user: User;
   onFunctionCall?: (functionName: string, args: any[]) => void;
 }
@@ -16,7 +17,7 @@ interface Message {
   text: string;
 }
 
-const ChatWidget: React.FC<LlamaTreeProps> = ({ url, firebaseConfig, user, onFunctionCall }) => {
+const ChatWidget: React.FC<LlamaTreeProps> = ({ url, user, onFunctionCall }) => {
   const [messages, setMessages] = useState<Message[]>([
     { id: 1, user: "User1", text: "Hello, how are you?" },
     { id: 2, user: "User2", text: "I am good, thanks! How about you?" },
@@ -35,13 +36,23 @@ const ChatWidget: React.FC<LlamaTreeProps> = ({ url, firebaseConfig, user, onFun
     const superTester = process.env.REACT_APP_SUPER_TESTER;
 
     console.log(superTester);
-    // const app = initializeApp(firebaseConfig);
-    //
-    // const db = getFirestore(app);
-    //
-    // const userDocRef = doc(db, "assistantChat", user.uid);
-    //
-    // console.log(userDocRef);
+
+    console.log({ firebaseConfig });
+    const app = initializeApp(firebaseConfig);
+
+    const db = getFirestore(app);
+
+    const userDocRef = doc(db, "assistantChat", user.uid);
+
+    console.log(userDocRef);
+
+    const chatsCollectionRef = collection(userDocRef, "chats");
+
+    onSnapshot(chatsCollectionRef, (snapshot) => {
+      snapshot.docs.forEach((doc) => {
+        console.log(doc.data());
+      });
+    });
   }, []);
 
 

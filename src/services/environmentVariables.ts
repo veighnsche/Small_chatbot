@@ -1,3 +1,4 @@
+export const HOST = process.env.ASSISTANT_CHAT_HOST || "localhost";
 export const PORT = process.env.ASSISTANT_CHAT_PORT || 3001;
 export const CORS_ORIGIN = process.env.ASSISTANT_CHAT_CORS_ORIGIN || "*";
 export const ENVIRONMENT = process.env.ASSISTANT_CHAT_ENVIRONMENT || "production";

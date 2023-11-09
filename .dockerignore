@@ -1,44 +1,41 @@
 # Node modules and log files
 node_modules/
-npm-debug.log
-yarn-error.log
+#npm-debug.log
+#yarn-error.log
+#.env
+.env.example
 
-# Ignore TypeScript config files
-tsconfig.json
+# Ignore the build directory
+dist/
 
-# Ignore your service account key
-**/service-account-key.json
-
-# Ignore development-specific files like TypeScript source
-**/*.ts
-**/*.tsx
-!widgets/chat/build/**/*  # Include the build dir of the widget
+# Include the build dir of the widget
+#!widgets/chat/build/**/*
 
 # Ignore editor specific files
-*.iml
-**/.vscode
-**/.idea
-
-# Ignore all log files
-**/*.log
-
-# Ignore specific directories or files you know you don't need in your Docker image
-**/*.md
-**/README.md
+#*.iml
+#**/.vscode
+#**/.idea
+#
+## Ignore all log files
+#**/*.log
+#
+## Ignore specific directories or files you know you don't need in your Docker image
+#**/*.md
+#**/README.md
 
 # Ignore widget node_modules and ignore the src folder to ensure it doesn't get added.
 widgets/chat/node_modules/
-widgets/chat/src/
-widgets/chat/.babelrc
-widgets/chat/tsconfig.json
-widgets/chat/webpack.config.js
-widgets/chat/package.json
-widgets/chat/package-lock.json
-widgets/chat/yarn.lock
-
-# You might also want to ignore test setup and config files
-**/setupTests.ts
-**/*.test.ts
-**/*.test.tsx
-**/*.spec.ts
-**/*.spec.tsx
+widgets/chat/build/
+#widgets/chat/src/index.tsx
+#widgets/chat/src/react-app-env.d.ts
+#widgets/chat/src/reportWebVitals.ts
+#widgets/chat/src/setupTests.ts
+widgets/chat/.env
+#widgets/chat/.env.example
+#
+## You might also want to ignore test setup and config files
+#**/setupTests.ts
+#**/*.test.ts
+#**/*.test.tsx
+#**/*.spec.ts
+#**/*.spec.tsx

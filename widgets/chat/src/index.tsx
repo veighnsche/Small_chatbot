@@ -9,6 +9,6 @@ const root = ReactDOM.createRoot(
 
 root.render(
   <React.StrictMode>
-    <ChatWidget url="http://localhost:3001" firebaseConfig={{}} user={{} as User}/>
+    <ChatWidget url="http://localhost:3001" user={{} as User}/>
   </React.StrictMode>,
 );

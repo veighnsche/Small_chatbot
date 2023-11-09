@@ -1,12 +1,13 @@
-import admin, { ServiceAccount } from "firebase-admin";
-import serviceAccountKey from "../service-account-key.json";
+import admin from "firebase-admin";
+import { serviceAccountKey } from "../service-account-key";
 
 let db: admin.firestore.Firestore;
 
-export const initializeFirebase = () => {
-  if (!admin.apps.length) { // Check if app is already initialized
+const initializeFirebase = () => {
+  if (!admin.apps.length) {
+
     admin.initializeApp({
-      credential: admin.credential.cert(serviceAccountKey as ServiceAccount),
+      credential: admin.credential.cert(serviceAccountKey),
     });
 
     db = admin.firestore();
@@ -15,7 +16,7 @@ export const initializeFirebase = () => {
 
 export const getDatabase = () => {
   if (!db) {
-    throw new Error("Firebase has not been initialized. Please call initializeFirebase() first.");
+    initializeFirebase();
   }
 
   return db;
