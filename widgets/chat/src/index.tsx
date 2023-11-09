@@ -1,6 +1,7 @@
 import { User } from "firebase/auth";
 import * as React from "react";
 import * as ReactDOM from "react-dom/client";
+import { StyleSheetManager } from "styled-components";
 import Main from "./Main";
 import { LlamaTreeProvider } from "./providers/LlamaTreeProvider";
 import { decodeMessage } from "./services/crypto";
@@ -14,10 +15,16 @@ export interface LlamaTreeProps {
 
 class ChatWidgetElement extends HTMLElement {
   private readonly root: ShadowRoot;
+  private readonly container: HTMLDivElement;
+  private readonly reactRoot: ReactDOM.Root;
+
 
   constructor() {
     super();
     this.root = this.attachShadow({ mode: "open" });
+    this.container = document.createElement("div");
+    this.reactRoot = ReactDOM.createRoot(this.container);
+    this.root.appendChild(this.container);
   }
 
   setProps(props: LlamaTreeProps) {
@@ -32,13 +39,13 @@ class ChatWidgetElement extends HTMLElement {
         .then(data => {
           const firebaseConfig = decodeMessage(props.user.uid, data);
 
-          const reactRoot = ReactDOM.createRoot(this.root);
-
-          reactRoot.render(
+          this.reactRoot.render(
             <React.StrictMode>
-              <LlamaTreeProvider url={props.url} firebaseConfig={firebaseConfig} user={props.user}>
-                <Main onFunctionCall={props.onFunctionCall}/>
-              </LlamaTreeProvider>
+              <StyleSheetManager target={this.container}>
+                <LlamaTreeProvider url={props.url} firebaseConfig={firebaseConfig} user={props.user}>
+                  <Main onFunctionCall={props.onFunctionCall}/>
+                </LlamaTreeProvider>
+              </StyleSheetManager>
             </React.StrictMode>,
           );
         });
@@ -47,6 +54,10 @@ class ChatWidgetElement extends HTMLElement {
 
   sendMessage(message: string) {
     eventBus.emit("message", message);
+  }
+
+  disconnectedCallback() {
+    this.reactRoot.unmount();
   }
 }
 
