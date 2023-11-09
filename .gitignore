@@ -1,9 +1,9 @@
 # Server
 node_modules/
-.env
+server/.env
 .idea
 
 package-lock.json
-/dist/
+server/dist/
 
-src/service-account-key.json
+server/src/service-account-key.json

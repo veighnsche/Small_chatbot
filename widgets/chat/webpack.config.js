@@ -1,13 +1,9 @@
 // webpack.config.js
 const path = require('path')
-const dotenv = require('dotenv')
-const webpack = require('webpack')
-
-dotenv.config()
 
 module.exports = {
   mode: 'production',
-  entry: './src/index.web-component.tsx', // Your entry point
+  entry: './src/index.tsx', // Your entry point
   output: {
     path: path.resolve(__dirname, 'build'),
     filename: 'chat-widget.js', // The single bundled file
@@ -17,20 +13,26 @@ module.exports = {
   module: {
     rules: [
       {
-        test: /\.jsx?$/,
-        exclude: /node_modules/,
-        use: {
-          loader: 'babel-loader',
-          options: {
-            presets: ['@babel/preset-env', '@babel/preset-react'],
-          },
-        },
-      },
-      // Add rules for any other file types you might be using (CSS, etc.)
-      {
         test: /\.tsx?$/,
-        use: 'ts-loader',
         exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              presets: [
+                '@babel/preset-env',
+                '@babel/preset-react',
+                '@babel/preset-typescript',
+              ],
+              plugins: ['babel-plugin-styled-components'],
+            },
+          },
+          'ts-loader',
+        ],
+      },
+      {
+        test: /\.css$/,
+        use: ['style-loader', 'css-loader'],
       },
     ],
   },
@@ -46,9 +48,4 @@ module.exports = {
     react: 'React',
     'react-dom': 'ReactDOM',
   },
-  plugins: [
-    new webpack.DefinePlugin({
-      'process.env': JSON.stringify(process.env),
-    }),
-  ],
 }

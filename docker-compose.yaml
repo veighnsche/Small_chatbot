@@ -9,8 +9,7 @@ services:
       - NODE_ENV=production  # Set additional environment variables if needed
       - ASSISTANT_CHAT_HOST=0.0.0.0
     env_file:
-      - .env  # Loads the root .env file first
-      - widgets/chat/.env  # Overrides with variables from the widget's .env file
+      - server/.env  # Loads the root .env file first
     # volumes:  # Uncomment and edit if you need to mount volumes
     #   - ./data:/data
     restart: unless-stopped  # This ensures the service keeps running unless explicitly stopped

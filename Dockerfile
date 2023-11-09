@@ -2,16 +2,16 @@
 FROM node:16 AS app-builder
 
 # Set the working directory
-WORKDIR /usr/src/app
+WORKDIR /usr/src/app/server
 
 # Copy package.json and package-lock.json
-COPY package*.json ./
+COPY server/package*.json ./
 
 # Install all dependencies
 RUN npm install
 
 # Copy the rest of the source code
-COPY . .
+COPY server .
 
 # Build the TypeScript app
 RUN npm run build
@@ -41,16 +41,16 @@ FROM node:16-slim
 WORKDIR /usr/src/app
 
 # Copy package.json and package-lock.json for production
-COPY package*.json ./
+COPY server/package*.json ./server
 
 # Install only production dependencies
 RUN npm install --only=production
 
 # Copy the built JavaScript from the app-builder stage
-COPY --from=app-builder /usr/src/app/dist ./dist
+COPY --from=app-builder /usr/src/app/dist ./server/dist
 
 # Copy the node_modules from the app-builder stage
-COPY --from=app-builder /usr/src/app/node_modules ./node_modules
+COPY --from=app-builder /usr/src/app/node_modules ./server/node_modules
 
 # Copy the built widget from the widget-builder stage
 COPY --from=widget-builder /usr/src/app/widgets/chat/build ./widgets/chat/build
@@ -69,4 +69,4 @@ ENV ASSISTANT_CHAT_PORT=3001
 ENV ASSISTANT_CHAT_HOST=0.0.0.0
 
 # Start the app
-CMD ["node", "dist/index.js"]
+CMD ["node", "server/dist/index.js"]
