@@ -7,7 +7,6 @@ export function setupWidgets(app: Application) {
 
   app.get("/module", (req, res) => {
     const serverUrl = `${req.protocol}://${req.get("host")}`;
-    console.log("Server URL:", serverUrl);
 
     const moduleJs = generateWidgetScript(serverUrl);
     res.setHeader("Content-Type", "text/javascript");

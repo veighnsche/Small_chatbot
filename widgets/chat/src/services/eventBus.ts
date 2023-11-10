@@ -5,10 +5,11 @@ type EventCallback<T> = (data: T) => void;
 class EventBus<T extends EventMap> {
   private listeners: Map<keyof T, Set<EventCallback<any>>> = new Map();
 
-  on<K extends keyof T>(event: K, callback: EventCallback<T[K]>): void {
+  on<K extends keyof T>(event: K, callback: EventCallback<T[K]>): () => void {
     const listeners = this.listeners.get(event) || new Set<EventCallback<any>>();
     listeners.add(callback as EventCallback<any>);
     this.listeners.set(event, listeners);
+    return () => this.off(event, callback);
   }
 
   off<K extends keyof T>(event: K, callback: EventCallback<T[K]>): void {

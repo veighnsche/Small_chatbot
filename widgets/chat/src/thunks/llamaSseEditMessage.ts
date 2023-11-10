@@ -27,26 +27,18 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
     const state = getState();
     const thread = threadMemo(state);
     const chatId = state.llamaChat.currentChatId;
+    const assistantParams = state.llamaChatParams;
 
     if (!chatId) {
       throw new Error("No chatId");
     }
 
     try {
-      console.log({
-        thread,
-        newMessages,
-        assistantParams: {
-          model: "gpt-3.5-turbo",
-        },
-      });
       const body = await wretch(`chat/${chatId}`)
         .post<SendMessageParams>({
           thread,
           newMessages,
-          assistantParams: {
-            model: "gpt-3.5-turbo",
-          },
+          assistantParams,
         });
 
       for await (const action of streamToAssistantAction(body)) {

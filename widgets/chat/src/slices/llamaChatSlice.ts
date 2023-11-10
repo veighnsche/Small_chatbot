@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { eventBus } from "../services/eventBus.ts";
 import { LlamaChat } from "../types/LlamaChat";
 import { LlamaMessage } from "../types/LlamaMessage";
 import { addIters, makeChildrensMap, traverseToLastMessageId } from "../utils/messages";
@@ -32,8 +33,14 @@ const llamaChatSlice = createSlice({
       state.assistantStream = undefined;
       state.messages = addIters(action.payload.messages);
       state.childrensMap = makeChildrensMap(state.messages);
-      if (state.messages.length > 0) {
-        state.lastMessageId = state.messages[state.messages.length - 1].id;
+
+      const lastMessage = state.messages[state.messages.length - 1];
+      if (lastMessage) {
+        state.lastMessageId = lastMessage.id;
+        eventBus.emit("assistant-message", lastMessage);
+        if ("function_call" in lastMessage) {
+          eventBus.emit("function-call", lastMessage.function_call);
+        }
       }
     },
 

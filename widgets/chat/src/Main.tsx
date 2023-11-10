@@ -7,14 +7,12 @@ import { Input } from "./components/Input/Input.tsx";
 import "./Main.css";
 import "./reset.css";
 import { eventBus } from "./services/eventBus";
+import { editLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { useLlamaDispatch } from "./stores/llamaStore.ts";
 import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
 
-interface MainProps {
-  onFunctionCall?: (functionName: string, args: any[]) => void;
-}
 
-const Main = ({}: MainProps) => {
+const Main = () => {
   const dispatch = useLlamaDispatch();
 
   const addMessage = (message: string) => {
@@ -26,11 +24,18 @@ const Main = ({}: MainProps) => {
     }));
   };
 
+  const editChatParams = (params: any) => {
+    dispatch(editLlamaChatParams(params));
+  };
+
   useEffect(() => {
-    eventBus.on("message", addMessage);
+    const subs = [
+      eventBus.on("user-message", addMessage),
+      eventBus.on("chat-params", editChatParams)
+    ];
 
     return () => {
-      eventBus.off("message", addMessage);
+      subs.forEach((unsub) => unsub());
     };
   }, []);
 

@@ -21,6 +21,7 @@ export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConf
     const state = getState();
     const thread = threadMemo(state);
     const chatId = state.llamaChat.currentChatId;
+    const assistantParams = state.llamaChatParams;
 
     const slicedThread = thread.slice(0, thread.length - 1);
     const parent_id = slicedThread[slicedThread.length - 1].id;
@@ -34,9 +35,7 @@ export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConf
     try {
       const body = await wretch(`chat/${chatId}/regenerate`).post<SendMessageParams>({
         thread: slicedThread,
-        assistantParams: {
-          model: "gpt-3.5-turbo",
-        },
+        assistantParams,
       });
 
       for await (const action of streamToAssistantAction(body)) {
