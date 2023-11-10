@@ -1,15 +1,6 @@
-import styled from "styled-components";
 import { useLlamaHistoryList } from "../hooks/components/useLlamaHistoryList";
 import { HistoryItem } from "./HistoryItem";
-
-const HistoryListWrapper = styled.div`
-  grid-area: history;
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto; /* To handle scrolling if there are many history items */
-  border-right: 1px solid #888; /* Optional: Add a divider between history and chat */
-  border-top-left-radius: 14px;
-`;
+import "../styles/HistoryList.css";
 
 export const HistoryList = () => {
   const {
@@ -18,10 +9,10 @@ export const HistoryList = () => {
   } = useLlamaHistoryList();
 
   return (
-    <HistoryListWrapper>
+    <div className="history-list-wrapper">
       {history.map((chat) => (
         <HistoryItem key={chat.id} {...chat} selected={selectedChatId(chat.id)}/>
       ))}
-    </HistoryListWrapper>
+    </div>
   );
 };

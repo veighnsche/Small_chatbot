@@ -5,7 +5,7 @@ interface SendMessageParams {
   title: string;
 }
 
-export const editTitleApi = createAsyncThunk<void, SendMessageParams, LlamaThunkApiConfig>(
+export const llamaApiEditTitle = createAsyncThunk<void, SendMessageParams, LlamaThunkApiConfig>(
   "llamaChat/editTitle",
   async ({ title }, {
     getState,

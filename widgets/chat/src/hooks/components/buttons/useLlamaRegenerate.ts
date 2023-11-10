@@ -1,12 +1,12 @@
 import { useLlamaDispatch, useLlamaSelector } from "../../../stores/llamaStore";
-import { regenerate } from "../../../thunks/llamaSseRegenerate";
+import { llamaSseRegenerate } from "../../../thunks/llamaSseRegenerate";
 
 export const useLlamaRegenerate = () => {
   const chatId = useLlamaSelector((state) => state.llamaChat.currentChatId)
   const dispatch = useLlamaDispatch();
 
   const onRegenerate = () => {
-    dispatch(regenerate());
+    dispatch(llamaSseRegenerate());
   }
 
   const disabled = !chatId;

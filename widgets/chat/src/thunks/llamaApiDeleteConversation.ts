@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 
-export const deleteConversationApi = createAsyncThunk<void, void, LlamaThunkApiConfig>(
+export const llamaApiDeleteConversation = createAsyncThunk<void, void, LlamaThunkApiConfig>(
   "llamaChat/deleteConversation",
   async (_, {
     getState,

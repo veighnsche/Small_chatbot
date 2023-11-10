@@ -1,0 +1,54 @@
+.tooltip-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+@keyframes slideInFromRight {
+    from {
+        opacity: 0;
+        right: 50%;
+    }
+    to {
+        opacity: 1;
+        right: 100%;
+    }
+}
+
+@keyframes slideOutToLeft {
+    from {
+        opacity: 1;
+        right: 100%;
+    }
+    to {
+        opacity: 0;
+        right: 50%;
+    }
+}
+
+.tooltip {
+    background-color: #333;
+    color: #fff;
+    padding: 5px 10px;
+    border-radius: 5px;
+    position: absolute;
+    top: 50%;
+    margin-right: 10px;
+    transform: translateY(-50%);
+    font-size: 12px;
+    z-index: 10;
+    opacity: 0;
+    right: 110%;
+}
+
+.tooltip.show {
+    animation: slideInFromRight 0.3s ease-in-out;
+}
+
+.tooltip.active {
+    opacity: 1;
+    right: 100%;
+}
+
+.tooltip.hide {
+    animation: slideOutToLeft 0.3s ease-in-out;
+}

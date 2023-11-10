@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { useLlamaDispatch } from "../../stores/llamaStore";
-import { editMessage } from "../../thunks/llamaSseEditMessage";
+import { llamaSseEditMessage } from "../../thunks/llamaSseEditMessage";
 
 export interface InputEditProps {
   content: string;
@@ -26,7 +26,7 @@ export const useLlamaInputEdit = ({ content, parent_id, onCancel }: InputEditPro
   };
 
   const handleSend = async () => {
-    await dispatch(editMessage({
+    await dispatch(llamaSseEditMessage({
       parent_id,
       newMessages: [{
         content: inputValue,

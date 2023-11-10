@@ -32,7 +32,9 @@ const llamaChatSlice = createSlice({
       state.assistantStream = undefined;
       state.messages = addIters(action.payload.messages);
       state.childrensMap = makeChildrensMap(state.messages);
-      state.lastMessageId = state.messages[state.messages.length - 1].id;
+      if (state.messages.length > 0) {
+        state.lastMessageId = state.messages[state.messages.length - 1].id;
+      }
     },
 
     setCurrentChatId: (state, action: PayloadAction<{ chatId: string }>) => {
@@ -75,7 +77,7 @@ const llamaChatSlice = createSlice({
       if (state.assistantStream) {
         state.assistantStream.function_call = {
           name: action.payload.name,
-          arguments: ''
+          arguments: "",
         };
       }
     },

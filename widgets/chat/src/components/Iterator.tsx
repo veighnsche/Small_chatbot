@@ -1,29 +1,5 @@
-import styled from "styled-components";
 import { IteratorProps, useLlamaIterator } from "../hooks/components/useLlamaIterator";
-
-const IteratorWrapper = styled.div`
-  margin-left: 1.7rem;
-  height: 1rem;
-  margin-top: 2px;
-  display: flex;
-  justify-content: center;
-`;
-
-const IteratorLine = styled.div`
-  font-size: 0.85rem;
-  color: #888;
-`;
-
-const IteratorButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: inherit;
-  padding: 0;
-  margin: 0;
-  color: inherit;
-  outline: none;
-`;
+import '../styles/Iterator.css';
 
 export const Iterator = (props: IteratorProps) => {
   const {
@@ -35,20 +11,20 @@ export const Iterator = (props: IteratorProps) => {
   } = useLlamaIterator(props);
 
   if (hidden) {
-    return <IteratorWrapper/>;
+    return <div className="iterator-wrapper"/>;
   }
 
   return (
-    <IteratorWrapper>
-      <IteratorLine>
-        <IteratorButton onClick={onPrev}>
+    <div className="iterator-wrapper">
+      <div className="iterator-line">
+        <button className="iterator-button" onClick={onPrev}>
           &lt;
-        </IteratorButton>
+        </button>
         {` ${current} / ${total} `}
-        <IteratorButton onClick={onNext}>
+        <button className="iterator-button" onClick={onNext}>
           &gt;
-        </IteratorButton>
-      </IteratorLine>
-    </IteratorWrapper>
+        </button>
+      </div>
+    </div>
   );
 };

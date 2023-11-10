@@ -1,9 +1,11 @@
 .box-container {
+    position: fixed; /* Fixed positioning relative to the viewport */
+    bottom: 0; /* Align to the bottom */
+    right: 32px; /* Align to the right */
     grid-area: main;
-    width: 100%;
-    height: 100%;
+    width: 600px;
+    height: 600px;
     border: 2px solid #888;
-    border-radius: 16px;
     display: grid;
     grid-template-columns: 40% 60%;
     grid-template-rows: 4rem 1fr auto auto;

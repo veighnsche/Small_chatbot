@@ -1,5 +1,5 @@
 import { useLlamaDispatch } from "../../stores/llamaStore";
-import { addMessage } from "../../thunks/llamaSseAddMessage";
+import { llamaSseAddMessage } from "../../thunks/llamaSseAddMessage";
 import { ChangeEvent, KeyboardEventHandler, useEffect, useRef, useState } from "react";
 
 export const useLlamaInput = () => {
@@ -37,7 +37,7 @@ export const useLlamaInput = () => {
 
   const handleSend = async () => {
     reset();
-    await dispatch(addMessage({
+    await dispatch(llamaSseAddMessage({
       newMessages: [{
         content: inputValue,
         role: "user",

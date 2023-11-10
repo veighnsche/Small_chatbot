@@ -12,7 +12,7 @@ interface SendMessageParams {
   assistantParams: Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n">;
 }
 
-export const editMessage = createAsyncThunk<void, {
+export const llamaSseEditMessage = createAsyncThunk<void, {
   parent_id: string,
   newMessages: ChatCompletionMessageParam[]
 }, LlamaThunkApiConfig>(

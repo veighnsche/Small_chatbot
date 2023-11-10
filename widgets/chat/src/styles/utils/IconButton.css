@@ -1,0 +1,33 @@
+.icon-button {
+    border: none;
+    background-color: transparent;
+    width: 2rem;
+    height: 2rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.icon-button:focus {
+    outline: none;
+}
+
+.icon-button:disabled {
+    cursor: default;
+    opacity: 0.5;
+}
+
+.icon-button:disabled:hover {
+    background-color: transparent;
+}
+
+.icon-button.circle {
+    border: 1px solid #ccc;
+    border-radius: 50%;
+    transition: background-color 0.3s;
+}
+
+.icon-button.circle:hover {
+    background-color: #f5f5f5;
+}

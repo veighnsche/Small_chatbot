@@ -1,0 +1,23 @@
+.iterator-wrapper {
+    margin-left: 1.7rem;
+    height: 1rem;
+    margin-top: 2px;
+    display: flex;
+    justify-content: center;
+}
+
+.iterator-line {
+    font-size: 0.85rem;
+    color: #888;
+}
+
+.iterator-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: inherit;
+    padding: 0;
+    margin: 0;
+    color: inherit;
+    outline: none;
+}

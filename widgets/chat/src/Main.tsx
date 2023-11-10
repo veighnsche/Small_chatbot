@@ -4,20 +4,33 @@ import { Chat } from "./components/Chat";
 import { ChatTitle } from "./components/ChatTitle";
 import { HistoryList } from "./components/HistoryList";
 import { Input } from "./components/Input";
+import "./Main.css";
+import "./reset.css";
 import { eventBus } from "./services/eventBus";
-import "./Main.css"
+import { useLlamaDispatch } from "./stores/llamaStore.ts";
+import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
 
 interface MainProps {
   onFunctionCall?: (functionName: string, args: any[]) => void;
 }
 
-const Main = ({ onFunctionCall }: MainProps) => {
+const Main = ({}: MainProps) => {
+  const dispatch = useLlamaDispatch();
+
+  const addMessage = (message: string) => {
+    dispatch(llamaSseAddMessage({
+      newMessages: [{
+        role: "user",
+        content: message,
+      }],
+    }));
+  };
 
   useEffect(() => {
-    eventBus.on("message", (m) => onFunctionCall?.("message", [m]));
+    eventBus.on("message", addMessage);
 
     return () => {
-      eventBus.off("message", (m) => onFunctionCall?.("message", [m]));
+      eventBus.off("message", addMessage);
     };
   }, []);
 

@@ -1,12 +1,12 @@
 import {
   appendAssistantStreamContent,
   appendAssistantStreamFunctionCallArguments,
-  setCurrentChatId,
   startAssistantStream,
   startAssistantStreamFunctionCall,
 } from "../../slices/llamaChatSlice";
 import { LlamaActions } from "../../stores/llamaStore";
 import { streamToObject } from "../../utils/stream";
+import { llamaOnMessagesSnapshot } from "../llamaOnMessagesSnapshot.ts";
 
 /**
  * Convert a readable stream into an async iterable of assistant actions.
@@ -16,7 +16,7 @@ export async function* streamToAssistantAction(body: ReadableStream<Uint8Array>)
   try {
     for await (const delta of streamToObject(body)) {
       if ("chatId" in delta) {
-        yield setCurrentChatId({ chatId: delta.chatId });
+        yield llamaOnMessagesSnapshot({ chatId: delta.chatId }) as any;
       }
       if ("role" in delta) {
         yield startAssistantStream({ role: delta.role });

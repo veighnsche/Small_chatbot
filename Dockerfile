@@ -64,9 +64,9 @@ EXPOSE 3001
 # Set the environment to "production"
 ENV NODE_ENV=production
 
-ENV ASSISTANT_CHAT_PORT=3001
+ENV LLAMA_TREE_PORT=3001
 
-ENV ASSISTANT_CHAT_HOST=0.0.0.0
+ENV LLAMA_TREE_HOST=0.0.0.0
 
 # Start the app
 CMD ["node", "server/dist/index.js"]

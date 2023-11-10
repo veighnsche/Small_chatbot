@@ -1,7 +1,7 @@
 import { ChangeEvent, useState } from "react";
 import { useLlamaDispatch } from "../../stores/llamaStore";
-import { deleteConversationApi } from "../../thunks/llamaApiDeleteConversation";
-import { editTitleApi } from "../../thunks/llamaApiEditTitle";
+import { llamaApiDeleteConversation } from "../../thunks/llamaApiDeleteConversation";
+import { llamaApiEditTitle } from "../../thunks/llamaApiEditTitle";
 import { llamaOnMessagesSnapshot } from "../../thunks/llamaOnMessagesSnapshot";
 import { LlamaChat } from "../../types/LlamaChat";
 
@@ -24,7 +24,7 @@ export const useLlamaHistoryItem = ({ id, title, selected }: LlamaHistoryItemPro
   };
 
   const onEditCheck = () => {
-    dispatch(editTitleApi({ title: editInputValue }));
+    dispatch(llamaApiEditTitle({ title: editInputValue }));
     setIsEditing(false);
   };
 
@@ -38,7 +38,7 @@ export const useLlamaHistoryItem = ({ id, title, selected }: LlamaHistoryItemPro
   };
 
   const onDelete = () => {
-    dispatch(deleteConversationApi());
+    dispatch(llamaApiDeleteConversation());
   };
 
   return {

@@ -11,7 +11,7 @@ interface SendMessageParams {
   assistantParams: Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n">;
 }
 
-export const regenerate = createAsyncThunk<void, void, LlamaThunkApiConfig>(
+export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConfig>(
   "llamaChat/regenerate",
   async (_, {
     getState,
