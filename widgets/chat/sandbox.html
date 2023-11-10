@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Chat Widget Sandbox</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script>
+      const sendMessage = () => {
+        const input = document.getElementById('message-input')
+        const message = input.value
+        input.value = '' // Clear the input after sending
+
+        const chatWidget = document.querySelector('llama-tree-chat-widget')
+        chatWidget.sendMessage(message)
+      }
+    </script>
+</head>
+<body>
+<button id="google-signin-btn">Sign in with Google</button>
+<llama-tree-chat-widget></llama-tree-chat-widget>
+
+<label for="message-input">
+    Message
+</label>
+<input type="text" id="message-input" placeholder="Type a message">
+<button id="send-message-btn" onclick="sendMessage()">Send</button>
+
+
+<script src="http://localhost:3001/llama-tree-chat-widget.umd.js"></script>
+<script type="module">
+  const firebaseConfig = {
+    apiKey: 'AIzaSyCKEVvZx6wk5hNjNsSg4_a4DKFmOVRK9Xw',
+    authDomain: 'weightlifting-plan-and-track.firebaseapp.com',
+    databaseURL: 'https://weightlifting-plan-and-track-default-rtdb.europe-west1.firebasedatabase.app',
+    projectId: 'weightlifting-plan-and-track',
+    storageBucket: 'weightlifting-plan-and-track.appspot.com',
+    messagingSenderId: '448087616119',
+    appId: '1:448087616119:web:63d8d524ef5bd3e6a43472',
+    measurementId: 'G-6W8L2GY8D8',
+  }
+
+  import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js'
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    signInWithPopup,
+  } from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js'
+
+  const app = initializeApp(firebaseConfig)
+  const auth = getAuth(app)
+
+  const onGoogleSignIn = () => {
+    const provider = new GoogleAuthProvider()
+    signInWithPopup(auth, provider)
+      .then((result) => {
+        console.log(result)
+        const user = result.user
+        passUserToWidget(user)
+      }).catch((error) => {
+      console.error(error)
+    })
+  }
+
+  auth.onAuthStateChanged((user) => {
+    if (user) {
+      passUserToWidget(user)
+    }
+  })
+
+  const passUserToWidget = (user) => {
+    const chatWidget = document.querySelector('llama-tree-chat-widget')
+    chatWidget.setProps({
+      url: 'http://localhost:3001',
+      user,
+      onFunctionCall: (functionName, args) => {
+        console.log(functionName, args)
+      },
+    })
+  }
+
+  document.getElementById('google-signin-btn').addEventListener('click', onGoogleSignIn)
+</script>
+</body>
+</html>
