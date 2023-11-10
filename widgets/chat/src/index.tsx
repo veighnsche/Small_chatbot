@@ -8,34 +8,35 @@ import { decodeMessage } from "./services/crypto";
 import { eventBus } from "./services/eventBus";
 
 export interface LlamaTreeProps {
-  url: string;
   user: User;
   onFunctionCall?: (functionName: string, args: any[]) => void;
 }
 
 class ChatWidgetElement extends HTMLElement {
-  private readonly root: ShadowRoot;
-  private readonly container: HTMLDivElement;
-  private readonly reactRoot: ReactDOM.Root;
+  private root?: ShadowRoot;
+  private container?: HTMLDivElement;
+  private reactRoot?: ReactDOM.Root;
+  private url?: string;
 
-
-  constructor() {
-    super();
+  connectedCallback() {
     this.root = this.attachShadow({ mode: "open" });
     this.container = document.createElement("div");
     this.reactRoot = ReactDOM.createRoot(this.container);
     this.root.appendChild(this.container);
   }
 
-  setProps(props: LlamaTreeProps) {
+  setUrl(url: string) {
+    this.url = url;
+  }
 
+  setProps(props: LlamaTreeProps) {
     const styleLink = document.createElement("link");
     styleLink.rel = "stylesheet";
-    styleLink.href = `${props.url}/style.css`;
-    this.root.appendChild(styleLink);
+    styleLink.href = `${this.url}/style.css`;
+    this.root?.appendChild(styleLink);
 
     props.user.getIdToken().then((token) => {
-      fetch(`${props.url}/api/v1/chat/config`, {
+      fetch(`${this.url}/api/v1/chat/config`, {
         method: "GET",
         headers: {
           "Authorization": "Bearer " + token,
@@ -45,10 +46,10 @@ class ChatWidgetElement extends HTMLElement {
         .then(data => {
           const firebaseConfig = decodeMessage(props.user.uid, data);
 
-          this.reactRoot.render(
+          this.reactRoot?.render(
             <StrictMode>
               <StyleSheetManager target={this.container}>
-                <LlamaTreeProvider url={props.url} firebaseConfig={firebaseConfig} user={props.user}>
+                <LlamaTreeProvider url={this.url!} firebaseConfig={firebaseConfig} user={props.user}>
                   <Main onFunctionCall={props.onFunctionCall}/>
                 </LlamaTreeProvider>
               </StyleSheetManager>
@@ -63,7 +64,7 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   disconnectedCallback() {
-    this.reactRoot.unmount();
+    this.reactRoot?.unmount();
   }
 }
 
