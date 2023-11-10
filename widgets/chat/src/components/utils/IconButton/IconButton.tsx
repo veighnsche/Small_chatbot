@@ -1,8 +1,8 @@
-import React, { forwardRef, ButtonHTMLAttributes } from 'react';
+import { forwardRef, ButtonHTMLAttributes, ReactNode } from "react";
 import './IconButton.css';
 
 interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-  children: React.ReactNode;
+  children: ReactNode;
   circle?: boolean;
 }
 

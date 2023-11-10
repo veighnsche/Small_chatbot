@@ -4,6 +4,7 @@ import {
 } from "./useLlamaCopyToClipboard.ts";
 import { IconButton } from "../../utils/IconButton/IconButton.tsx";
 import { Tooltip } from "../../utils/Tooltip/Tooltip.tsx";
+import Copy from "../../../icons/copy.svg";
 
 export const CopyToClipboard = (props: LlamaCopyToClipboardProps) => {
   const { copyToClipboard } = useLlamaCopyToClipboard(props);
@@ -11,7 +12,7 @@ export const CopyToClipboard = (props: LlamaCopyToClipboardProps) => {
   return (
     <Tooltip content="Copied!" onClick={copyToClipboard}>
       <IconButton>
-        <img src="http://localhost:3001/icons/copy.svg" alt="copy icon"/>
+        <img src={Copy} alt="copy icon"/>
       </IconButton>
     </Tooltip>
   );

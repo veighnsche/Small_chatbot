@@ -1,10 +1,14 @@
-import { useLlamaContentBubble } from "./useLlamaContentBubble.ts";
+import AssistantIcon from "../../icons/assistant.svg";
+import Edit from "../../icons/edit.svg";
+import SystemIcon from "../../icons/system.svg";
+import UserIcon from "../../icons/user.svg";
 import { LlamaMessage } from "../../types/LlamaMessage.ts";
 import { CopyToClipboard } from "../buttons/CopyToClipboard/CopyToClipboard.tsx";
 import { InputEdit } from "../InputEdit/InputEdit.tsx";
 import { Iterator } from "../Iterator/Iterator.tsx";
 import { IconButton } from "../utils/IconButton/IconButton.tsx";
-import './ContentBubble.css';
+import "./ContentBubble.css";
+import { useLlamaContentBubble } from "./useLlamaContentBubble.ts";
 
 export const ContentBubble = (message: LlamaMessage) => {
   const {
@@ -43,7 +47,7 @@ const User = ({
       <div className="content-bubble-wrapper">
         <img
           className="role-icon"
-          src={`http://localhost:3001/icons/user.svg`}
+          src={UserIcon}
           alt={`user icon`}
         />
         <div className="content-text">
@@ -58,7 +62,7 @@ const User = ({
         <div className="actions">
           {!isEditing ? (
             <IconButton onClick={onStartEdit}>
-              <img src="http://localhost:3001/icons/edit.svg" alt="edit icon"/>
+              <img src={Edit} alt="edit icon"/>
             </IconButton>
           ) : null}
         </div>
@@ -79,7 +83,7 @@ const FunctionCall = ({
       <div className="content-bubble-wrapper">
         <img
           className="role-icon"
-          src={`http://localhost:3001/icons/assistant.svg`}
+          src={AssistantIcon}
           alt={`assistant icon`}
         />
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
@@ -110,7 +114,7 @@ const Assistant = ({
       <div className="content-bubble-wrapper">
         <img
           className="role-icon"
-          src={`http://localhost:3001/icons/assistant.svg`}
+          src={AssistantIcon}
           alt={`assistant icon`}
         />
         <div className="content-text">
@@ -130,7 +134,7 @@ const System = ({ content }: LlamaMessage) => {
       <div className="content-bubble-wrapper">
         <img
           className="role-icon"
-          src={`http://localhost:3001/icons/system.svg`}
+          src={SystemIcon}
           alt={`system icon`}
         />
         <div className="content-text">

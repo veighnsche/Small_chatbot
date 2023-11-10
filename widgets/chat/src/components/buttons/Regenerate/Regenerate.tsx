@@ -1,5 +1,6 @@
-import { useLlamaRegenerate } from "./useLlamaRegenerate.ts";
+import Refresh from "../../../icons/refresh.svg";
 import { IconButton } from "../../utils/IconButton/IconButton.tsx";
+import { useLlamaRegenerate } from "./useLlamaRegenerate.ts";
 
 export const Regenerate = () => {
   const { onRegenerate, disabled } = useLlamaRegenerate();
@@ -10,7 +11,7 @@ export const Regenerate = () => {
       disabled={disabled}
       onClick={onRegenerate}
     >
-      <img src="http://localhost:3001/icons/refresh.svg" alt="refresh"/>
+      <img src={Refresh} alt="refresh"/>
     </IconButton>
   );
 };

@@ -1,6 +1,10 @@
-import { LlamaHistoryItemProps, useLlamaHistoryItem } from "./useLlamaHistoryItem.ts";
-import "./HistoryItem.css";
+import Check from "../../icons/check.svg";
+import Cross from "../../icons/cross.svg";
+import Delete from "../../icons/delete.svg";
+import EditTitle from "../../icons/edit-title.svg";
 import { IconButton } from "../utils/IconButton/IconButton.tsx";
+import "./HistoryItem.css";
+import { LlamaHistoryItemProps, useLlamaHistoryItem } from "./useLlamaHistoryItem.ts";
 
 export const HistoryItem = (props: LlamaHistoryItemProps) => {
   const {
@@ -22,10 +26,10 @@ export const HistoryItem = (props: LlamaHistoryItemProps) => {
         <input className="edit-input" value={editInputValue} onChange={onEditValueChange}/>
         <div className="action">
           <IconButton onClick={onEditCheck}>
-            <img src="http://localhost:3001/icons/check.svg" alt="check icon"/>
+            <img src={Check} alt="check icon"/>
           </IconButton>
           <IconButton onClick={onEditCancel}>
-            <img src="http://localhost:3001/icons/cross.svg" alt="cross icon"/>
+            <img src={Cross} alt="cross icon"/>
           </IconButton>
         </div>
       </div>
@@ -38,10 +42,10 @@ export const HistoryItem = (props: LlamaHistoryItemProps) => {
         <p className="history-title">{title}</p>
         <div className="action">
           <IconButton onClick={onStartEdit}>
-            <img src="http://localhost:3001/icons/edit_title.svg" alt="edit icon"/>
+            <img src={EditTitle} alt="edit icon"/>
           </IconButton>
           <IconButton onClick={onDelete}>
-            <img src="http://localhost:3001/icons/delete.svg" alt="delete icon"/>
+            <img src={Delete} alt="delete icon"/>
           </IconButton>
         </div>
       </div>

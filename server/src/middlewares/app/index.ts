@@ -1,6 +1,5 @@
 import cors from "cors";
 import express, { type Application } from "express";
-import * as path from "path";
 import { CORS_ORIGIN } from "../../services/environmentVariables";
 import { getRateLimiter } from "../../services/rateLimiter";
 
@@ -13,10 +12,8 @@ const corsOptions = {
 };
 
 export function setupAppMiddlewares(app: Application) {
-  app.use(cors(corsOptions));
-
   app.use(express.json());
-  app.use(getRateLimiter());
 
-  app.use(express.static(path.join(__dirname, "../../public")));
+  app.use(cors(corsOptions));
+  app.use(getRateLimiter());
 }

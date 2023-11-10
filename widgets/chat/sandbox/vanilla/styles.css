@@ -1,0 +1,68 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #f4f4f4;
+}
+
+#chat-container {
+    text-align: center;
+    padding: 20px;
+    background-color: white;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 100px;
+    left: 30px;
+    z-index: 1000;
+}
+
+#google-signin-btn-container {
+    margin-bottom: 20px; /* More room from the input */
+}
+
+#google-signin-btn, #send-message-btn {
+    background-color: #4285f4;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#google-signin-btn:hover, #send-message-btn:hover {
+    background-color: #357ae8;
+}
+
+#chat-input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+#chat-input-container > div {
+    display: flex;
+    width: 100%;
+}
+
+#message-input {
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    flex-grow: 1; /* Takes up remaining space */
+}
+
+#send-message-btn {
+    border-radius: 4px 4px 4px 0;
+    height: 40px; /* Adjust height as per input field */
+}
+
+label[for="message-input"] {
+    align-self: flex-start;
+    margin-bottom: 5px;
+}
