@@ -1,9 +1,9 @@
 import { useEffect } from "react";
-import { NewChat } from "./components/buttons/NewChat";
-import { Chat } from "./components/Chat";
-import { ChatTitle } from "./components/ChatTitle";
-import { HistoryList } from "./components/HistoryList";
-import { Input } from "./components/Input";
+import { NewChat } from "./components/buttons/NewChat/NewChat.tsx";
+import { Chat } from "./components/Chat/Chat.tsx";
+import { ChatTitle } from "./components/ChatTitle/ChatTitle.tsx";
+import { HistoryList } from "./components/HistoryList/HistoryList.tsx";
+import { Input } from "./components/Input/Input.tsx";
 import "./Main.css";
 import "./reset.css";
 import { eventBus } from "./services/eventBus";

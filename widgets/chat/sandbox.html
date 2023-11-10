@@ -29,7 +29,7 @@
 <button id="send-message-btn" onclick="sendMessage()">Send</button>
 
 
-<script src="http://localhost:3001/llama-tree-chat-widget.umd.js"></script>
+<script src="http://localhost:30001/llama-tree-chat-widget.umd.js"></script>
 <script type="module">
   const firebaseConfig = {
     apiKey: 'AIzaSyCKEVvZx6wk5hNjNsSg4_a4DKFmOVRK9Xw',
@@ -73,7 +73,7 @@
   const passUserToWidget = (user) => {
     const chatWidget = document.querySelector('llama-tree-chat-widget')
     chatWidget.setProps({
-      url: 'http://localhost:3001',
+      url: 'http://localhost:30001',
       user,
       onFunctionCall: (functionName, args) => {
         console.log(functionName, args)

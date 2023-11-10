@@ -1,72 +1,68 @@
-# Step 1: Build the main TypeScript app
+# STEP 1: Start building the main TypeScript application
 FROM node:16 AS app-builder
 
-# Set the working directory
-WORKDIR /usr/src/app/server
-
-# Copy package.json and package-lock.json
-COPY server/package*.json ./
-
-# Install all dependencies
-RUN npm install
-
-# Copy the rest of the source code
-COPY server .
-
-# Build the TypeScript app
-RUN npm run build
-
-# Step 2: Build the widget
-FROM node:16 AS widget-builder
-
-# Set the working directory for the widget
-WORKDIR /usr/src/app/widgets/chat
-
-# Copy package.json and package-lock.json for widget
-COPY widgets/chat/package*.json ./
-
-# Install widget dependencies
-RUN npm install
-
-# Copy the widget source code
-COPY widgets/chat .
-
-# Build the widget
-RUN npm run build
-
-# Step 3: Set up the production environment
-FROM node:16-slim
-
-# Set the working directory for the production environment
+# STEP 2: Set the working directory for the main app
 WORKDIR /usr/src/app
 
-# Copy package.json and package-lock.json for production
-COPY server/package*.json ./server
+# STEP 3: Copy package.json and package-lock.json for the server
+COPY server/package*.json ./
 
-# Install only production dependencies
+# STEP 4: Install dependencies for the server
+RUN npm install
+
+# STEP 5: Copy the server's source code
+COPY server .
+
+# STEP 6: Build the TypeScript server application
+RUN npm run build
+
+# STEP 7: Start building the widget
+FROM node:16 AS widget-builder
+
+# STEP 8: Set the working directory for the widget
+WORKDIR /usr/src/app
+
+# STEP 9: Copy package.json and package-lock.json for the widget
+COPY widgets/chat/package*.json ./
+
+# STEP 10: Install dependencies for the widget
+RUN npm install
+
+# STEP 11: Copy the widget's source code
+COPY widgets/chat .
+
+# STEP 12: Build the widget
+RUN npm run build
+
+# STEP 13: Set up the production environment
+FROM node:16-slim
+
+# STEP 14: Set the working directory for the production environment
+WORKDIR /usr/src/app
+
+# STEP 15: Copy package.json and package-lock.json for the production server
+COPY server/package*.json ./server/
+
+# STEP 16: Change to the server directory
+WORKDIR /usr/src/app/server
+
+# STEP 17: Install only the production dependencies for the server
 RUN npm install --only=production
 
-# Copy the built JavaScript from the app-builder stage
+# STEP 18: Change back to the main app directory
+WORKDIR /usr/src/app
+
+# STEP 19: Copy the built server application from the app-builder stage
 COPY --from=app-builder /usr/src/app/dist ./server/dist
 
-# Copy the node_modules from the app-builder stage
-COPY --from=app-builder /usr/src/app/node_modules ./server/node_modules
+# STEP 20: Copy the built widget from the widget-builder stage
+COPY --from=widget-builder /usr/src/app/dist ./widgets/chat/dist
 
-# Copy the built widget from the widget-builder stage
-COPY --from=widget-builder /usr/src/app/widgets/chat/build ./widgets/chat/build
-
-# Copy the widget sandbox from the widget-builder stage
-COPY --from=widget-builder /usr/src/app/widgets/chat/sandbox.html ./widgets/chat/sandbox.html
-
-# Expose the port the app runs on
+# STEP 21: Expose the port for the application
 EXPOSE 3001
 
-# Set the environment to "production"
+# STEP 22: Set the environment to production
 ENV NODE_ENV=production
 
-ENV LLAMA_TREE_PORT=3001
-
-ENV LLAMA_TREE_HOST=0.0.0.0
-
-# Start the app
+# STEP 23: Start the server application
 CMD ["node", "server/dist/index.js"]
