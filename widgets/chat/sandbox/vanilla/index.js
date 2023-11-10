@@ -1,4 +1,4 @@
-// chatWidget.js
+// firebase
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js'
 import {getAuth, GoogleAuthProvider, signInWithPopup} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js'
 
@@ -16,17 +16,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
-const sendMessage = () => {
-  const input = document.getElementById('message-input')
-  const message = input.value
-  input.value = ''
-
-  const chatWidget = document.querySelector('llama-tree-chat-widget')
-  chatWidget.sendMessage(message)
-}
-
-document.getElementById('send-message-btn').addEventListener('click', sendMessage)
-
 const onGoogleSignIn = async () => {
   const provider = new GoogleAuthProvider()
   try {
@@ -42,6 +31,9 @@ auth.onAuthStateChanged((user) => {
   }
 })
 
+document.getElementById('google-signin-btn').addEventListener('click', onGoogleSignIn)
+
+// widget
 const passUserToWidget = (user) => {
   const chatWidget = document.querySelector('llama-tree-chat-widget')
   chatWidget.setProps({
@@ -53,4 +45,13 @@ const passUserToWidget = (user) => {
   })
 }
 
-document.getElementById('google-signin-btn').addEventListener('click', onGoogleSignIn)
+const sendMessage = () => {
+  const input = document.getElementById('message-input')
+  const message = input.value
+  input.value = ''
+
+  const chatWidget = document.querySelector('llama-tree-chat-widget')
+  chatWidget.sendMessage(message)
+}
+
+document.getElementById('send-message-btn').addEventListener('click', sendMessage)
