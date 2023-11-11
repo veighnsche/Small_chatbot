@@ -47,9 +47,12 @@ function initializeLlamaTree() {
     if (user) {
       llamaTree.setProps({
         user,
-        onFunctionCall: (functionName, args) => {
-          console.log(functionName, args)
-        },
+        // onFunctionCall: (functionName, args) => {
+        //   console.log('Function call', functionCall)
+        // },
+        // onLlamaAction: (action) => {
+        //   console.log('Llama action', action)
+        // },
       })
     }
   })

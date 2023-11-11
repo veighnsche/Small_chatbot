@@ -6,7 +6,7 @@ import { HistoryList } from "./components/HistoryList/HistoryList.tsx";
 import { Input } from "./components/Input/Input.tsx";
 import "./Main.css";
 import "./reset.css";
-import { eventBus } from "./services/eventBus";
+import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { editLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { useLlamaDispatch } from "./stores/llamaStore.ts";
 import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
@@ -30,8 +30,8 @@ const Main = () => {
 
   useEffect(() => {
     const subs = [
-      eventBus.on("user-message", addMessage),
-      eventBus.on("chat-params", editChatParams)
+      llamaEventBus.on("user-message", addMessage),
+      llamaEventBus.on("chat-params", editChatParams)
     ];
 
     return () => {

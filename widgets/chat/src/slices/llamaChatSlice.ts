@@ -1,5 +1,4 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { eventBus } from "../services/eventBus.ts";
 import { LlamaChat } from "../types/LlamaChat";
 import { LlamaMessage } from "../types/LlamaMessage";
 import { addIters, makeChildrensMap, traverseToLastMessageId } from "../utils/messages";
@@ -24,7 +23,6 @@ const initialState: LlamaChatState = {
   assistantStream: undefined,
 };
 
-
 const llamaChatSlice = createSlice({
   name: "llamaChat",
   initialState,
@@ -37,14 +35,11 @@ const llamaChatSlice = createSlice({
       const lastMessage = state.messages[state.messages.length - 1];
       if (lastMessage) {
         state.lastMessageId = lastMessage.id;
-        eventBus.emit("assistant-message", lastMessage);
-        if ("function_call" in lastMessage) {
-          eventBus.emit("function-call", lastMessage.function_call);
-        }
       }
     },
 
     setCurrentChatId: (state, action: PayloadAction<{ chatId: string }>) => {
+      state.messages = [];
       state.itersMap = {};
       state.currentChatId = action.payload.chatId;
     },
@@ -74,18 +69,18 @@ const llamaChatSlice = createSlice({
       };
     },
 
-    appendAssistantStreamContent: (state, action: PayloadAction<{ content: string }>) => {
-      if (state.assistantStream) {
-        state.assistantStream.content += action.payload.content;
-      }
-    },
-
     startAssistantStreamFunctionCall: (state, action: PayloadAction<{ name: string }>) => {
       if (state.assistantStream) {
         state.assistantStream.function_call = {
           name: action.payload.name,
           arguments: "",
         };
+      }
+    },
+
+    appendAssistantStreamContent: (state, action: PayloadAction<{ content: string }>) => {
+      if (state.assistantStream) {
+        state.assistantStream.content += action.payload.content;
       }
     },
 

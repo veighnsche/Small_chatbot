@@ -1,18 +1,20 @@
 import { User } from "firebase/auth";
+import { ChatCompletionMessage } from "openai/resources/chat/completions";
 import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
 import Main from "./Main";
 import { LlamaTreeProvider } from "./providers/LlamaTreeProvider";
 import { decodeMessage } from "./services/crypto";
-import { eventBus } from "./services/eventBus";
+import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
-import { LlamaMessage } from "./types/LlamaMessage.ts";
+import { LlamaActions } from "./stores/llamaStore.ts";
+
 
 export interface LlamaTreeProps {
   user: User;
   customCssUrl?: string;
-  onFunctionCall?: (functionName: string, args: any[]) => void;
-  onAssistantMessage?: (message: LlamaMessage) => void;
+  onLlamaAction?: (action: LlamaActions) => void;
+  onFunctionCall?: (functionCall: ChatCompletionMessage.FunctionCall) => void;
 }
 
 class ChatWidgetElement extends HTMLElement {
@@ -42,11 +44,11 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   sendMessage(message: string) {
-    eventBus.emit("user-message", message);
+    llamaEventBus.emit("user-message", message);
   }
 
   sendChatParams(params: LlamaChatParams) {
-    eventBus.emit("chat-params", params);
+    llamaEventBus.emit("chat-params", params);
   }
 
   disconnectedCallback() {
@@ -81,13 +83,17 @@ class ChatWidgetElement extends HTMLElement {
 
   private subscribeToEvents(props: LlamaTreeProps) {
     if (props.onFunctionCall) {
-      this.subs.push(eventBus.on("function-call", ({ functionName, args }) =>
-        props.onFunctionCall?.(functionName, args),
-      ));
+      const functionCallSub = llamaEventBus.on("function-call", (functionCall) =>
+        props.onFunctionCall?.(functionCall),
+      );
+      this.subs.push(functionCallSub);
     }
 
-    if (props.onAssistantMessage) {
-      this.subs.push(eventBus.on("assistant-message", props.onAssistantMessage));
+    if (props.onLlamaAction) {
+      const llamaActionSub = llamaEventBus.on("llama-action", (action) =>
+        props.onLlamaAction?.(action),
+      );
+      this.subs.push(llamaActionSub);
     }
   }
 
