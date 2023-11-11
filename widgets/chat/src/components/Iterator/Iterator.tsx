@@ -11,7 +11,7 @@ export const Iterator = (props: IteratorProps) => {
   } = useLlamaIterator(props);
 
   if (hidden) {
-    return <div className="iterator-wrapper"/>;
+    return null;
   }
 
   return (
@@ -21,7 +21,7 @@ export const Iterator = (props: IteratorProps) => {
           className="iterator-button"
           onClick={onPrev}
           disabled={current === 1}
-          title={current === 1 ? "You are at the beginning of the list" : ""}
+          title={current === 1 ? "You are at the beginning of the list" : "Previous iteration"}
         >
           &lt;
         </button>
@@ -30,7 +30,7 @@ export const Iterator = (props: IteratorProps) => {
           className="iterator-button"
           onClick={onNext}
           disabled={current === total}
-          title={current === total ? "You are at the end of the list" : ""}
+          title={current === total ? "You are at the end of the list" : "Next iteration"}
         >
           &gt;
         </button>

@@ -7,9 +7,9 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 }
 
 export const IconButton = forwardRef<HTMLButtonElement, IconButtonProps>(
-  ({ children, circle, ...props }, ref) => (
+  ({ className = '', children, circle, ...props }, ref) => (
     <button
-      className={`icon-button ${circle ? 'circle' : ''}`}
+      className={`icon-button ${circle ? 'circle' : ''} ${className}`}
       ref={ref}
       {...props}
     >

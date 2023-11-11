@@ -43,13 +43,15 @@ const User = ({
 
   return (
     <div className="content-bubble-container user">
-      <Iterator parent_id={parent_id} iter={iter}/>
       <div className="content-bubble-wrapper">
-        <img
-          className="role-icon"
-          src={UserIcon}
-          alt={`user icon`}
-        />
+        <div className="content-header">
+          <img
+            className="role-icon"
+            src={UserIcon}
+            alt={`user icon`}
+          />
+          <span>You</span>
+        </div>
         <div className="content-text">
           {isEditing ? (
             <InputEdit
@@ -59,9 +61,10 @@ const User = ({
             />
           ) : <p>{content}</p>}
         </div>
-        <div className="actions">
+        <div className="content-actions">
+          <Iterator parent_id={parent_id} iter={iter}/>
           {!isEditing ? (
-            <IconButton onClick={onStartEdit} title={"Edit"}>
+            <IconButton className="on-user-hover" onClick={onStartEdit} title={"Edit"}>
               <img src={Edit} alt="edit icon"/>
             </IconButton>
           ) : null}
@@ -79,13 +82,15 @@ const FunctionCall = ({
 }: LlamaMessage) => {
   return (
     <div className="content-bubble-container assistant">
-      <Iterator parent_id={parent_id} iter={iter}/>
       <div className="content-bubble-wrapper">
-        <img
-          className="role-icon"
-          src={AssistantIcon}
-          alt={`assistant icon`}
-        />
+        <div className="content-header">
+          <img
+            className="role-icon"
+            src={AssistantIcon}
+            alt={`assistant icon`}
+          />
+          <span>Assistant</span>
+        </div>
         <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
           <div className="content-text">
             <p>{content}</p>
@@ -95,7 +100,8 @@ const FunctionCall = ({
             <p className="function-arguments">{function_call?.arguments}</p>
           </div>
         </div>
-        <div className="actions">
+        <div className="content-actions">
+          <Iterator parent_id={parent_id} iter={iter}/>
           <CopyToClipboard content={content || ""}/>
         </div>
       </div>
@@ -110,17 +116,20 @@ const Assistant = ({
 }: LlamaMessage) => {
   return (
     <div className="content-bubble-container assistant">
-      <Iterator parent_id={parent_id} iter={iter}/>
       <div className="content-bubble-wrapper">
-        <img
-          className="role-icon"
-          src={AssistantIcon}
-          alt={`assistant icon`}
-        />
+        <div className="content-header">
+          <img
+            className="role-icon"
+            src={AssistantIcon}
+            alt={`assistant icon`}
+          />
+          <span>Assistant</span>
+        </div>
         <div className="content-text">
           <p>{content}</p>
         </div>
-        <div className="actions">
+        <div className="content-actions">
+          <Iterator parent_id={parent_id} iter={iter}/>
           <CopyToClipboard content={content || ""}/>
         </div>
       </div>
@@ -132,11 +141,14 @@ const System = ({ content }: LlamaMessage) => {
   return (
     <div className="content-bubble-container system">
       <div className="content-bubble-wrapper">
-        <img
-          className="role-icon"
-          src={SystemIcon}
-          alt={`system icon`}
-        />
+        <div className="content-header">
+          <img
+            className="role-icon"
+            src={SystemIcon}
+            alt={`system icon`}
+          />
+          <span>System</span>
+        </div>
         <div className="content-text">
           <p>{content}</p>
         </div>
