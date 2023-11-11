@@ -2,7 +2,6 @@
     position: fixed;
     bottom: 0;
     right: 32px;
-    grid-area: main;
     height: 600px;
     border: 2px solid #888;
     display: grid;
@@ -13,9 +12,31 @@
         "history chat"
         "history input"
         "new input";
-    transition: grid-template-columns 300ms ease-in-out, width 300ms ease-in-out;
+    transition: grid-template-columns 300ms ease-in-out, height 300ms ease-in-out;
+}
+
+.box-container.large {
+    height: 90vh;
+    grid-template-columns: 320px 560px;
 }
 
 .box-container.history-drawer-closed {
     grid-template-columns: 0 360px;
+}
+
+.box-container.large.history-drawer-closed {
+    grid-template-columns: 0 560px;
+}
+
+.open-chat-container {
+    position: fixed;
+    bottom: 0;
+    right: 32px;
+    height: 48px;
+    width: 48px;
+    border: 2px solid #888;
+    border-bottom: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
