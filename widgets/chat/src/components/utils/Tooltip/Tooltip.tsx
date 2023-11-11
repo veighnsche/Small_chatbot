@@ -1,4 +1,5 @@
-import { LlamaTooltipProps, TooltipState, useLlamaTooltip } from "./useLlamaTooltip.ts";
+import { AnimationState } from "../../../types/AnimationState.ts";
+import { LlamaTooltipProps, useLlamaTooltip } from "./useLlamaTooltip.ts";
 import './Tooltip.css';
 
 export const Tooltip = (props: LlamaTooltipProps) => {
@@ -11,11 +12,11 @@ export const Tooltip = (props: LlamaTooltipProps) => {
 
   const getStateClass = () => {
     switch (tooltipState) {
-      case TooltipState.Show:
+      case AnimationState.Show:
         return 'show';
-      case TooltipState.Active:
+      case AnimationState.Active:
         return 'active';
-      case TooltipState.Hide:
+      case AnimationState.Hide:
         return 'hide';
       default:
         return '';

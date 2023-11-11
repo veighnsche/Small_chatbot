@@ -1,39 +1,48 @@
-import { toggleChatHistory, toggleChatSize, toggleChatView } from "../../slices/llamaChatViewSlice.ts";
-import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
-// import { useLlamaChatHeader } from "./useLlamaChatHeader.ts";
-import "./ChatHeader.css";
-import { IconButton } from "../utils/IconButton/IconButton.tsx";
-import OpenHistoryIcon from "../../assets/history-open.svg";
-import CloseHistoryIcon from "../../assets/history-close.svg";
-import EnlargeIcon from "../../assets/enlarge.svg";
-import ShrinkIcon from "../../assets/shrink.svg";
 import CloseChatIcon from "../../assets/chat-close.svg";
+import NewChatIcon from "../../assets/chat-new.svg";
+import EnlargeIcon from "../../assets/enlarge.svg";
+import CloseHistoryIcon from "../../assets/history-close.svg";
+import OpenHistoryIcon from "../../assets/history-open.svg";
+import ShrinkIcon from "../../assets/shrink.svg";
+import { reset } from "../../slices/llamaChatSlice.ts";
+import { toggleChatView, toggleHistoryDrawer, toggleSize } from "../../slices/llamaChatViewSlice";
+import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore";
+import { IconButton } from "../utils/IconButton/IconButton";
+import "./ChatHeader.css";
 
 export const ChatHeader = () => {
   const dispatch = useLlamaDispatch();
-  // const { title } = useLlamaChatHeader();
-  const { isHistoryOpen, isLarge } = useLlamaSelector((state) => state.llamaChatView);
+  const { isHistoryDrawerOpen, isLarge } = useLlamaSelector(state => state.llamaChatView);
 
-  const HistoryIcon = isHistoryOpen ? CloseHistoryIcon : OpenHistoryIcon;
-  const ResizeIcon = isLarge ? ShrinkIcon : EnlargeIcon;
-
-  const historyString = isHistoryOpen ? "Close History" : "Open History";
-  const resizeString = isLarge ? "Shrink" : "Enlarge";
+  const { history, resize } = {
+    history: {
+      icon: isHistoryDrawerOpen ? CloseHistoryIcon : OpenHistoryIcon,
+      title: isHistoryDrawerOpen ? "Close History" : "Open History",
+    },
+    resize: {
+      icon: isLarge ? ShrinkIcon : EnlargeIcon,
+      title: isLarge ? "Shrink" : "Enlarge",
+    },
+  };
 
   return (
-    <div className="title-container">
-      <div className="left-actions">
-        <IconButton onClick={() => dispatch(toggleChatHistory())} title={historyString}>
-          <img src={HistoryIcon} alt={historyString}/>
+    <div className="header-container">
+      <div className="header-actions">
+        <IconButton onClick={() => dispatch(toggleHistoryDrawer())} title={history.title}>
+          <img src={history.icon} alt={`${history.title} icon`}/>
         </IconButton>
+        {!isHistoryDrawerOpen ? (
+          <IconButton onClick={() => dispatch(reset())} title="New Chat">
+            <img src={NewChatIcon} alt="New Chat icon"/>
+          </IconButton>
+        ) : null}
       </div>
-      {/*<h3 className="title">{title}</h3>*/}
-      <div className="right-actions">
-        <IconButton onClick={() => dispatch(toggleChatSize())} title={resizeString}>
-          <img src={ResizeIcon} alt={resizeString}/>
+      <div className="header-actions">
+        <IconButton onClick={() => dispatch(toggleSize())} title={resize.title}>
+          <img src={resize.icon} alt={`${resize.title} icon`}/>
         </IconButton>
         <IconButton onClick={() => dispatch(toggleChatView())} title="Minimize Chat">
-          <img src={CloseChatIcon} alt="Minimize Chat"/>
+          <img src={CloseChatIcon} alt="Minimize Chat icon"/>
         </IconButton>
       </div>
     </div>

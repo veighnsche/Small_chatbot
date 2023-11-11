@@ -2,6 +2,6 @@
     grid-area: history;
     display: flex;
     flex-direction: column;
-    overflow-y: auto; /* To handle scrolling if there are many history items */
-    border-right: 1px solid #888; /* Optional: Add a divider between history and chat */
+    overflow-y: auto;
+    border-right: 1px solid #888;
 }

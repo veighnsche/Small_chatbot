@@ -1,11 +1,13 @@
 .chat-input-wrapper {
+    grid-area: input;
+    z-index: 10;
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
     gap: 0.5rem;
     padding: 0.5rem;
     border-top: 1px solid #888;
-    grid-area: input;
+    background-color: #f5f5f5;
 }
 
 .chat-input {

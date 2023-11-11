@@ -3,7 +3,7 @@
     display: inline-block;
 }
 
-@keyframes slideInFromRight {
+@keyframes tooltipSlideIn {
     from {
         opacity: 0;
         right: 50%;
@@ -14,7 +14,7 @@
     }
 }
 
-@keyframes slideOutToLeft {
+@keyframes tooltipSlideOut {
     from {
         opacity: 1;
         right: 100%;
@@ -41,7 +41,7 @@
 }
 
 .tooltip.show {
-    animation: slideInFromRight 0.3s ease-in-out;
+    animation: tooltipSlideIn 0.3s ease-in-out;
 }
 
 .tooltip.active {
@@ -50,5 +50,5 @@
 }
 
 .tooltip.hide {
-    animation: slideOutToLeft 0.3s ease-in-out;
+    animation: tooltipSlideOut 0.3s ease-in-out;
 }

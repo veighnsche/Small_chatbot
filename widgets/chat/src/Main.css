@@ -1,18 +1,21 @@
 .box-container {
-    position: fixed; /* Fixed positioning relative to the viewport */
-    bottom: 0; /* Align to the bottom */
-    right: 32px; /* Align to the right */
+    position: fixed;
+    bottom: 0;
+    right: 32px;
     grid-area: main;
-    width: 600px;
     height: 600px;
     border: 2px solid #888;
     display: grid;
-    grid-template-columns: 40% 60%;
+    grid-template-columns: 240px 360px;
     grid-template-rows: 4rem 1fr auto auto;
-
     grid-template-areas:
         "history title"
         "history chat"
         "history input"
         "new input";
+    transition: grid-template-columns 300ms ease-in-out, width 300ms ease-in-out;
+}
+
+.box-container.history-drawer-closed {
+    grid-template-columns: 0 360px;
 }

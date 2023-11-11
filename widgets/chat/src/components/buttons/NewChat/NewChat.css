@@ -1,13 +1,15 @@
 .new-chat-button {
     grid-area: new;
-    width: 100%;
     height: calc(4rem + 2px); /* 2px for border */
     border: none;
     background-color: #007bff; /* Adjusted color */
     color: white;
     font-size: 1.2rem;
     cursor: pointer;
-    transition: background-color 0.3s;
+    box-sizing: border-box;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
 }
 
 .new-chat-button:hover {

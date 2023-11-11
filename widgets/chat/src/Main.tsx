@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { NewChat } from "./components/buttons/NewChat/NewChat.tsx";
 import { Chat } from "./components/Chat/Chat.tsx";
 import { ChatHeader } from "./components/ChatHeader/ChatHeader.tsx";
@@ -8,7 +8,7 @@ import "./Main.css";
 import "./reset.css";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { editLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
-import { useLlamaDispatch } from "./stores/llamaStore.ts";
+import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
 import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
 
 
@@ -31,7 +31,7 @@ const Main = () => {
   useEffect(() => {
     const subs = [
       llamaEventBus.on("user-message", addMessage),
-      llamaEventBus.on("chat-params", editChatParams)
+      llamaEventBus.on("chat-params", editChatParams),
     ];
 
     return () => {
@@ -39,10 +39,23 @@ const Main = () => {
     };
   }, []);
 
+  const historyDrawerState = useLlamaSelector((state) => state.llamaChatView.isHistoryDrawerOpen);
+  const [renderDrawer, setRenderDrawer] = useState(historyDrawerState);
+
+  useEffect(() => {
+    const ANIMATION_DURATION = 300;
+
+    if (historyDrawerState) {
+      setRenderDrawer(true);
+    } else {
+      setTimeout(() => setRenderDrawer(false), ANIMATION_DURATION);
+    }
+  }, [historyDrawerState]);
+
   return (
-    <div className="box-container">
-      <HistoryList/>
-      <NewChat/>
+    <div className={`box-container ${historyDrawerState ? "" : "history-drawer-closed"}`}>
+      {renderDrawer && <HistoryList/>}
+      {renderDrawer && <NewChat/>}
       <ChatHeader/>
       <Chat/>
       <Input/>

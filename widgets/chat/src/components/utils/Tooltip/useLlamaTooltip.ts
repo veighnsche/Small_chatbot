@@ -1,4 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
+import { AnimationState } from "../../../types/AnimationState.ts";
 
 export interface LlamaTooltipProps {
   content: string;
@@ -6,15 +7,8 @@ export interface LlamaTooltipProps {
   onClick?: () => void;
 }
 
-export enum TooltipState {
-  Hidden = "hidden",
-  Show = "show",
-  Active = "active",
-  Hide = "hide",
-}
-
 export const useLlamaTooltip = ({ onClick, ...props }: LlamaTooltipProps) => {
-  const [state, setState] = useState<TooltipState>(TooltipState.Hidden);
+  const [state, setState] = useState<AnimationState>(AnimationState.Hidden);
 
   useEffect(() => {
     const SHOW_ANIMATION_DURATION = 300;
@@ -24,14 +18,14 @@ export const useLlamaTooltip = ({ onClick, ...props }: LlamaTooltipProps) => {
     let timer: NodeJS.Timeout;
 
     switch (state) {
-      case TooltipState.Show:
-        timer = setTimeout(() => setState(TooltipState.Active), SHOW_ANIMATION_DURATION);
+      case AnimationState.Show:
+        timer = setTimeout(() => setState(AnimationState.Active), SHOW_ANIMATION_DURATION);
         break;
-      case TooltipState.Active:
-        timer = setTimeout(() => setState(TooltipState.Hide), ACTIVE_DURATION);
+      case AnimationState.Active:
+        timer = setTimeout(() => setState(AnimationState.Hide), ACTIVE_DURATION);
         break;
-      case TooltipState.Hide:
-        timer = setTimeout(() => setState(TooltipState.Hidden), HIDE_ANIMATION_DURATION);
+      case AnimationState.Hide:
+        timer = setTimeout(() => setState(AnimationState.Hidden), HIDE_ANIMATION_DURATION);
         break;
     }
 
@@ -42,7 +36,7 @@ export const useLlamaTooltip = ({ onClick, ...props }: LlamaTooltipProps) => {
     if (onClick) {
       onClick();
     }
-    setState(TooltipState.Show);
+    setState(AnimationState.Show);
   };
 
   return {
