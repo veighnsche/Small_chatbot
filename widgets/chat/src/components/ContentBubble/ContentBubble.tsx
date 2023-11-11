@@ -1,7 +1,7 @@
-import AssistantIcon from "../../icons/assistant.svg";
-import Edit from "../../icons/edit.svg";
-import SystemIcon from "../../icons/system.svg";
-import UserIcon from "../../icons/user.svg";
+import AssistantIcon from "../../assets/assistant.svg";
+import Edit from "../../assets/edit.svg";
+import SystemIcon from "../../assets/system.svg";
+import UserIcon from "../../assets/user.svg";
 import { LlamaMessage } from "../../types/LlamaMessage.ts";
 import { CopyToClipboard } from "../buttons/CopyToClipboard/CopyToClipboard.tsx";
 import { InputEdit } from "../InputEdit/InputEdit.tsx";
@@ -61,7 +61,7 @@ const User = ({
         </div>
         <div className="actions">
           {!isEditing ? (
-            <IconButton onClick={onStartEdit}>
+            <IconButton onClick={onStartEdit} title={"Edit"}>
               <img src={Edit} alt="edit icon"/>
             </IconButton>
           ) : null}

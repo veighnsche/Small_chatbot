@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { NewChat } from "./components/buttons/NewChat/NewChat.tsx";
 import { Chat } from "./components/Chat/Chat.tsx";
-import { ChatTitle } from "./components/ChatTitle/ChatTitle.tsx";
+import { ChatHeader } from "./components/ChatHeader/ChatHeader.tsx";
 import { HistoryList } from "./components/HistoryList/HistoryList.tsx";
 import { Input } from "./components/Input/Input.tsx";
 import "./Main.css";
@@ -43,7 +43,7 @@ const Main = () => {
     <div className="box-container">
       <HistoryList/>
       <NewChat/>
-      <ChatTitle/>
+      <ChatHeader/>
       <Chat/>
       <Input/>
     </div>

@@ -1,0 +1,23 @@
+.title-container {
+    grid-area: title;
+    display: flex;
+    align-items: center;
+    justify-content: space-between; /* Adjusted for better spacing */
+    background-color: #f5f5f5;
+    border-bottom: 1px solid #888;
+    border-top-right-radius: 16px;
+    padding: 0 1rem; /* Added padding to the container for consistent spacing */
+}
+
+.title {
+    margin: 0;
+    padding: 0.5rem 0; /* Adjusted padding for vertical alignment */
+    font-size: 1.5rem;
+    white-space: nowrap; /* Prevents the title from wrapping */
+}
+
+.right-actions {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}

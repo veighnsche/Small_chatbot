@@ -10,8 +10,8 @@ export interface LlamaChatViewSliceState {
 
 const initialState: LlamaChatViewSliceState = {
   isOpen: true,
-  isLarge: true,
-  isHistoryOpen: false,
+  isLarge: false,
+  isHistoryOpen: true,
 };
 
 const llamaChatViewSlice = createSlice({

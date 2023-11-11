@@ -1,7 +1,7 @@
-import Check from "../../icons/check.svg";
-import Cross from "../../icons/cross.svg";
-import Delete from "../../icons/delete.svg";
-import EditTitle from "../../icons/edit-title.svg";
+import Check from "../../assets/check.svg";
+import Cross from "../../assets/cross.svg";
+import Delete from "../../assets/delete.svg";
+import EditTitle from "../../assets/edit-title.svg";
 import { IconButton } from "../utils/IconButton/IconButton.tsx";
 import "./HistoryItem.css";
 import { LlamaHistoryItemProps, useLlamaHistoryItem } from "./useLlamaHistoryItem.ts";
