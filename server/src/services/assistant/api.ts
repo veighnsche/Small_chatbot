@@ -9,14 +9,14 @@ class AssistantApi {
 
   constructor() {
     const openaiKey = OPENAI_KEY;
-    const azureKey = IO_AZURE_OPENAI_KEY;
+    const iOazureKey = IO_AZURE_OPENAI_KEY;
 
-    if (!openaiKey && !azureKey) {
-      throw new Error("Must have either OPENAI_KEY or AZURE_OPENAI_KEY set.");
+    if (!openaiKey && !iOazureKey) {
+      throw new Error("Must have either OPENAI_KEY or IO_AZURE_OPENAI_KEY set.");
     }
 
-    if (openaiKey && azureKey) {
-      throw new Error("Cannot have both OPENAI_KEY and AZURE_OPENAI_KEY set.");
+    if (openaiKey && iOazureKey) {
+      throw new Error("Cannot have both OPENAI_KEY and IO_AZURE_OPENAI_KEY set.");
     }
 
     if (openaiKey) {
@@ -31,7 +31,7 @@ class AssistantApi {
       });
     }
 
-    if (azureKey) {
+    if (iOazureKey) {
       console.info("Using iOgpt as assistant api");
       this.chatCompletionApi = async (params: ChatCompletionCreateParamsNonStreaming) => {
         const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
@@ -54,48 +54,52 @@ class AssistantApi {
 
   private async* streamGenerator(stream: ReadableStream): AsyncGenerator<any> {
     const reader = stream.getReader();
+    const decoder = new TextDecoder();
+    let fragment = ""; // we have fragmented messages, so sometimes we need to store the previous chunk
 
     try {
       while (true) {
-        const { done, value } = await reader.read();
+        const { done, value: data } = await reader.read();
         if (done) break;
+        if (!data) continue;
 
-        yield* this.uint8ArrayToObjGenerator(value);
+        const decoded = decoder.decode(data);
+
+        if (fragment) { // if in the last loop we had a fragment, we need to process it first
+          fragment += decoded.split("data: ")[0]; // add the first part of the decoded chunk to the fragment
+          try {
+            yield JSON.parse(fragment.slice(6));
+            fragment = "";
+          } catch (e) {
+            yield* processChunk(fragment); // sometimes the fragmentation is in the "data: " part, so combining them together might make 2 data lines
+          }
+        }
+
+        yield* processChunk(decoded);
       }
     } finally {
       reader.releaseLock();
     }
-  }
 
-  private* uint8ArrayToObjGenerator<T extends Record<string, any>>(data: Uint8Array): Generator<T> {
-    const decoder = new TextDecoder();
-    const jsonBundle = decoder.decode(data);
-    const jsons = jsonBundle.split(/(?=data: |event: )/);
-    let startOfBrokenJson = "";
-
-    for (const jsonString of jsons) {
-      if (startOfBrokenJson) {
-        startOfBrokenJson += jsonString.split("\n\n")[0];
-        try {
-          yield JSON.parse(startOfBrokenJson.slice(6));
-        } catch (e) {
-          console.error("Failed to parse JSON:", e, startOfBrokenJson);
-        } finally {
-          startOfBrokenJson = "";
+    function* processChunk(chunk: string) {
+      const jsons = chunk.split(/(?=data: |event: )/);
+      for (const jsonString of jsons) {
+        if (jsonString.startsWith("data: ")) {
+          try {
+            yield JSON.parse(jsonString.slice(6));
+            fragment = "";
+          } catch (e) {
+            fragment = jsonString;
+          }
+        } else if (jsonString.startsWith("event: ")) {
+          console.log({ event: jsonString });
+        } else if (jsonString.startsWith("data: [DONE]")) {
+          yield { done: true }
         }
-      } else if (jsonString.startsWith("data: ")) {
-        try {
-          yield JSON.parse(jsonString.slice(6));
-        } catch (e) {
-          startOfBrokenJson = jsonString;
-        }
-      } else if (jsonString.startsWith("event: ")) {
-        console.log({ event: jsonString });
-      } else if (jsonString.startsWith("data: [DONE]")) {
-        return;
       }
     }
   }
+
 }
 
 const assistantApi = new AssistantApi();
