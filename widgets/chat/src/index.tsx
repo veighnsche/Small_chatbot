@@ -1,4 +1,6 @@
-import { User } from "firebase/auth";
+import { initializeApp } from "firebase/app";
+import { getAuth, User } from "firebase/auth";
+import { doc, getFirestore } from "firebase/firestore";
 import { ChatCompletionMessage } from "openai/resources/chat/completions";
 import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
@@ -9,7 +11,8 @@ import { decodeMessage } from "./services/crypto";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { LlamaChatViewSliceState } from "./slices/llamaChatViewSlice.ts";
-import { LlamaActions } from "./stores/llamaStore.ts";
+import { configureLlamaStore, LlamaActions } from "./stores/llamaStore.ts";
+import { configureWretch } from "./utils/fetch.ts";
 
 
 export interface LlamaTreeProps {
@@ -102,13 +105,28 @@ class ChatWidgetElement extends HTMLElement {
     this.subs = [
       llamaEventBus.on("function-call", handleFunctionCall),
       llamaEventBus.on("llama-action", handleLlamaAction),
-    ]
+    ];
   }
 
   private async configureAndRender(props: LlamaTreeProps) {
     const token = await props.user.getIdToken();
     const firebaseConfig = await this.fetchChatConfig(token, props);
-    this.renderChatWidget(props, firebaseConfig);
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    auth.onAuthStateChanged((user) => {
+      if (user) {
+        const db = getFirestore(app);
+        const llamaStore = configureLlamaStore({
+          wretch: configureWretch({ url: this.url!, user }),
+          userDocRef: doc(db, "assistantChat", user.uid),
+          user,
+        });
+        this.renderChatWidget(llamaStore);
+      }
+    });
+
+    await auth.updateCurrentUser(props.user);
   }
 
   private async fetchChatConfig(token: string, props: LlamaTreeProps) {
@@ -122,10 +140,10 @@ class ChatWidgetElement extends HTMLElement {
     return decodeMessage(props.user.uid, data);
   }
 
-  private renderChatWidget(props: LlamaTreeProps, firebaseConfig: any) {
+  private renderChatWidget(llamaStore: ReturnType<typeof configureLlamaStore>) {
     this.reactRoot!.render(
       <StrictMode>
-        <LlamaTreeProvider url={this.url!} firebaseConfig={firebaseConfig} user={props.user}>
+        <LlamaTreeProvider llamaStore={llamaStore}>
           <Main/>
         </LlamaTreeProvider>
       </StrictMode>,

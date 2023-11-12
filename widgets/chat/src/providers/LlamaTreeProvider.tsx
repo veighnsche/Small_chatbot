@@ -1,30 +1,13 @@
-import { FirebaseOptions, initializeApp } from "firebase/app";
-import { getAuth, User } from "firebase/auth";
-import { doc, getFirestore } from "firebase/firestore";
 import { ReactNode } from "react";
 import { Provider as ReduxProvider } from "react-redux";
-import { configureLlamaStore } from "../stores/llamaStore";
-import { configureWretch } from "../utils/fetch";
+import type { configureLlamaStore } from "../stores/llamaStore";
 
-interface LlamaTreeProps {
+export interface LlamaTreeProps {
   children: ReactNode;
-  url: string;
-  firebaseConfig: FirebaseOptions;
-  user: User;
+  llamaStore: ReturnType<typeof configureLlamaStore>;
 }
 
-export function LlamaTreeProvider({ children, url, firebaseConfig, user }: LlamaTreeProps) {
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  auth.updateCurrentUser(user);
-
-  const db = getFirestore(app);
-  const llamaStore = configureLlamaStore({
-    wretch: configureWretch({ url, user }),
-    userDocRef: doc(db, "assistantChat", user.uid),
-    user,
-  });
-
+export function LlamaTreeProvider({ llamaStore, children }: LlamaTreeProps) {
   return (
     <ReduxProvider store={llamaStore}>
       {children}
