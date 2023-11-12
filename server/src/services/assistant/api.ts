@@ -104,4 +104,4 @@ class AssistantApi {
 
 const assistantApi = new AssistantApi();
 
-export const llamaChatCompletion = assistantApi.chatCompletionApi.bind(assistantApi);
+export const llamaChatCompletion = assistantApi.chatCompletionApi.bind(assistantApi); // what does bind do?
