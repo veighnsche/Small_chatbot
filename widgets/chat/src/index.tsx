@@ -4,9 +4,11 @@ import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
 import Main from "./Main";
 import { LlamaTreeProvider } from "./providers/LlamaTreeProvider";
+import "./reset.css";
 import { decodeMessage } from "./services/crypto";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
+import { LlamaChatViewSliceState } from "./slices/llamaChatViewSlice.ts";
 import { LlamaActions } from "./stores/llamaStore.ts";
 
 
@@ -49,6 +51,14 @@ class ChatWidgetElement extends HTMLElement {
 
   sendChatParams(params: LlamaChatParams) {
     llamaEventBus.emit("chat-params", params);
+  }
+
+  sendChatView(view: LlamaChatViewSliceState) {
+    llamaEventBus.emit("chat-view", view);
+  }
+
+  sendChatId(chatId: string) {
+    llamaEventBus.emit("chat-id", chatId);
   }
 
   disconnectedCallback() {

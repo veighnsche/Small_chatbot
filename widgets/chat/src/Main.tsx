@@ -7,11 +7,11 @@ import { HistoryList } from "./components/HistoryList/HistoryList.tsx";
 import { Input } from "./components/Input/Input.tsx";
 import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
-import "./reset.css";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
-import { editLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
-import { toggleChatView } from "./slices/llamaChatViewSlice.ts";
+import { editLlamaChatParams, LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
+import { editChatView, LlamaChatViewSliceState, toggleChatView } from "./slices/llamaChatViewSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
+import { llamaOnMessagesSnapshot } from "./thunks/llamaOnMessagesSnapshot.ts";
 import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
 
 const Main = () => {
@@ -26,14 +26,24 @@ const Main = () => {
     }));
   };
 
-  const editChatParams = (params: any) => {
+  const editChatParams = (params: Partial<LlamaChatParams>) => {
     dispatch(editLlamaChatParams(params));
+  };
+
+  const handleEditChatView = (view: LlamaChatViewSliceState) => {
+    dispatch(editChatView(view));
+  };
+
+  const handleSetCurrentChatId = (chatId: string) => {
+    dispatch(llamaOnMessagesSnapshot({ chatId }));
   };
 
   useEffect(() => {
     const subs = [
       llamaEventBus.on("user-message", addMessage),
       llamaEventBus.on("chat-params", editChatParams),
+      llamaEventBus.on("chat-view", handleEditChatView),
+      llamaEventBus.on("chat-id", handleSetCurrentChatId),
     ];
 
     return () => {
