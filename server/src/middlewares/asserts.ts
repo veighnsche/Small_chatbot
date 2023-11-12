@@ -86,6 +86,16 @@ const chatId: AuthMiddleware = (req, res, next) => {
   next();
 };
 
+/**
+ * Asserts that req.params.sseId is a string.
+ */
+const sseId: AuthMiddleware = (req, res, next) => {
+  if (!req.params.sseId) {
+    return res.status(400).send("req.params.sseId: Required.");
+  }
+  next();
+};
+
 export default {
   body: {
     newMessages,
@@ -95,6 +105,7 @@ export default {
   },
   params: {
     chatId,
+    sseId,
   },
   auth: {
     userUid,

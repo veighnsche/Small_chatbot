@@ -1,4 +1,5 @@
 .box-container {
+    z-index: 9999;
     position: fixed;
     bottom: 0;
     right: 32px;
@@ -28,7 +29,7 @@
     grid-template-columns: 0 560px;
 }
 
-.open-chat-container {
+.open-chat-button {
     position: fixed;
     bottom: 0;
     right: 32px;

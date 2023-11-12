@@ -4,27 +4,47 @@ import { Chat, ChatCompletionChunk, ChatCompletionMessage } from "openai/resourc
 import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
 import { LlamaMessage } from "../models/chatMessage";
 import { OPEN_AI_API_KEY } from "./environmentVariables";
+import { connectionsEventBus } from "./eventBus";
 import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
 
 const openai = () => new OpenAI({
   apiKey: OPEN_AI_API_KEY,
 });
 
-export async function* callAssistantStream(assistantParams: ChatCompletionCreateParamsBase): AsyncGenerator<ChatCompletionChunk.Choice> {
-  const completionStreamResult = await openai().chat.completions.create({
+export async function* callAssistantStream(
+  assistantParams: ChatCompletionCreateParamsBase,
+  sseId: string
+): AsyncGenerator<ChatCompletionChunk.Choice> {
+  // Create a stream for chat completions
+  const chatCompletionStream = await openai().chat.completions.create({
     ...assistantParams,
     stream: true,
   });
 
-  if (typeof completionStreamResult[Symbol.asyncIterator] === "function") {
-    for await (const chunk of completionStreamResult) {
-      yield chunk.choices[0];
-    }
-  } else {
+  // Check if the result is iterable
+  if (!isIterable(chatCompletionStream)) {
     throw new Error("The completion stream result is not iterable.");
+  }
+
+  // Listen for stop events
+  let shouldStop = false;
+  connectionsEventBus.on(sseId, () => {
+    shouldStop = true;
+  });
+
+  // Iterate over the completion stream
+  for await (const chunk of chatCompletionStream) {
+    if (shouldStop) {
+      break;
+    }
+    yield chunk.choices[0];
   }
 }
 
+// Helper function to check if an object is iterable
+function isIterable(obj: any): boolean {
+  return typeof obj[Symbol.asyncIterator] === "function";
+}
 
 export const callChatTitleAssistant = async (chatMessages: LlamaMessage[]): Promise<string> => {
   const messages: ChatCompletionMessage[] = LlamaMessage.toChatCompletionMessagesParam(chatMessages);

@@ -61,4 +61,4 @@ class EventBus<T extends EventMap> {
   }
 }
 
-export const llamaEventBus = new EventBus<EventMap>();
+export const connectionsEventBus = new EventBus<EventMap>();

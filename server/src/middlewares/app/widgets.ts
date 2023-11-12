@@ -1,14 +1,15 @@
 import express, { Application } from "express";
-import path from 'path';
+import path from 'path'
+import Terser from "terser";
 
 export function setupWidgets(app: Application) {
   const widgetPath = path.join(__dirname, "../../../../widgets/chat/dist");
   app.use(express.static(widgetPath));
 
-  app.get("/module", (req, res) => {
+  app.get("/module", async (req, res) => {
     const serverUrl = `${req.protocol}://${req.get("host")}`;
 
-    const moduleJs = generateWidgetScript(serverUrl);
+    const moduleJs = await generateWidgetScript(serverUrl);
     res.setHeader("Content-Type", "text/javascript");
     res.send(moduleJs);
   });
@@ -16,7 +17,7 @@ export function setupWidgets(app: Application) {
 
 function generateWidgetScript(serverUrl: string) {
   // language=JavaScript
-  return `
+  const widgetSetup = `
     const llamaTree = createChatWidget();
     document.body.appendChild(llamaTree);
 
@@ -35,4 +36,6 @@ function generateWidgetScript(serverUrl: string) {
       return script;
     }
   `;
+
+  return Terser.minify(widgetSetup).then((result) => result.code);
 }

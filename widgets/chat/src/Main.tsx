@@ -61,11 +61,9 @@ const Main = () => {
   const isOpen = useLlamaSelector((state) => state.llamaChatView.isOpen);
   if (!isOpen) {
     return (
-      <div className="open-chat-container">
-        <IconButton onClick={() => dispatch(toggleChatView())}>
-          <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
-        </IconButton>
-      </div>
+      <IconButton className="open-chat-button" onClick={() => dispatch(toggleChatView())}>
+        <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
+      </IconButton>
     );
   }
 

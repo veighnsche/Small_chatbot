@@ -1,7 +1,11 @@
-import { useLlamaInput } from "./useLlamaInput.ts";
+import StopIcon from "../../assets/stop.svg";
+import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
+import { llamaSseStop } from "../../thunks/llamaSseStop.ts";
 import { Regenerate } from "../buttons/Regenerate/Regenerate.tsx";
 import { ButtonPrimary } from "../utils/Button/Button.tsx";
-import './Input.css';
+import { IconButton } from "../utils/IconButton/IconButton.tsx";
+import "./Input.css";
+import { useLlamaInput } from "./useLlamaInput.ts";
 
 export const Input = () => {
   const {
@@ -11,6 +15,10 @@ export const Input = () => {
     handleSend,
     textAreaRef,
   } = useLlamaInput();
+
+  const dispatch = useLlamaDispatch();
+  const sseId = useLlamaSelector((state) => state.llamaChat.sseId);
+  const isStreaming = !!sseId;
 
   return (
     <div className="chat-input-wrapper">
@@ -23,10 +31,18 @@ export const Input = () => {
         onChange={inputOnChange}
         onKeyDown={handleInputOnKeyPress}
       />
-      <ButtonPrimary onClick={handleSend}>
-        Send
-      </ButtonPrimary>
-      <Regenerate/>
+      {isStreaming ? (
+        <IconButton onClick={() => dispatch(llamaSseStop({ sseId }))} title={"Stop Streaming"}>
+          <img src={StopIcon} alt={"Stop Streaming icon"}/>
+        </IconButton>
+      ) : (
+        <>
+          <ButtonPrimary onClick={handleSend} disabled={isStreaming}>
+            Send
+          </ButtonPrimary>
+          <Regenerate/>
+        </>
+      )}
     </div>
   );
 };

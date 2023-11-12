@@ -1,6 +1,6 @@
 import {
   appendAssistantStreamContent,
-  appendAssistantStreamFunctionCallArguments,
+  appendAssistantStreamFunctionCallArguments, setSseId,
   startAssistantStream,
   startAssistantStreamFunctionCall,
 } from "../../slices/llamaChatSlice";
@@ -15,6 +15,9 @@ import { llamaOnMessagesSnapshot } from "../llamaOnMessagesSnapshot.ts";
 export async function* streamToAssistantAction(body: ReadableStream<Uint8Array>): AsyncGenerator<LlamaActions> {
   try {
     for await (const delta of streamToObject(body)) {
+      if ("sseId" in delta) {
+        yield setSseId({ sseId: delta.sseId });
+      }
       if ("chatId" in delta) {
         yield llamaOnMessagesSnapshot({ chatId: delta.chatId }) as any;
       }
@@ -31,6 +34,9 @@ export async function* streamToAssistantAction(body: ReadableStream<Uint8Array>)
         if ("arguments" in delta.function_call) {
           yield appendAssistantStreamFunctionCallArguments({ arguments: delta.function_call.arguments });
         }
+      }
+      if ("cleanup" in delta) {
+        yield setSseId({ sseId: undefined });
       }
     }
   } catch (err) {

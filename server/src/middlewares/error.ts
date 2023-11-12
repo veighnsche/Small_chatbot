@@ -1,4 +1,5 @@
 import { NextFunction, Request, Response } from "express";
+import { connectionsEventBus } from "../services/eventBus";
 import { AuthMiddleware } from "../types/auth";
 
 /**
@@ -8,7 +9,9 @@ export const errorHandler = (err: Error, _: Request, res: Response, next: NextFu
   console.error(err.message);
 
   if (res.locals.sse.initialized) {
-    res.write(`event: error\ndata: ${JSON.stringify({ message: err.message })}\n\n`);
+    connectionsEventBus.offAll(res.locals.sse.id);
+    res.write(`event: ERROR\ndata: ${JSON.stringify({ message: err.message })}\n\n`);
+    res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`)
     return res.end();
   } else if (res.headersSent) {
     return next(err);

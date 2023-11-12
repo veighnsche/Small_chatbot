@@ -68,6 +68,13 @@ router.delete(
 );
 
 router.delete(
+  "/stop/:sseId",
+  mw.asserts.params.sseId,
+  mw.sse.stop,
+  mw[204],
+)
+
+router.delete(
   "/:chatId",
   mw.auth.firebase.protect,
   mw.asserts.params.chatId,

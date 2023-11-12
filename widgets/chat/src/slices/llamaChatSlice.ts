@@ -6,20 +6,22 @@ import { addIters, makeChildrensMap, traverseToLastMessageId } from "../utils/me
 export type LlamaChatAction = ReturnType<typeof llamaChatSlice.actions[keyof typeof llamaChatSlice.actions]>
 
 export interface LlamaChatState {
+  sseId?: string;
   currentChatId?: LlamaChat["id"];
   messages: LlamaMessage[];
-  childrensMap: Record<LlamaMessage["id"], LlamaMessage["id"][]>; // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
+  childrensMap: Record<LlamaMessage["id"], LlamaMessage["id"][]>;
   itersMap: Record<LlamaMessage["id"], number>; // the number represents the idx of the child message
-  lastMessageId: LlamaMessage["id"]; // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
+  lastMessageId: LlamaMessage["id"];
   assistantStream: LlamaMessage | undefined;
 }
 
 const initialState: LlamaChatState = {
+  sseId: undefined,
   currentChatId: undefined,
   messages: [],
-  childrensMap: {}, // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
+  childrensMap: {},
   itersMap: {},
-  lastMessageId: "-1", // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
+  lastMessageId: "-1",
   assistantStream: undefined,
 };
 
@@ -36,6 +38,10 @@ const llamaChatSlice = createSlice({
       if (lastMessage) {
         state.lastMessageId = lastMessage.id;
       }
+    },
+
+    setSseId: (state, action: PayloadAction<{ sseId?: string }>) => {
+      state.sseId = action.payload.sseId;
     },
 
     setCurrentChatId: (state, action: PayloadAction<{ chatId: string }>) => {
@@ -99,6 +105,7 @@ const llamaChatSlice = createSlice({
 export const {
   setMessages,
   setCurrentChatId,
+  setSseId,
   setLastMessageId,
   setIter,
   reset,

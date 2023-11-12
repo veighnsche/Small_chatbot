@@ -4,7 +4,7 @@ import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AuthMiddleware, ReqBody, ResLocals } from "../types/auth";
 import { AssistantParamsBody } from "../types/bodies";
-import { ChatDocLocals, ThreadLocals } from "../types/locals";
+import { ChatDocLocals, SseLocals, ThreadLocals } from "../types/locals";
 import { withDefaultParameters } from "../utils/assistant";
 import { getLastId } from "../utils/messages";
 import { combineChatDeltasIntoSingleMsg, createEventData } from "../utils/stream";
@@ -12,9 +12,10 @@ import { combineChatDeltasIntoSingleMsg, createEventData } from "../utils/stream
 /**
  * Streams the assistant's response to the client.
  */
-const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantParamsBody>, res: ResLocals<ThreadLocals & ChatDocLocals>, next) => {
-  if (!res.locals.thread || !res.locals.chatDocRepo) {
-    throw new Error("The messages and chatDocRepo must be initialized before calling the assistant.");
+const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantParamsBody>, res: ResLocals<ThreadLocals & ChatDocLocals & SseLocals>, next) => {
+  if (!res.locals.thread || !res.locals.chatDocRepo || !res.locals.sse) {
+    console.log(res.locals);
+    throw new Error("The messages, chatDocRepo and sse id must be initialized before calling the assistant.");
   }
 
   const messages = res.locals.thread;
@@ -30,7 +31,7 @@ const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantPar
 
   const deltas: ChatCompletionChunk.Choice.Delta[] = [];
   try {
-    for await (const { delta, finish_reason } of callAssistantStream(assistantParams)) {
+    for await (const { delta, finish_reason } of callAssistantStream(assistantParams, res.locals.sse.id)) {
       if (!finish_reason) {
         deltas.push(delta);
         res.write(`data: ${JSON.stringify(delta)}\n\n`);

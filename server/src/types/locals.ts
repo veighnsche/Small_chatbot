@@ -7,7 +7,7 @@ export interface ThreadLocals {
 }
 
 export interface ChatDocLocals {
-  chatDocRepo?: ChatDocumentRepository
+  chatDocRepo?: ChatDocumentRepository;
 }
 
 export interface ChatColLocals {
@@ -16,4 +16,12 @@ export interface ChatColLocals {
 
 export interface ChatIdLocals {
   chatId?: string,
+}
+
+export interface SseLocals {
+  sse: {
+    id: string,
+    initialized: boolean,
+    finalized: boolean,
+  };
 }
