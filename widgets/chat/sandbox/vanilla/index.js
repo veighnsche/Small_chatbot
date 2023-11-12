@@ -54,6 +54,14 @@ function initializeLlamaTree() {
         //   console.log('Llama action', action)
         // },
       })
+
+      setTimeout(() => {
+        llamaTree.sendChatView({
+          isOpen: true,
+          isHistoryDrawerOpen: true,
+          isLarge: true,
+        })
+      }, 500)
     }
   })
 }

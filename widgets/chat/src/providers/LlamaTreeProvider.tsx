@@ -1,5 +1,5 @@
 import { FirebaseOptions, initializeApp } from "firebase/app";
-import { User } from "firebase/auth";
+import { getAuth, User } from "firebase/auth";
 import { doc, getFirestore } from "firebase/firestore";
 import { ReactNode } from "react";
 import { Provider as ReduxProvider } from "react-redux";
@@ -13,18 +13,17 @@ interface LlamaTreeProps {
   user: User;
 }
 
-export function LlamaTreeProvider({
-  children,
-  url,
-  firebaseConfig,
-  user,
-}: LlamaTreeProps) {
+export function LlamaTreeProvider({ children, url, firebaseConfig, user }: LlamaTreeProps) {
   const app = initializeApp(firebaseConfig);
-  const db = getFirestore(app);
+  const auth = getAuth(app);
+  auth.updateCurrentUser(user);
 
-  const userDocRef = doc(db, "assistantChat", user.uid);
-  const wretch = configureWretch({ url, user });
-  const llamaStore = configureLlamaStore({ wretch, userDocRef, user });
+  const db = getFirestore(app);
+  const llamaStore = configureLlamaStore({
+    wretch: configureWretch({ url, user }),
+    userDocRef: doc(db, "assistantChat", user.uid),
+    user,
+  });
 
   return (
     <ReduxProvider store={llamaStore}>
