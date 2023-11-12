@@ -9,6 +9,7 @@ import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { editLlamaChatParams, LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
+import { loadSystemMessage } from "./slices/llamaChatSlice.ts";
 import { editChatView, LlamaChatViewSliceState, toggleChatView } from "./slices/llamaChatViewSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
 import { llamaOnMessagesSnapshot } from "./thunks/llamaOnMessagesSnapshot.ts";
@@ -17,7 +18,11 @@ import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
 const Main = () => {
   const dispatch = useLlamaDispatch();
 
-  const addMessage = (message: string) => {
+  const handleLoadSystemMessage = (message: string) => {
+    dispatch(loadSystemMessage({ message }));
+  }
+
+  const handleAddMessage = (message: string) => {
     dispatch(llamaSseAddMessage({
       newMessages: [{
         role: "user",
@@ -26,7 +31,7 @@ const Main = () => {
     }));
   };
 
-  const editChatParams = (params: Partial<LlamaChatParams>) => {
+  const handleEditChatParams = (params: Partial<LlamaChatParams>) => {
     dispatch(editLlamaChatParams(params));
   };
 
@@ -40,8 +45,9 @@ const Main = () => {
 
   useEffect(() => {
     const subs = [
-      llamaEventBus.on("user-message", addMessage),
-      llamaEventBus.on("chat-params", editChatParams),
+      llamaEventBus.on("system-message", handleLoadSystemMessage),
+      llamaEventBus.on("user-message", handleAddMessage),
+      llamaEventBus.on("chat-params", handleEditChatParams),
       llamaEventBus.on("chat-view", handleEditChatView),
       llamaEventBus.on("chat-id", handleSetCurrentChatId),
     ];

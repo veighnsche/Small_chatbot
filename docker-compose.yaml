@@ -2,12 +2,12 @@ version: '3.8'
 
 services:
   llama-tree:
-    image: llama-tree:0.1.0
+    image: llama-tree:0.1.1
     ports:
       - "30001:3001"  # Map the port from the container to your host. Change as needed.
     environment:
       - NODE_ENV=production  # Set additional environment variables if needed
-      - ASSISTANT_CHAT_HOST=0.0.0.0
+      - LLAMA_TREE_HOST=0.0.0.0
     env_file:
       - server/.env  # Loads the root .env file first
     # volumes:  # Uncomment and edit if you need to mount volumes

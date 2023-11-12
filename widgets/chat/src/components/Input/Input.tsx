@@ -37,7 +37,7 @@ export const Input = () => {
         </IconButton>
       ) : (
         <>
-          <ButtonPrimary onClick={handleSend} disabled={isStreaming}>
+          <ButtonPrimary onClick={handleSend} disabled={!inputValue || isStreaming}>
             Send
           </ButtonPrimary>
           <Regenerate/>

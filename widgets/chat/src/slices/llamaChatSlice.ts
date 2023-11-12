@@ -8,6 +8,7 @@ export type LlamaChatAction = ReturnType<typeof llamaChatSlice.actions[keyof typ
 export interface LlamaChatState {
   sseId?: string;
   currentChatId?: LlamaChat["id"];
+  loadedSystemMessages: LlamaMessage[];
   messages: LlamaMessage[];
   childrensMap: Record<LlamaMessage["id"], LlamaMessage["id"][]>;
   itersMap: Record<LlamaMessage["id"], number>; // the number represents the idx of the child message
@@ -18,6 +19,7 @@ export interface LlamaChatState {
 const initialState: LlamaChatState = {
   sseId: undefined,
   currentChatId: undefined,
+  loadedSystemMessages: [],
   messages: [],
   childrensMap: {},
   itersMap: {},
@@ -60,6 +62,19 @@ const llamaChatSlice = createSlice({
     }>) => {
       state.itersMap[action.payload.parent_id] = action.payload.iter;
       state.lastMessageId = traverseToLastMessageId(state.childrensMap, state.itersMap, action.payload.parent_id); // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
+    },
+
+    loadSystemMessage: (state, action: PayloadAction<{ message: string }>) => {
+      state.loadedSystemMessages.push({
+        id: `system-${state.loadedSystemMessages.length}`,
+        parent_id: "-1",
+        role: "system",
+        content: action.payload.message,
+        iter: {
+          current: 1,
+          total: 1,
+        },
+      });
     },
 
     startAssistantStream: (state, action: PayloadAction<{ role: LlamaMessage["role"] }>) => {
@@ -108,6 +123,7 @@ export const {
   setSseId,
   setLastMessageId,
   setIter,
+  loadSystemMessage,
   reset,
   startAssistantStream,
   appendAssistantStreamContent,

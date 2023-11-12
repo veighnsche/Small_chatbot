@@ -45,6 +45,10 @@ class ChatWidgetElement extends HTMLElement {
     await this.configureAndRender(props);
   }
 
+  loadSystemMessage(message: string) {
+    llamaEventBus.emit("system-message", message);
+  }
+
   sendMessage(message: string) {
     llamaEventBus.emit("user-message", message);
   }
@@ -92,19 +96,13 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   private subscribeToEvents(props: LlamaTreeProps) {
-    if (props.onFunctionCall) {
-      const functionCallSub = llamaEventBus.on("function-call", (functionCall) =>
-        props.onFunctionCall?.(functionCall),
-      );
-      this.subs.push(functionCallSub);
-    }
+    const handleFunctionCall = (functionCall: ChatCompletionMessage.FunctionCall) => props.onFunctionCall?.(functionCall);
+    const handleLlamaAction = (action: LlamaActions) => props.onLlamaAction?.(action);
 
-    if (props.onLlamaAction) {
-      const llamaActionSub = llamaEventBus.on("llama-action", (action) =>
-        props.onLlamaAction?.(action),
-      );
-      this.subs.push(llamaActionSub);
-    }
+    this.subs = [
+      llamaEventBus.on("function-call", handleFunctionCall),
+      llamaEventBus.on("llama-action", handleLlamaAction),
+    ]
   }
 
   private async configureAndRender(props: LlamaTreeProps) {
