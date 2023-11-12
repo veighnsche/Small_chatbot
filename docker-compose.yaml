@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   llama-tree:
-    image: veighnsche/llama-tree:0.1.0
+    image: llama-tree:0.1.0
     ports:
       - "30001:3001"  # Map the port from the container to your host. Change as needed.
     environment:

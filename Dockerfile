@@ -1,5 +1,7 @@
 # STEP 1: Start building the main TypeScript application
-FROM node:16 AS app-builder
+FROM node:18 AS app-builder
+
+RUN npm install -g npm@10.2.3
 
 # STEP 2: Set the working directory for the main app
 WORKDIR /usr/src/app
@@ -17,7 +19,9 @@ COPY server .
 RUN npm run build
 
 # STEP 7: Start building the widget
-FROM node:16 AS widget-builder
+FROM node:18 AS widget-builder
+
+RUN npm install -g npm@10.2.3
 
 # STEP 8: Set the working directory for the widget
 WORKDIR /usr/src/app
@@ -35,7 +39,7 @@ COPY widgets/chat .
 RUN npm run build
 
 # STEP 13: Set up the production environment
-FROM node:16-slim
+FROM node:18-slim
 
 # STEP 14: Set the working directory for the production environment
 WORKDIR /usr/src/app

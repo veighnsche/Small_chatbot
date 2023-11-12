@@ -6,7 +6,9 @@ export const HOST = process.env.LLAMA_TREE_HOST;
 export const PORT = process.env.LLAMA_TREE_PORT;
 export const CORS_ORIGIN = process.env.LLAMA_TREE_CORS_ORIGIN;
 export const ENVIRONMENT = process.env.LLAMA_TREE_ENVIRONMENT;
-export const OPEN_AI_API_KEY = process.env.LLAMA_TREE_OPEN_AI_API_KEY;
+export const OPENAI_KEY = process.env.LLAMA_TREE_OPENAI_KEY;
+export const IO_AZURE_OPENAI_ENDPOINT = process.env.LLAMA_TREE_AZURE_OPENAI_ENDPOINT;
+export const IO_AZURE_OPENAI_KEY = process.env.LLAMA_TREE_AZURE_OPENAI_KEY;
 
 export const FIREBASE_CONFIG = {
   apiKey: process.env.FB_CONF_APIKEY,

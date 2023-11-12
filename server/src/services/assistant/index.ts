@@ -1,30 +1,22 @@
 import { JSONSchema7 } from "json-schema";
-import { OpenAI } from "openai";
 import { Chat, ChatCompletionChunk, ChatCompletionMessage } from "openai/resources/chat";
-import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
-import { LlamaMessage } from "../models/chatMessage";
-import { OPEN_AI_API_KEY } from "./environmentVariables";
-import { connectionsEventBus } from "./eventBus";
+import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
+import { LlamaMessage } from "../../models/chatMessage";
+import { connectionsEventBus } from "../eventBus";
+import { llamaChatCompletion } from "./api";
 import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
 
-const openai = () => new OpenAI({
-  apiKey: OPEN_AI_API_KEY,
-});
-
 export async function* callAssistantStream(
-  assistantParams: ChatCompletionCreateParamsBase,
-  sseId: string
+  assistantParams: ChatCompletionCreateParamsNonStreaming,
+  sseId: string,
 ): AsyncGenerator<ChatCompletionChunk.Choice> {
   // Create a stream for chat completions
-  const chatCompletionStream = await openai().chat.completions.create({
-    ...assistantParams,
-    stream: true,
-  });
+  const chatCompletionStream = await llamaChatCompletion(assistantParams);
 
   // Check if the result is iterable
-  if (!isIterable(chatCompletionStream)) {
-    throw new Error("The completion stream result is not iterable.");
-  }
+  // if (typeof chatCompletionStream[Symbol.asyncIterator] === "function") {
+  //   throw new Error("The completion stream result is not iterable.");
+  // }
 
   // Listen for stop events
   let shouldStop = false;
@@ -36,6 +28,9 @@ export async function* callAssistantStream(
   for await (const chunk of chatCompletionStream) {
     if (shouldStop) {
       break;
+    }
+    if (chunk.choices.length === 0) {
+      continue;
     }
     yield chunk.choices[0];
   }
@@ -49,7 +44,7 @@ function isIterable(obj: any): boolean {
 export const callChatTitleAssistant = async (chatMessages: LlamaMessage[]): Promise<string> => {
   const messages: ChatCompletionMessage[] = LlamaMessage.toChatCompletionMessagesParam(chatMessages);
 
-  const completion = await openai().chat.completions.create({
+  const completion = await llamaChatCompletion({
     messages: [
       {
         role: "system",

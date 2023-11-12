@@ -1,5 +1,5 @@
 import { ChatCompletionChunk } from "openai/resources/chat";
-import { ChatCompletionCreateParamsBase } from "openai/src/resources/chat/completions";
+import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AuthMiddleware, ReqBody, ResLocals } from "../types/auth";
@@ -21,7 +21,7 @@ const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantPar
   const messages = res.locals.thread;
   const functions = req.body.assistantParams.functions;
 
-  const assistantParams: ChatCompletionCreateParamsBase = {
+  const assistantParams: ChatCompletionCreateParamsNonStreaming = {
     ...req.body.assistantParams,
     messages: LlamaMessage.toChatCompletionMessagesParam(messages),
     functions: functions ? withDefaultParameters(functions) : undefined,
