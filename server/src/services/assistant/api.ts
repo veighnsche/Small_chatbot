@@ -1,11 +1,12 @@
 import { OpenAI } from "openai";
-import { ChatCompletionChunk } from "openai/resources/chat";
+import { ChatCompletion, ChatCompletionChunk } from "openai/resources/chat";
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { Stream } from "openai/streaming";
 import { IO_AZURE_OPENAI_ENDPOINT, IO_AZURE_OPENAI_KEY, OPENAI_KEY } from "../environmentVariables";
 
 class AssistantApi {
-  chatCompletionApi: (params: ChatCompletionCreateParamsNonStreaming) => Promise<Stream<ChatCompletionChunk>>;
+  chatCompletionStream: (params: ChatCompletionCreateParamsNonStreaming) => Promise<Stream<ChatCompletionChunk>>;
+  chatCompletion: (params: ChatCompletionCreateParamsNonStreaming) => Promise<ChatCompletion>
 
   constructor() {
     const openaiKey = OPENAI_KEY;
@@ -25,21 +26,28 @@ class AssistantApi {
         apiKey: OPENAI_KEY,
       });
 
-      this.chatCompletionApi = (params: ChatCompletionCreateParamsNonStreaming) => openai.chat.completions.create({
+      this.chatCompletionStream = (params: ChatCompletionCreateParamsNonStreaming) => openai.chat.completions.create({
         ...params,
         stream: true,
       });
+
+      this.chatCompletion = (params: ChatCompletionCreateParamsNonStreaming) => openai.chat.completions.create(params);
     }
 
     if (iOazureKey) {
       console.info("Using iOgpt as assistant api");
-      this.chatCompletionApi = async (params: ChatCompletionCreateParamsNonStreaming) => {
+
+      const init = {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "iO-GPT-Subscription-Key": IO_AZURE_OPENAI_KEY,
+        },
+      }
+
+      this.chatCompletionStream = async (params: ChatCompletionCreateParamsNonStreaming) => {
         const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "iO-GPT-Subscription-Key": IO_AZURE_OPENAI_KEY,
-          },
+          ...init,
           body: JSON.stringify({
             ...params,
             stream: true,
@@ -49,6 +57,15 @@ class AssistantApi {
         // Wrap the async generator within a Stream object
         return new Stream(() => this.streamGenerator(response.body), null);
       };
+
+      this.chatCompletion = async (params: ChatCompletionCreateParamsNonStreaming) => {
+        const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
+          ...init,
+          body: JSON.stringify(params),
+        });
+
+        return await response.json();
+      }
     }
   }
 
@@ -104,4 +121,5 @@ class AssistantApi {
 
 const assistantApi = new AssistantApi();
 
-export const llamaChatCompletion = assistantApi.chatCompletionApi.bind(assistantApi); // what does bind do?
+export const llamaChatCompletionStream = assistantApi.chatCompletionStream.bind(assistantApi); // what does bind do?
+export const llamaChatCompletion = assistantApi.chatCompletion.bind(assistantApi);

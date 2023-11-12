@@ -3,7 +3,7 @@ import { Chat, ChatCompletionChunk, ChatCompletionMessage } from "openai/resourc
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { LlamaMessage } from "../../models/chatMessage";
 import { connectionsEventBus } from "../eventBus";
-import { llamaChatCompletion } from "./api";
+import { llamaChatCompletion, llamaChatCompletionStream } from "./api";
 import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
 
 export async function* callAssistantStream(
@@ -11,7 +11,7 @@ export async function* callAssistantStream(
   sseId: string,
 ): AsyncGenerator<ChatCompletionChunk.Choice> {
   // Create a stream for chat completions
-  const chatCompletionStream = await llamaChatCompletion(assistantParams);
+  const chatCompletionStream = await llamaChatCompletionStream(assistantParams);
 
   // Check if the result is iterable
   // if (typeof chatCompletionStream[Symbol.asyncIterator] === "function") {
@@ -34,11 +34,6 @@ export async function* callAssistantStream(
     }
     yield chunk.choices[0];
   }
-}
-
-// Helper function to check if an object is iterable
-function isIterable(obj: any): boolean {
-  return typeof obj[Symbol.asyncIterator] === "function";
 }
 
 export const callChatTitleAssistant = async (chatMessages: LlamaMessage[]): Promise<string> => {

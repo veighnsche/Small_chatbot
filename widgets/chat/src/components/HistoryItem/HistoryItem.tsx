@@ -25,10 +25,10 @@ export const HistoryItem = (props: LlamaHistoryItemProps) => {
       <div className="history-item-wrapper">
         <input className="edit-input" value={editInputValue} onChange={onEditValueChange}/>
         <div className="action">
-          <IconButton onClick={onEditCheck}>
+          <IconButton onClick={onEditCheck} title="Save">
             <img src={Check} alt="check icon"/>
           </IconButton>
-          <IconButton onClick={onEditCancel}>
+          <IconButton onClick={onEditCancel} title="Cancel">
             <img src={Cross} alt="cross icon"/>
           </IconButton>
         </div>
@@ -39,12 +39,12 @@ export const HistoryItem = (props: LlamaHistoryItemProps) => {
   if (selected) {
     return (
       <div className="history-item-wrapper">
-        <p className="history-title">{title}</p>
+        <p className="history-title" title={title}>{title}</p>
         <div className="action">
-          <IconButton onClick={onStartEdit}>
+          <IconButton onClick={onStartEdit} title="Edit">
             <img src={EditTitle} alt="edit icon"/>
           </IconButton>
-          <IconButton onClick={onDelete}>
+          <IconButton onClick={onDelete} title="Delete">
             <img src={Delete} alt="delete icon"/>
           </IconButton>
         </div>
@@ -53,7 +53,7 @@ export const HistoryItem = (props: LlamaHistoryItemProps) => {
   }
 
   return (
-    <button className="history-item-button" onClick={onHistorySelect}>
+    <button className="history-item-button" onClick={onHistorySelect} title={title}>
       <p className="history-title">{title}</p>
     </button>
   );
