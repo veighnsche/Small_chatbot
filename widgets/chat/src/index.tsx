@@ -12,6 +12,7 @@ import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { LlamaChatViewSliceState } from "./slices/llamaChatViewSlice.ts";
 import { configureLlamaStore, LlamaActions } from "./stores/llamaStore.ts";
+import { LlamaLoadedSystemMessage } from "./types/LlamaLoadedSystemMessage.ts";
 import { configureWretch } from "./utils/fetch.ts";
 
 
@@ -48,24 +49,36 @@ class ChatWidgetElement extends HTMLElement {
     await this.configureAndRender(props);
   }
 
-  loadSystemMessage(message: string) {
-    llamaEventBus.emit("system-message", message);
+  loadSystemMessage(systemMessage: LlamaLoadedSystemMessage) {
+    llamaEventBus.emit("load-system-message", systemMessage);
+  }
+
+  removeLoadedSystemMessage(id: string) {
+    llamaEventBus.emit("remove-system-message", id);
   }
 
   sendMessage(message: string) {
     llamaEventBus.emit("user-message", message);
   }
 
-  sendChatParams(params: LlamaChatParams) {
+  setChatParams(params: LlamaChatParams) {
     llamaEventBus.emit("chat-params", params);
   }
 
-  sendChatView(view: LlamaChatViewSliceState) {
+  setChatView(view: Partial<LlamaChatViewSliceState>) {
     llamaEventBus.emit("chat-view", view);
   }
 
-  sendChatId(chatId: string) {
+  setChatId(chatId: string) {
     llamaEventBus.emit("chat-id", chatId);
+  }
+
+  onFunctionCall(callback: (functionCall: ChatCompletionMessage.FunctionCall) => void): () => void {
+    return llamaEventBus.on("function-call", callback);
+  }
+
+  onLlamaAction(callback: (action: LlamaActions) => void): () => void {
+    return llamaEventBus.on("llama-action", callback);
   }
 
   disconnectedCallback() {
@@ -99,13 +112,13 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   private subscribeToEvents(props: LlamaTreeProps) {
-    const handleFunctionCall = (functionCall: ChatCompletionMessage.FunctionCall) => props.onFunctionCall?.(functionCall);
-    const handleLlamaAction = (action: LlamaActions) => props.onLlamaAction?.(action);
+    if (props.onFunctionCall) {
+      this.subs.push(llamaEventBus.on("function-call", props.onFunctionCall));
+    }
 
-    this.subs = [
-      llamaEventBus.on("function-call", handleFunctionCall),
-      llamaEventBus.on("llama-action", handleLlamaAction),
-    ];
+    if (props.onLlamaAction) {
+      this.subs.push(llamaEventBus.on("llama-action", props.onLlamaAction));
+    }
   }
 
   private async configureAndRender(props: LlamaTreeProps) {

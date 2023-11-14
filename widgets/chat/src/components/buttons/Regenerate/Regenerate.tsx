@@ -14,6 +14,7 @@ export const Regenerate = () => {
       disabled={disabled || isStreaming}
       onClick={onRegenerate}
       title="Regenerate"
+      style={{ width: "2rem", height: "2rem" }}
     >
       <img src={Refresh} alt="refresh"/>
     </IconButton>

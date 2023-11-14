@@ -1,9 +1,11 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { threadMemo } from "../selectors/thread";
+import { threadMemo } from "../selectors/thread.ts";
 import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
+import { emptyLoadedSystemMessages } from "../slices/llamaChatSlice.ts";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
+import { loadedSystemToChatParam } from "../utils/messages.ts";
 import { streamToAssistantAction } from "./shared/stream";
 
 interface SendMessageParams {
@@ -25,12 +27,20 @@ export const llamaSseAddMessage = createAsyncThunk<void, {
     const thread = threadMemo(state);
     const chatId = state.llamaChat.currentChatId;
     const assistantParams = state.llamaChatParams;
+    const loadedSystemMessages = state.llamaChat.loadedSystemMessages;
+
+    const nextMessages = [
+      ...loadedSystemMessages.map(loadedSystemToChatParam),
+      ...newMessages,
+    ];
+
+    dispatch(emptyLoadedSystemMessages());
 
     try {
       const body = await wretch(`chat${chatId ? `/${chatId}` : ""}`)
         .post<SendMessageParams>({
           thread,
-          newMessages,
+          newMessages: nextMessages,
           assistantParams,
         });
 

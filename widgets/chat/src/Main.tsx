@@ -9,18 +9,23 @@ import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { editLlamaChatParams, LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
-import { loadSystemMessage } from "./slices/llamaChatSlice.ts";
+import { loadSystemMessage, removeSystemMessage } from "./slices/llamaChatSlice.ts";
 import { editChatView, LlamaChatViewSliceState, toggleChatView } from "./slices/llamaChatViewSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
 import { llamaOnMessagesSnapshot } from "./thunks/llamaOnMessagesSnapshot.ts";
 import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
+import { LlamaLoadedSystemMessage } from "./types/LlamaLoadedSystemMessage.ts";
 
 const Main = () => {
   const dispatch = useLlamaDispatch();
 
-  const handleLoadSystemMessage = (message: string) => {
-    dispatch(loadSystemMessage({ message }));
-  }
+  const handleLoadSystemMessage = (systemMessageToLoad: Omit<LlamaLoadedSystemMessage, "id">) => {
+    dispatch(loadSystemMessage({ message: systemMessageToLoad }));
+  };
+
+  const handleRemoveLoadedSystemMessage = (id: string) => {
+    dispatch(removeSystemMessage({ id }));
+  };
 
   const handleAddMessage = (message: string) => {
     dispatch(llamaSseAddMessage({
@@ -35,7 +40,7 @@ const Main = () => {
     dispatch(editLlamaChatParams(params));
   };
 
-  const handleEditChatView = (view: LlamaChatViewSliceState) => {
+  const handleEditChatView = (view: Partial<LlamaChatViewSliceState>) => {
     dispatch(editChatView(view));
   };
 
@@ -45,7 +50,8 @@ const Main = () => {
 
   useEffect(() => {
     const subs = [
-      llamaEventBus.on("system-message", handleLoadSystemMessage),
+      llamaEventBus.on("load-system-message", handleLoadSystemMessage),
+      llamaEventBus.on("remove-system-message", handleRemoveLoadedSystemMessage),
       llamaEventBus.on("user-message", handleAddMessage),
       llamaEventBus.on("chat-params", handleEditChatParams),
       llamaEventBus.on("chat-view", handleEditChatView),
@@ -66,7 +72,7 @@ const Main = () => {
 
     if (isHistoryDrawerOpen) {
       setRenderDrawer(true);
-    } else {
+    } else if (!isHistoryDrawerOpen && renderDrawer) {
       setTimeout(() => setRenderDrawer(false), ANIMATION_DURATION);
     }
   }, [isHistoryDrawerOpen]);

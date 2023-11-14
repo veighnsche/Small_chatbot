@@ -1,5 +1,9 @@
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { LlamaChatState } from "../slices/llamaChatSlice";
+import { LlamaLoadedSystemMessage } from "../types/LlamaLoadedSystemMessage.ts";
 import { LlamaMessage } from "../types/LlamaMessage";
+
+export const SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE = "[END OF SYSTEM MESSAGE TITLE]";
 
 export const addIters = (messages: LlamaMessage[]): LlamaMessage[] => {
   const totalIterMap = new Map<string, number>();
@@ -75,4 +79,46 @@ export function traverseToLastMessageId(
   }
 
   return findLastMessageId(parent_id);
+}
+
+export function loadedSystemToLlama(loadedSystemMessage: LlamaLoadedSystemMessage, parent_id: string): LlamaMessage {
+  return {
+    id: loadedSystemMessage.id,
+    parent_id,
+    content: loadedSystemMessage.title + SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE + loadedSystemMessage.content,
+    role: "system",
+    disabled: true,
+    iter: {
+      current: 1,
+      total: 1,
+    },
+  }
+}
+
+export function processSystemMessagesToLlama(thread: LlamaMessage[], loadedSystemMessages: any[]): LlamaMessage[] {
+  const lastThreadMessage = thread[thread.length - 1]
+    ? thread[thread.length - 1]
+    : { id: "-1" };
+
+  const llamaSystemMessages = loadedSystemMessages.reduce(
+    (accumulator, message) => {
+      const llamaSystemMessage = loadedSystemToLlama(message, accumulator.parent_id);
+      accumulator.parent_id = llamaSystemMessage.id;
+      accumulator.llamaSystemMessages.push(llamaSystemMessage);
+      return accumulator;
+    },
+    {
+      parent_id: lastThreadMessage.id,
+      llamaSystemMessages: [] as LlamaMessage[],
+    },
+  );
+
+  return [...thread, ...llamaSystemMessages.llamaSystemMessages];
+}
+
+export function loadedSystemToChatParam(loadedSystemMessage: LlamaLoadedSystemMessage): ChatCompletionMessageParam {
+  return {
+    role: "system",
+    content: loadedSystemMessage.title + SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE + loadedSystemMessage.content,
+  }
 }

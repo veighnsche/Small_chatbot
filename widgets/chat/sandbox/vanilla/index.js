@@ -1,17 +1,8 @@
 // firebase.js
 import {initializeApp} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-app.js'
 import {getAuth, GoogleAuthProvider, signInWithPopup} from 'https://www.gstatic.com/firebasejs/10.5.2/firebase-auth.js'
+import {firebaseConfig} from './firebaseConfig.js'
 
-const firebaseConfig = {
-  apiKey: 'AIzaSyCKEVvZx6wk5hNjNsSg4_a4DKFmOVRK9Xw',
-  authDomain: 'weightlifting-plan-and-track.firebaseapp.com',
-  databaseURL: 'https://weightlifting-plan-and-track-default-rtdb.europe-west1.firebasedatabase.app',
-  projectId: 'weightlifting-plan-and-track',
-  storageBucket: 'weightlifting-plan-and-track.appspot.com',
-  messagingSenderId: '448087616119',
-  appId: '1:448087616119:web:63d8d524ef5bd3e6a43472',
-  measurementId: 'G-6W8L2GY8D8',
-}
 
 const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
@@ -34,6 +25,8 @@ function initializeLlamaTree() {
     return setTimeout(initializeLlamaTree, 500) // Check every 500ms if llamaTree is available
   }
 
+
+  document.getElementById('send-message-btn').addEventListener('click', sendMessage)
   function sendMessage() {
     const input = document.getElementById('message-input')
     const message = input.value
@@ -41,27 +34,41 @@ function initializeLlamaTree() {
     llamaTree.sendMessage(message)
   }
 
-  document.getElementById('send-message-btn').addEventListener('click', sendMessage)
+  document.getElementById('load-system-message-btn').addEventListener('click', loadSystemMessage)
 
-  auth.onAuthStateChanged((user) => {
+  function loadSystemMessage() {
+    const titleInput = document.getElementById('system-message-title-input');
+    const title = titleInput.value;
+    titleInput.value = '';
+
+    const contentTextArea = document.getElementById('system-message-content-input');
+    let content = contentTextArea.value;
+    contentTextArea.value = '';
+
+    llamaTree.loadSystemMessage({
+      title,
+      content,
+    });
+  }
+
+
+  auth.onAuthStateChanged(async (user) => {
     if (user) {
-      llamaTree.setProps({
+      await llamaTree.setProps({
         user,
         // onFunctionCall: (functionName, args) => {
         //   console.log('Function call', functionCall)
         // },
-        // onLlamaAction: (action) => {
-        //   console.log('Llama action', action)
-        // },
+        onLlamaAction: (action) => {
+          console.log('Llama action', action)
+        },
       })
 
-      setTimeout(() => {
-        llamaTree.sendChatView({
-          isOpen: true,
-          isHistoryDrawerOpen: true,
-          isLarge: true,
-        })
-      }, 500)
+      llamaTree.setChatView({
+        isOpen: true,
+        isHistoryDrawerOpen: true,
+        isLarge: true,
+      })
     }
   })
 }

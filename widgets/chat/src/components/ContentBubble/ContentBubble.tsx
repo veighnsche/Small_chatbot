@@ -1,8 +1,12 @@
+import { useState } from "react";
 import AssistantIcon from "../../assets/assistant.svg";
+import ContentHideIcon from "../../assets/content-hide.svg";
+import ContentShowIcon from "../../assets/content-show.svg";
 import Edit from "../../assets/edit.svg";
 import SystemIcon from "../../assets/system.svg";
 import UserIcon from "../../assets/user.svg";
 import { LlamaMessage } from "../../types/LlamaMessage.ts";
+import { SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE } from "../../utils/messages.ts";
 import { CopyToClipboard } from "../buttons/CopyToClipboard/CopyToClipboard.tsx";
 import { InputEdit } from "../InputEdit/InputEdit.tsx";
 import { Iterator } from "../Iterator/Iterator.tsx";
@@ -137,19 +141,30 @@ const Assistant = ({
   );
 };
 
-const System = ({ content }: LlamaMessage) => {
+const System = ({ content: THIS_CONTENT_HAS_2_VALUES }: LlamaMessage) => { // Technical debt out of scope
+  const [title, content] = THIS_CONTENT_HAS_2_VALUES!.split(SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE); // Technical debt out of scope
+  const [isVisible, setIsVisible] = useState(false);
+
+  const toggleContent = () => {
+    setIsVisible(!isVisible);
+  };
+
   return (
     <div className="content-bubble-container system">
       <div className="content-bubble-wrapper">
-        <div className="content-header">
+        <div className="content-header system">
           <img
             className="role-icon"
             src={SystemIcon}
-            alt={`system icon`}
+            alt="system icon"
           />
-          <span>System</span>
+          <span>{title}</span>
+          <IconButton onClick={toggleContent} title={isVisible ? "Hide Content" : "Show Content"}>
+            <img src={isVisible ? ContentHideIcon : ContentShowIcon}
+                 alt={`${isVisible ? "Hide Content" : "Show Content"} icon`}/>{" "}
+          </IconButton>
         </div>
-        <div className="content-text">
+        <div className={`content-text system ${isVisible ? "visible" : "hidden"}`}>
           <p>{content}</p>
         </div>
       </div>

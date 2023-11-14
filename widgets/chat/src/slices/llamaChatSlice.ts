@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LlamaChat } from "../types/LlamaChat";
+import { LlamaLoadedSystemMessage } from "../types/LlamaLoadedSystemMessage.ts";
 import { LlamaMessage } from "../types/LlamaMessage";
 import { addIters, makeChildrensMap, traverseToLastMessageId } from "../utils/messages";
 
@@ -8,7 +9,7 @@ export type LlamaChatAction = ReturnType<typeof llamaChatSlice.actions[keyof typ
 export interface LlamaChatState {
   sseId?: string;
   currentChatId?: LlamaChat["id"];
-  loadedSystemMessages: LlamaMessage[];
+  loadedSystemMessages: LlamaLoadedSystemMessage[];
   messages: LlamaMessage[];
   childrensMap: Record<LlamaMessage["id"], LlamaMessage["id"][]>;
   itersMap: Record<LlamaMessage["id"], number>; // the number represents the idx of the child message
@@ -64,17 +65,24 @@ const llamaChatSlice = createSlice({
       state.lastMessageId = traverseToLastMessageId(state.childrensMap, state.itersMap, action.payload.parent_id); // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
     },
 
-    loadSystemMessage: (state, action: PayloadAction<{ message: string }>) => {
+    loadSystemMessage: (state, action: PayloadAction<{ message: Omit<LlamaLoadedSystemMessage, "id"> }>) => {
       state.loadedSystemMessages.push({
-        id: `system-${state.loadedSystemMessages.length}`,
-        parent_id: "-1",
-        role: "system",
-        content: action.payload.message,
-        iter: {
-          current: 1,
-          total: 1,
-        },
+        id: `system-${Date.now().toString() + "." + Math.random().toString().slice(2)}`,
+        ...action.payload.message,
       });
+    },
+
+    removeSystemMessage: (state, action: PayloadAction<{ id: string }>) => {
+      // what is more performant? splice or filter?
+      // answer: splice is more performant
+      const index = state.loadedSystemMessages.findIndex((message) => message.id === action.payload.id);
+      if (index !== -1) {
+        state.loadedSystemMessages.splice(index, 1);
+      }
+    },
+
+    emptyLoadedSystemMessages: (state) => {
+      state.loadedSystemMessages = [];
     },
 
     startAssistantStream: (state, action: PayloadAction<{ role: LlamaMessage["role"] }>) => {
@@ -124,6 +132,8 @@ export const {
   setLastMessageId,
   setIter,
   loadSystemMessage,
+  removeSystemMessage,
+  emptyLoadedSystemMessages,
   reset,
   startAssistantStream,
   appendAssistantStreamContent,

@@ -1,10 +1,13 @@
 import OpenAI from "openai";
 import { Chat, ChatCompletionMessage } from "openai/resources/chat";
 import { ILlamaMessage } from "../types/chat";
+import { fixJSON } from "../utils/json";
 import { removeKeys } from "../utils/object";
 import { getTimeStamp } from "../utils/time";
 import ChatCompletionRole = OpenAI.ChatCompletionRole;
 import ChatCompletionMessageParam = Chat.ChatCompletionMessageParam;
+
+export const SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE = "[END OF SYSTEM MESSAGE TITLE]";
 
 export class LlamaMessage implements ILlamaMessage {
   constructor(
@@ -22,14 +25,14 @@ export class LlamaMessage implements ILlamaMessage {
     if (message.content) {
       return new LlamaMessage(message.content, timestamp, parentId, message.role);
     } else if (message.function_call) {
-      const args = JSON.parse(message.function_call.arguments);
+      const args = makeArgs(message.function_call.arguments);
       const newArgs = removeKeys(args, ["explanation"])
-      const newFunctionCall = {
+      const parsedFunctionCall = {
         name: message.function_call.name,
         arguments: JSON.stringify(newArgs),
       };
 
-      return new LlamaMessage(args.explanation, timestamp, parentId, message.role, newFunctionCall);
+      return new LlamaMessage(args.explanation, timestamp, parentId, message.role, parsedFunctionCall);
     }
 
     throw new Error("fromChatCompletionMessage: Message must have content or function call");
@@ -70,6 +73,13 @@ export class LlamaMessage implements ILlamaMessage {
         },
       };
     } else if (this.content) {
+      if (this.role === "system") {
+        const [_, content] = this.content.split(SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE);
+        return {
+          role: this.role,
+          content,
+        };
+      }
       return {
         role: this.role,
         content: this.content,
@@ -116,5 +126,28 @@ export class LlamaMessage implements ILlamaMessage {
 
   static fromRecords(records: ILlamaMessage[]): LlamaMessage[] {
     return records.map((record) => LlamaMessage.fromRecord(record));
+  }
+}
+
+function makeArgs(args: string): any {
+  try {
+    return JSON.parse(args);
+  } catch (err) {
+    if (!args.startsWith("{")) {
+      // remove all the text before the first {
+      const firstBraceIndex = args.indexOf("{");
+      const newArgs = args.substring(firstBraceIndex);
+      try {
+        return JSON.parse(newArgs);
+      } catch (err) {
+        console.error('makeArgs: args did not start with {, but could not parse args as JSON')
+        const json = fixJSON(args);
+        if (!json) {
+          throw new Error('makeArgs: args did not start with {, but could not fix JSON')
+        }
+        return json;
+      }
+    }
+    return {};
   }
 }

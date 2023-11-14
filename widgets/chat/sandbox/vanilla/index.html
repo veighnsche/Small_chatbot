@@ -11,12 +11,30 @@
     <div id="google-signin-btn-container">
         <button id="google-signin-btn">Sign in with Google</button>
     </div>
+    <hr style="width: 100%; height: 1px; margin: 0;">
     <div id="chat-input-container">
         <label for="message-input">Message</label>
         <div>
             <input type="text" id="message-input" placeholder="Type a message">
             <button id="send-message-btn">Send</button>
         </div>
+    </div>
+    <hr style="width: 100%; height: 1px; margin: 0;">
+    <div id="load-system-message-container">
+        <div>
+            <label for="system-message-title-input">System Message Title</label>
+            <input type="text" id="system-message-title-input"
+                   placeholder="Type a system message title"
+                   value="System Message Title">
+        </div>
+        <div>
+            <label for="system-message-content-input">System Message</label>
+            <textarea id="system-message-content-input"
+                      placeholder="Type a system content message"
+                      rows="5"
+            >System Message Content</textarea>
+        </div>
+        <button id="load-system-message-btn">Load System Message</button>
     </div>
 </div>
 <script type="module" src="http://localhost:3001/module"></script>

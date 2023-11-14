@@ -1,5 +1,5 @@
 .content-bubble-container {
-    padding: 1rem 1rem 0 1rem;
+    padding: 1rem;
 }
 
 .content-bubble-container.user {
@@ -15,17 +15,19 @@
 }
 
 .content-bubble-container.assistant {
-    background-color: #f5f5f5;
+    background-color: #e6e6e6;
 }
 
 .content-bubble-container.system {
-    background-color: #888;
-    border: 1px solid lightgrey;
-    margin: 0.5rem;
 }
 
 .content-bubble-wrapper {
     width: 100%;
+}
+
+.content-header.system {
+    display: flex;
+    align-items: flex-end;
 }
 
 .content-header span {
@@ -87,4 +89,18 @@
 .content-actions .icon-button {
     height: 1.14rem;
     width: 1.14rem;
+}
+
+/* Initial state when content is hidden */
+.content-text.system {
+    max-height: 0;
+    overflow: auto;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+/* State when content is visible */
+.content-text.system.visible {
+    max-height: 500px; /* Set this to a value that can accommodate the content */
+    opacity: 1;
 }

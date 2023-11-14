@@ -1,9 +1,12 @@
 # Server
 node_modules/
-server/.env
 .idea
 
 package-lock.json
 server/dist/
 
 server/src/service-account-key.json
+
+server/.env
+server/.env.resumator
+widgets/chat/sandbox/vanilla/firebaseConfig.js
