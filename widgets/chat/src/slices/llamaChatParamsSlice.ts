@@ -1,7 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
+import { JSONSchema7 as JSONSchema } from "json-schema";
 
-export type LlamaChatParams = Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n">;
+export type LlamaChatParams = Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n" | "functions"> & {
+  functions?: {
+    name: string;
+    description?: string;
+    parameters: JSONSchema;
+  }[];
+};
 
 export type LlamaChatParamsAction = ReturnType<typeof llamaChatParamsSlice.actions[keyof typeof llamaChatParamsSlice.actions]>
 

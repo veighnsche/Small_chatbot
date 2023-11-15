@@ -1,6 +1,6 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { threadMemo } from "../selectors/thread";
+import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
 import { setLastMessageId } from "../slices/llamaChatSlice";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
@@ -8,7 +8,7 @@ import { streamToAssistantAction } from "./shared/stream";
 
 interface SendMessageParams {
   thread: LlamaMessage[];
-  assistantParams: Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n">;
+  assistantParams: LlamaChatParams;
 }
 
 export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConfig>(

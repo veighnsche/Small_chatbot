@@ -110,7 +110,21 @@ label {
     background-color: #2c8f47;
 }
 
-#google-signin-btn, #send-message-btn, #load-system-message-btn {
+#set-function-call-btn {
+    background-color: #34a853; /* Different color for distinction */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 20px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#set-function-call-btn:hover {
+    background-color: #2c8f47;
+}
+
+#google-signin-btn, #send-message-btn, #load-system-message-btn, #load-system-message-btn, #set-function-call-btn {
     height: 40px; /* Unified height */
     /* Other existing styles */
 }

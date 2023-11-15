@@ -1,5 +1,6 @@
 .content-bubble-container {
     padding: 1rem;
+    max-width: 100%;
 }
 
 .content-bubble-container.user {
@@ -65,6 +66,7 @@
     padding: 0.2rem 0.5rem;
     margin-left: 0.5rem;
     white-space: pre-wrap;
+    max-width: calc(100% - 1rem);
 }
 
 .role-icon {

@@ -63,7 +63,7 @@ export function fixJSON(json: any): any | false {
               if (strP[1].includes('"') && strP[1].includes(':')) {
                 let part = strP[1].trim();
                 if (part.startsWith('"') && part.endsWith('"')) {
-                  part = part.substr(1, part.length - 2);
+                  part = part.substring(1, part.length - 2);
                   part = bulkRegex(part, p => p.replace(/(?<!\\)"/gm, ''));
                 }
                 strP[1] = ('"' + part + '"').trim();
