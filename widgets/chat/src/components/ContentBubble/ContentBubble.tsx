@@ -2,9 +2,13 @@ import { useState } from "react";
 import AssistantIcon from "../../assets/assistant.svg";
 import ContentHideIcon from "../../assets/content-hide.svg";
 import ContentShowIcon from "../../assets/content-show.svg";
+import CrossIcon from "../../assets/cross.svg";
 import Edit from "../../assets/edit.svg";
+import FunctionCallIcon from "../../assets/function-call.svg";
 import SystemIcon from "../../assets/system.svg";
 import UserIcon from "../../assets/user.svg";
+import { removeSystemMessage } from "../../slices/llamaChatSlice.ts";
+import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
 import { LlamaMessage } from "../../types/LlamaMessage.ts";
 import { SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE } from "../../utils/messages.ts";
 import { CopyToClipboard } from "../buttons/CopyToClipboard/CopyToClipboard.tsx";
@@ -82,44 +86,28 @@ const User = ({
 const FunctionCall = ({
   content,
   function_call,
-  parent_id,
-  iter,
+  ...rest
 }: LlamaMessage) => {
   return (
-    <div className="content-bubble-container assistant">
-      <div className="content-bubble-wrapper">
-        <div className="content-header">
-          <img
-            className="role-icon"
-            src={AssistantIcon}
-            alt={`assistant icon`}
-          />
-          <span>Assistant</span>
-        </div>
-        <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
-          <div className="content-text">
-            <p>{content}</p>
-          </div>
-          <div className="function-call-wrapper">
-            <h1 className="function-name">{function_call?.name}</h1>
-            <p className="function-arguments">{function_call?.arguments}</p>
-          </div>
-        </div>
-        <div className="content-actions">
-          <Iterator parent_id={parent_id} iter={iter}/>
-          <CopyToClipboard content={content || ""}/>
-        </div>
-      </div>
-    </div>
+    <>
+      <Assistant {...{ content, ...rest }}/>
+      <System {...{
+        content: `${function_call?.name}${SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE}${function_call?.arguments}`,
+        function_call, ...rest,
+      }}/>
+    </>
   );
 };
 
 const Assistant = ({
   content,
+  id,
   parent_id,
   iter,
-  isLastAssistantMessage,
 }: LlamaMessage) => {
+  const isLastAssistantMessage = useLlamaSelector((state) => {
+    return state.llamaChat.lastMessageId === id;
+  });
   return (
     <div className="content-bubble-container assistant">
       <div className="content-bubble-wrapper">
@@ -137,35 +125,41 @@ const Assistant = ({
         <div className="content-actions">
           <Iterator parent_id={parent_id} iter={iter}/>
           <CopyToClipboard content={content || ""}/>
-          {isLastAssistantMessage ?? <Regenerate />}
+          {isLastAssistantMessage ? <Regenerate/> : null}
         </div>
       </div>
     </div>
   );
 };
 
-const System = ({ content: THIS_CONTENT_HAS_2_VALUES }: LlamaMessage) => { // Technical debt out of scope
-  const [title, content] = THIS_CONTENT_HAS_2_VALUES!.split(SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE); // Technical debt out of scope
+const System = ({ content: THIS_CONTENT_HAS_2_VALUES, function_call, id }: LlamaMessage) => { // THIS_CONTENT_HAS_2_VALUES = Technical debt = out of scope
+  const [title, content] = THIS_CONTENT_HAS_2_VALUES!.split(SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE); // SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE = Technical debt = out of scope
   const [isVisible, setIsVisible] = useState(false);
+  const dispatch = useLlamaDispatch();
 
   const toggleContent = () => {
     setIsVisible(!isVisible);
   };
 
   return (
-    <div className="content-bubble-container system">
+    <div className={`content-bubble-container system ${function_call ? "function-call" : ""}`}>
       <div className="content-bubble-wrapper">
         <div className="content-header system">
           <img
             className="role-icon"
-            src={SystemIcon}
+            src={function_call ? FunctionCallIcon : SystemIcon}
             alt="system icon"
           />
           <span>{title}</span>
           <IconButton onClick={toggleContent} title={isVisible ? "Hide Content" : "Show Content"}>
             <img src={isVisible ? ContentHideIcon : ContentShowIcon}
-                 alt={`${isVisible ? "Hide Content" : "Show Content"} icon`}/>{" "}
+                 alt={`${isVisible ? "Hide Content" : "Show Content"} icon`}/>
           </IconButton>
+          {id.startsWith("system-") ? (
+            <IconButton onClick={() => dispatch(removeSystemMessage({ id }))} title="Clear A Loaded System Message">
+              <img src={CrossIcon} alt="Clear A Loaded System Message icon"/>
+            </IconButton>
+          ) : null}
         </div>
         <div className={`content-text system ${isVisible ? "visible" : "hidden"}`}>
           <p>{content}</p>

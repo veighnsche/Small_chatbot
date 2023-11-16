@@ -10,11 +10,9 @@ export const Regenerate = () => {
 
   return (
     <IconButton
-      circle
       disabled={disabled || isStreaming}
       onClick={onRegenerate}
       title="Regenerate"
-      style={{ width: "2rem", height: "2rem" }}
     >
       <img src={Refresh} alt="refresh"/>
     </IconButton>

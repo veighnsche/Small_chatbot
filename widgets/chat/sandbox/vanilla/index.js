@@ -95,7 +95,7 @@ function initializeLlamaTree() {
       ],
     });
 
-    llamaTree.sendMessage('Translate into Dutch');
+    // llamaTree.sendMessage('Translate into Dutch');
   }
 
 

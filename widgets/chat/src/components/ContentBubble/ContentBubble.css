@@ -19,7 +19,9 @@
     background-color: #e6e6e6;
 }
 
-.content-bubble-container.system {
+.content-bubble-container.system.function-call {
+    padding-top: 0;
+    background-color: #e6e6e6;
 }
 
 .content-bubble-wrapper {
@@ -67,6 +69,15 @@
     margin-left: 0.5rem;
     white-space: pre-wrap;
     max-width: calc(100% - 1rem);
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-in-out, opacity 0.3s ease-in-out;
+    opacity: 0;
+}
+
+.function-arguments.visible {
+    max-height: 200px; /* adjust as needed */
+    opacity: 1;
 }
 
 .role-icon {

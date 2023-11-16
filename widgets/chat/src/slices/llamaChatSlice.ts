@@ -15,6 +15,7 @@ export interface LlamaChatState {
   itersMap: Record<LlamaMessage["id"], number>; // the number represents the idx of the child message
   lastMessageId: LlamaMessage["id"];
   assistantStream: LlamaMessage | undefined;
+  error?: string;
 }
 
 const initialState: LlamaChatState = {
@@ -26,6 +27,7 @@ const initialState: LlamaChatState = {
   itersMap: {},
   lastMessageId: "-1",
   assistantStream: undefined,
+  error: undefined,
 };
 
 const llamaChatSlice = createSlice({
@@ -33,6 +35,7 @@ const llamaChatSlice = createSlice({
   initialState,
   reducers: {
     setMessages: (state, action: PayloadAction<{ messages: LlamaMessage[] }>) => {
+      state.error = undefined;
       state.assistantStream = undefined;
       state.messages = addIters(action.payload.messages);
       state.childrensMap = makeChildrensMap(state.messages);
@@ -122,6 +125,11 @@ const llamaChatSlice = createSlice({
     reset: () => {
       return initialState;
     },
+
+    setError: (state, action: PayloadAction<{ error: string }>) => {
+      state.assistantStream = undefined;
+      state.error = action.payload.error;
+    }
   },
 });
 

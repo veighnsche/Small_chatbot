@@ -24,7 +24,9 @@ export const Tooltip = (props: LlamaTooltipProps) => {
   };
 
   return (
-    <div className="tooltip-wrapper" onClick={clickToAppear}>
+    <div className="tooltip-wrapper" style={{
+      display: tooltipState === AnimationState.Hide ? 'none' : 'block',
+    }} onClick={clickToAppear}>
       <div className={`tooltip ${getStateClass()}`}>{content}</div>
       {children}
     </div>

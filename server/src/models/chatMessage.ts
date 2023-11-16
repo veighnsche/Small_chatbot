@@ -1,7 +1,7 @@
 import OpenAI from "openai";
 import { Chat, ChatCompletionMessage } from "openai/resources/chat";
 import { ILlamaMessage } from "../types/chat";
-import { fixJSON } from "../utils/json";
+import { makeArgs } from "../utils/messages";
 import { removeKeys } from "../utils/object";
 import { getTimeStamp } from "../utils/time";
 import ChatCompletionMessageParam = Chat.ChatCompletionMessageParam;
@@ -129,31 +129,3 @@ export class LlamaMessage implements ILlamaMessage {
   }
 }
 
-function makeArgs(args: string): any {
-  try {
-    return JSON.parse(args);
-  } catch (err) {
-    // console.error("makeArgs: could not parse args as JSON");
-    // commented out because this is expected behavior, backend needs to fix this.
-    // the args always starts with "undefined"
-  }
-
-  if (!args.startsWith("{")) {
-    // remove all the text before the first {
-    const firstBraceIndex = args.indexOf("{");
-    const newArgs = args.substring(firstBraceIndex);
-    try {
-      return JSON.parse(newArgs);
-    } catch (err) {
-      console.error("makeArgs: could not parse args by removing text before first {");
-    }
-  }
-
-  const json = fixJSON(args);
-  if (json) {
-    return json;
-  }
-
-  console.error("makeArgs: could not fix JSON");
-  return {};
-}

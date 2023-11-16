@@ -8,12 +8,17 @@ export const threadSseMemo: (state: RootLlamaState) => LlamaMessage[] = createSe
   threadMemo,
   (state: RootLlamaState) => state.llamaChat.assistantStream,
   (state: RootLlamaState) => state.llamaChat.loadedSystemMessages,
-  (thread, assistantStream, loadedSystemMessages) => {
-    if (!assistantStream) {
-      return loadedSystemMessages.length > 0
-        ? processSystemMessagesToLlama(thread, loadedSystemMessages)
-        : thread;
+  (
+    thread,
+    assistantStream,
+    loadedSystemMessages,
+  ) => {
+    if (assistantStream) {
+      return [...thread, assistantStream];
     }
-    return [...thread, assistantStream];
+
+    return loadedSystemMessages.length > 0
+      ? processSystemMessagesToLlama(thread, loadedSystemMessages)
+      : thread;
   },
 );

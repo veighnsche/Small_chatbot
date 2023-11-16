@@ -39,6 +39,9 @@ export async function* streamToAssistantAction(body: ReadableStream<Uint8Array>)
         yield setSseId({ sseId: undefined });
       }
     }
+    if ("error" in body) {
+
+    }
   } catch (err) {
     console.error("Error converting to assistant action:", err);
   }

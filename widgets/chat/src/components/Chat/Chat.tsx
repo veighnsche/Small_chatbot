@@ -1,9 +1,11 @@
+import { useLlamaSelector } from "../../stores/llamaStore.ts";
 import { UseLlamaChat } from "./useLlamaChat.ts";
 import { ContentBubble } from "../ContentBubble/ContentBubble.tsx";
 import "./Chat.css";
 
 export const Chat = () => {
   const { thread, chatContainerRef } = UseLlamaChat();
+  const error = useLlamaSelector((state) => state.llamaChat.error);
 
   if (thread.length === 0) {
     return (
@@ -20,6 +22,11 @@ export const Chat = () => {
       {thread.map((msg) => (
         <ContentBubble key={msg.id} {...msg} />
       ))}
+      {error && (
+        <div className="error-message">
+          <p>{error}</p>
+        </div>
+      )}
     </div>
   );
 };
