@@ -8,6 +8,7 @@ import UserIcon from "../../assets/user.svg";
 import { LlamaMessage } from "../../types/LlamaMessage.ts";
 import { SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE } from "../../utils/messages.ts";
 import { CopyToClipboard } from "../buttons/CopyToClipboard/CopyToClipboard.tsx";
+import { Regenerate } from "../buttons/Regenerate/Regenerate.tsx";
 import { InputEdit } from "../InputEdit/InputEdit.tsx";
 import { Iterator } from "../Iterator/Iterator.tsx";
 import { IconButton } from "../utils/IconButton/IconButton.tsx";
@@ -117,6 +118,7 @@ const Assistant = ({
   content,
   parent_id,
   iter,
+  isLastAssistantMessage,
 }: LlamaMessage) => {
   return (
     <div className="content-bubble-container assistant">
@@ -135,6 +137,7 @@ const Assistant = ({
         <div className="content-actions">
           <Iterator parent_id={parent_id} iter={iter}/>
           <CopyToClipboard content={content || ""}/>
+          {isLastAssistantMessage ?? <Regenerate />}
         </div>
       </div>
     </div>

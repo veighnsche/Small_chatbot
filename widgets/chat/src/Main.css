@@ -9,12 +9,13 @@
     background-color: #f5f5f5;
     display: grid;
     grid-template-columns: 240px 360px;
-    grid-template-rows: 4rem 1fr auto auto;
+    grid-template-rows: 4rem 1fr auto 2rem 2rem;
     grid-template-areas:
-        "history title"
+        "history chat"
         "history chat"
         "history input"
-        "new input";
+        "new input"
+        "new title";
     transition: grid-template-columns 300ms ease-in-out, height 300ms ease-in-out;
 }
 

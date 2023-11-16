@@ -32,9 +32,13 @@ export const llamaOnHistorySnapshot = createAsyncThunk<void, void, LlamaThunkApi
 );
 
 // Expose an unsubscribe function
-export function unsubscribeFromLlamaHistory() {
-  if (unsubscribe) {
+export const unsubscribeFromLlamaHistory = createAsyncThunk<void, void, LlamaThunkApiConfig>(
+  "llamaHistory/unsubscribeFromLlamaHistory",
+  async (_, { dispatch }) => {
+    if (!unsubscribe) {
+      return;
+    }
+    dispatch(setHistory({ history: [] }));
     unsubscribe();
-    unsubscribe = null;
-  }
-}
+  },
+);

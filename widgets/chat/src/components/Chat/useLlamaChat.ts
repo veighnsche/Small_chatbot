@@ -1,14 +1,17 @@
 import { useEffect, useRef } from "react";
 import { threadSseMemo } from "../../selectors/threadSse.ts";
-import { useLlamaSelector } from "../../stores/llamaStore.ts";
+import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
 import { unsubscribeFromLlamaMessages } from "../../thunks/llamaOnMessagesSnapshot.ts";
 
 export const UseLlamaChat = () => {
+  const dispatch = useLlamaDispatch();
   const thread = useLlamaSelector(threadSseMemo);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => () => {
-    unsubscribeFromLlamaMessages();
+  useEffect(() => {
+    return () => {
+      dispatch(unsubscribeFromLlamaMessages());
+    };
   }, []);
 
   useEffect(() => {
@@ -22,4 +25,4 @@ export const UseLlamaChat = () => {
     thread,
     chatContainerRef,
   };
-}
+};

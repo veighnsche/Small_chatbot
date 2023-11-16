@@ -36,6 +36,9 @@ export const useLlamaInput = () => {
   };
 
   const handleSend = async () => {
+    if (!inputValue) {
+      return;
+    }
     reset();
     await dispatch(llamaSseAddMessage({
       newMessages: [{

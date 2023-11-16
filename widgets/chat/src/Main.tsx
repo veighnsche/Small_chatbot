@@ -81,22 +81,27 @@ const Main = () => {
   const largeClass = isLarge ? "large" : "";
 
   const isOpen = useLlamaSelector((state) => state.llamaChatView.isOpen);
-  if (!isOpen) {
-    return (
-      <IconButton className="open-chat-button" onClick={() => dispatch(toggleChatView())}>
-        <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
-      </IconButton>
-    );
-  }
+  // if (!isOpen) {
+  //   return (
+  //     <IconButton className="open-chat-button" onClick={() => dispatch(toggleChatView())}>
+  //       <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
+  //     </IconButton>
+  //   );
+  // }
 
   return (
-    <div className={`box-container ${historyClass} ${largeClass}`}>
-      {renderDrawer && <HistoryList/>}
-      {renderDrawer && <NewChat/>}
-      <ChatHeader/>
-      <Chat/>
-      <Input/>
-    </div>
+    <>
+      <IconButton style={{ display: isOpen ? "none" : "flex" }} className="open-chat-button" onClick={() => dispatch(toggleChatView())}>
+        <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
+      </IconButton>
+      <div style={{ display: isOpen ? "grid" : "none" }} className={`box-container ${historyClass} ${largeClass}`}>
+        {renderDrawer && <HistoryList/>}
+        {renderDrawer && <NewChat/>}
+        <ChatHeader/>
+        <Chat/>
+        <Input/>
+      </div>
+    </>
   );
 };
 

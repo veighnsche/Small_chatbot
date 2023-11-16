@@ -4,12 +4,12 @@ import { reset, setCurrentChatId, setMessages } from "../slices/llamaChatSlice";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
 
-let unsubscribeMessages: (() => void) | null = null;
+let unsubscribe: (() => void) | null = null;
 
 export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chatId?: string }, LlamaThunkApiConfig>(
   "llamaChat/subscribeToLlamaMessages",
   async ({ chatId }, { dispatch, extra: { userDocRef } }) => {
-    unsubscribeFromLlamaMessages();
+    dispatch(unsubscribeFromLlamaMessages());
 
     if (!chatId) {
       dispatch(reset());
@@ -20,7 +20,7 @@ export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chatId?: string 
 
     const messagesCol = collection(userDocRef, "chats", chatId, "messages");
 
-    unsubscribeMessages = onSnapshot(messagesCol, (snapshot) => {
+    unsubscribe = onSnapshot(messagesCol, (snapshot) => {
       const messages = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
@@ -30,10 +30,13 @@ export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chatId?: string 
   },
 );
 
-// Expose an unsubscribe function
-export function unsubscribeFromLlamaMessages() {
-  if (unsubscribeMessages) {
-    unsubscribeMessages();
-    unsubscribeMessages = null;
-  }
-}
+export const unsubscribeFromLlamaMessages = createAsyncThunk<void, void, LlamaThunkApiConfig>(
+  "llamaChat/unsubscribeFromLlamaMessages",
+  async (_, { dispatch }) => {
+    if (!unsubscribe) {
+      return;
+    }
+    dispatch(reset());
+    unsubscribe();
+  },
+);

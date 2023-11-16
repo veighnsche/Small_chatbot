@@ -12,9 +12,9 @@ export const useLlamaHistoryList = () => {
     dispatch(llamaOnHistorySnapshot());
 
     return () => {
-      unsubscribeFromLlamaHistory();
+      dispatch(unsubscribeFromLlamaHistory());
     };
-  }, [dispatch]);
+  }, []);
 
   return {
     history,

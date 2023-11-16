@@ -8,6 +8,7 @@ export interface LlamaMessage extends ChatCompletionMessageParam {
     current: number;
     total: number;
   };
+  isLastAssistantMessage?: boolean;
 }
 
 export const LlamaMessageUtils = {
