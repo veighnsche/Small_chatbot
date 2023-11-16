@@ -57,8 +57,8 @@ class ChatWidgetElement extends HTMLElement {
     llamaEventBus.emit("remove-system-message", id);
   }
 
-  sendMessage(message: string) {
-    llamaEventBus.emit("user-message", message);
+  sendMessage(message: string, params? : Partial<LlamaChatParams>) {
+    llamaEventBus.emit("user-message", { message, params });
   }
 
   setChatParams(params: LlamaChatParams) {

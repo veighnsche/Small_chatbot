@@ -15,10 +15,11 @@ interface SendMessageParams {
 }
 
 export const llamaSseAddMessage = createAsyncThunk<void, {
-  newMessages: ChatCompletionMessageParam[]
+  newMessages: ChatCompletionMessageParam[];
+  params?: Partial<LlamaChatParams>;
 }, LlamaThunkApiConfig>(
   "llamaChat/addMessage",
-  async ({ newMessages }, {
+  async ({ newMessages, params }, {
     getState,
     dispatch,
     extra: { wretch },
@@ -26,7 +27,11 @@ export const llamaSseAddMessage = createAsyncThunk<void, {
     const state = getState();
     const thread = threadMemo(state);
     const chatId = state.llamaChat.currentChatId;
-    const assistantParams = state.llamaChatParams;
+    const assistantParams = {
+      ...state.llamaChatParams,
+      ...(params || {})
+    }
+
     const loadedSystemMessages = state.llamaChat.loadedSystemMessages;
 
     const nextMessages = [

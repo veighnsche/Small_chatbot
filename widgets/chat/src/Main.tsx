@@ -27,12 +27,13 @@ const Main = () => {
     dispatch(removeSystemMessage({ id }));
   };
 
-  const handleAddMessage = (message: string) => {
+  const handleAddMessage = ({ message, params }: { message: string, params?: Partial<LlamaChatParams>}) => {
     dispatch(llamaSseAddMessage({
       newMessages: [{
         role: "user",
         content: message,
       }],
+      params
     }));
   };
 

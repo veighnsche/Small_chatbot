@@ -67,7 +67,7 @@ function initializeLlamaTree() {
         '```',
     });
 
-    llamaTree.setChatParams({
+    llamaTree.sendMessage('Translate into Dutch', {
       function_call: { name: "set_motivation" },
       functions: [
         {
@@ -94,8 +94,6 @@ function initializeLlamaTree() {
         },
       ],
     });
-
-    // llamaTree.sendMessage('Translate into Dutch');
   }
 
 
