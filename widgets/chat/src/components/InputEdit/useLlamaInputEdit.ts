@@ -1,4 +1,5 @@
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useLlamaStreamingWrite } from "../../providers/LlamaStreamingProvider.tsx";
 import { useLlamaDispatch } from "../../stores/llamaStore.ts";
 import { llamaSseEditMessage } from "../../thunks/llamaSseEditMessage.ts";
 
@@ -12,6 +13,7 @@ export const useLlamaInputEdit = ({ content, parent_id, onCancel }: InputEditPro
   const dispatch = useLlamaDispatch();
   const [inputValue, setInputValue] = useState<string>(content);
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
+  const llamaStreamContext = useLlamaStreamingWrite();
 
   useEffect(() => {
     if (textAreaRef.current) {
@@ -32,6 +34,7 @@ export const useLlamaInputEdit = ({ content, parent_id, onCancel }: InputEditPro
         content: inputValue,
         role: "user",
       }],
+      llamaStreamContext,
     }));
   };
 

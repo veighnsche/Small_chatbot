@@ -1,3 +1,4 @@
+import { useLlamaStreamingWrite } from "../../providers/LlamaStreamingProvider.tsx";
 import { useLlamaDispatch } from "../../stores/llamaStore.ts";
 import { llamaSseAddMessage } from "../../thunks/llamaSseAddMessage.ts";
 import { ChangeEvent, KeyboardEventHandler, useEffect, useRef, useState } from "react";
@@ -6,6 +7,7 @@ export const useLlamaInput = () => {
   const dispatch = useLlamaDispatch();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
   const [inputValue, setInputValue] = useState<string>("");
+  const llamaStreamContext = useLlamaStreamingWrite();
 
   const inputOnChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     setInputValue(e.target.value);
@@ -45,6 +47,7 @@ export const useLlamaInput = () => {
         content: inputValue,
         role: "user",
       }],
+      llamaStreamContext,
     }));
   };
 

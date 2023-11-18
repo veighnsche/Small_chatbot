@@ -14,7 +14,6 @@ export interface LlamaChatState {
   childrensMap: Record<LlamaMessage["id"], LlamaMessage["id"][]>;
   itersMap: Record<LlamaMessage["id"], number>; // the number represents the idx of the child message
   lastMessageId: LlamaMessage["id"];
-  assistantStream: LlamaMessage | undefined;
   error?: string;
 }
 
@@ -26,7 +25,6 @@ const initialState: LlamaChatState = {
   childrensMap: {},
   itersMap: {},
   lastMessageId: "-1",
-  assistantStream: undefined,
   error: undefined,
 };
 
@@ -36,7 +34,6 @@ const llamaChatSlice = createSlice({
   reducers: {
     setMessages: (state, action: PayloadAction<{ messages: LlamaMessage[] }>) => {
       state.error = undefined;
-      state.assistantStream = undefined;
       state.messages = addIters(action.payload.messages);
       state.childrensMap = makeChildrensMap(state.messages);
 
@@ -88,46 +85,11 @@ const llamaChatSlice = createSlice({
       state.loadedSystemMessages = [];
     },
 
-    startAssistantStream: (state, action: PayloadAction<{ role: LlamaMessage["role"] }>) => {
-      state.assistantStream = {
-        id: "stream",
-        parent_id: "-1",
-        role: action.payload.role,
-        content: "",
-        iter: {
-          current: 1,
-          total: 1,
-        },
-      };
-    },
-
-    startAssistantStreamFunctionCall: (state, action: PayloadAction<{ name: string }>) => {
-      if (state.assistantStream) {
-        state.assistantStream.function_call = {
-          name: action.payload.name,
-          arguments: "",
-        };
-      }
-    },
-
-    appendAssistantStreamContent: (state, action: PayloadAction<{ content: string }>) => {
-      if (state.assistantStream) {
-        state.assistantStream.content += action.payload.content;
-      }
-    },
-
-    appendAssistantStreamFunctionCallArguments: (state, action: PayloadAction<{ arguments: string }>) => {
-      if (state.assistantStream && state.assistantStream.function_call) {
-        state.assistantStream.function_call.arguments += action.payload.arguments;
-      }
-    },
-
     reset: () => {
       return initialState;
     },
 
     setError: (state, action: PayloadAction<{ error: string }>) => {
-      state.assistantStream = undefined;
       state.error = action.payload.error;
     }
   },
@@ -142,10 +104,6 @@ export const {
   loadSystemMessage,
   removeSystemMessage,
   emptyLoadedSystemMessages,
-  startAssistantStream,
-  appendAssistantStreamContent,
-  startAssistantStreamFunctionCall,
-  appendAssistantStreamFunctionCallArguments,
   reset,
   setError,
 } = llamaChatSlice.actions;

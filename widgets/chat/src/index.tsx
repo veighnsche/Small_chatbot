@@ -5,6 +5,7 @@ import { ChatCompletionMessage } from "openai/resources/chat/completions";
 import { StrictMode } from "react";
 import * as ReactDOM from "react-dom/client";
 import Main from "./Main";
+import { LlamaStreamingProvider } from "./providers/LlamaStreamingProvider.tsx";
 import { LlamaTreeProvider } from "./providers/LlamaTreeProvider";
 import "./reset.css";
 import { decodeMessage } from "./services/crypto";
@@ -63,7 +64,7 @@ class ChatWidgetElement extends HTMLElement {
     llamaEventBus.emit("empty-system-messages");
   }
 
-  sendLlamaMessage(message: string, params? : Partial<LlamaChatParams>): Promise<LlamaMessage> {
+  sendLlamaMessage(message: string, params?: Partial<LlamaChatParams>): Promise<LlamaMessage> {
     const assistant_uid = generateUniqueID();
     llamaEventBus.emit("user-message", { message, params, assistant_uid });
 
@@ -139,12 +140,22 @@ class ChatWidgetElement extends HTMLElement {
     auth.onAuthStateChanged((user) => {
       if (user) {
         const db = getFirestore(app);
+
         const llamaStore = configureLlamaStore({
           wretch: configureWretch({ url: this.url!, user }),
           userDocRef: doc(db, "assistantChat", user.uid),
           user,
         });
-        this.renderChatWidget(llamaStore);
+
+        this.reactRoot!.render(
+          <StrictMode>
+            <LlamaStreamingProvider>
+              <LlamaTreeProvider llamaStore={llamaStore}>
+                <Main/>
+              </LlamaTreeProvider>
+            </LlamaStreamingProvider>
+          </StrictMode>,
+        );
       }
     });
 
@@ -160,16 +171,6 @@ class ChatWidgetElement extends HTMLElement {
     });
     const data = await response.text();
     return decodeMessage(props.user.uid, data);
-  }
-
-  private renderChatWidget(llamaStore: ReturnType<typeof configureLlamaStore>) {
-    this.reactRoot!.render(
-      <StrictMode>
-        <LlamaTreeProvider llamaStore={llamaStore}>
-          <Main/>
-        </LlamaTreeProvider>
-      </StrictMode>,
-    );
   }
 
   private unmountComponent() {

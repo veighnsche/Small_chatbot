@@ -1,4 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
+import { LlamaStreamContext } from "../providers/LlamaStreamingProvider.tsx";
 import { threadMemo } from "../selectors/thread";
 import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
 import { setLastMessageId } from "../slices/llamaChatSlice";
@@ -13,9 +14,13 @@ interface SendMessageParams {
   assistant_uid: string;
 }
 
-export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConfig>(
+export const llamaSseRegenerate = createAsyncThunk<void, {
+  llamaStreamContext: LlamaStreamContext,
+}, LlamaThunkApiConfig>(
   "llamaChat/regenerate",
-  async (_, {
+  async ({
+    llamaStreamContext,
+  }, {
     getState,
     dispatch,
     extra: { wretch },
@@ -41,9 +46,11 @@ export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConf
         assistant_uid: generateUniqueID(),
       });
 
-      for await (const action of streamToAssistantAction(body)) {
-        dispatch(action);
-      }
+      // for await (const action of streamToAssistantAction(body)) {
+      //   dispatch(action);
+      // }
+
+      await streamToAssistantAction(body, dispatch, llamaStreamContext);
     } catch (err) {
       console.error(err);
       throw new Error("Failed to regenerate");

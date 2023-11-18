@@ -1,12 +1,14 @@
 import { useEffect, useRef } from "react";
-import { threadSseMemo } from "../../selectors/threadSse.ts";
+import { useLlamaStreamingRead } from "../../providers/LlamaStreamingProvider.tsx";
+import { threadWithLoadedSystemMessagesMemo } from "../../selectors/threadSse.ts";
 import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
 import { unsubscribeFromLlamaMessages } from "../../thunks/llamaOnMessagesSnapshot.ts";
 
 export const UseLlamaChat = () => {
   const dispatch = useLlamaDispatch();
-  const thread = useLlamaSelector(threadSseMemo);
+  const thread = useLlamaSelector(threadWithLoadedSystemMessagesMemo);
   const chatContainerRef = useRef<HTMLDivElement>(null);
+  const llamaStreaming = useLlamaStreamingRead();
 
   useEffect(() => {
     return () => {
@@ -22,7 +24,7 @@ export const UseLlamaChat = () => {
   }, [thread]);
 
   return {
-    thread,
+    thread: llamaStreaming ? [...thread, llamaStreaming] : thread,
     chatContainerRef,
   };
 };

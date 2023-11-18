@@ -7,7 +7,9 @@ async function* streamToAsyncIterable(stream: ReadableStream<Uint8Array>): Async
   try {
     while (true) {
       const { value, done } = await reader.read();
-      if (done) break;
+      if (done) {
+        break;
+      }
       yield value;
     }
   } finally {

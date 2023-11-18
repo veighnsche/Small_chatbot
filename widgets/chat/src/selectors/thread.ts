@@ -41,10 +41,6 @@ export class LlamaMemoizer {
   private result: LlamaMessage[] = [];
 
   public threadMemo(state: RootLlamaState): LlamaMessage[] {
-    if (!!state.llamaChat.assistantStream) {
-      return this.result;
-    }
-
     const { currentChatId, messages, lastMessageId } = state.llamaChat;
 
     if (this.chatId !== currentChatId || this.messagesLength !== messages.length) {
