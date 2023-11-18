@@ -142,11 +142,12 @@ export const {
   loadSystemMessage,
   removeSystemMessage,
   emptyLoadedSystemMessages,
-  reset,
   startAssistantStream,
   appendAssistantStreamContent,
   startAssistantStreamFunctionCall,
   appendAssistantStreamFunctionCallArguments,
+  reset,
+  setError,
 } = llamaChatSlice.actions;
 
 export default llamaChatSlice.reducer;

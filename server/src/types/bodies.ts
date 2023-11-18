@@ -17,3 +17,7 @@ export interface EditChatTitleBody {
 export interface AssistantParamsBody {
   assistantParams: Omit<ChatCompletionCreateParamsNonStreaming, "messages" | "n">,
 }
+
+export interface AssistantUniqueIDBody {
+  assistant_uid: string,
+}

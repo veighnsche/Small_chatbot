@@ -5,20 +5,27 @@ import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
 import { setLastMessageId } from "../slices/llamaChatSlice";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
+import { generateUniqueID } from "../utils/uid.ts";
 import { streamToAssistantAction } from "./shared/stream";
 
 interface SendMessageParams {
   thread: LlamaMessage[];
   newMessages: ChatCompletionMessageParam[];
   assistantParams: LlamaChatParams;
+  assistant_uid: string;
 }
 
 export const llamaSseEditMessage = createAsyncThunk<void, {
+  assistant_uid?: string,
   parent_id: string,
   newMessages: ChatCompletionMessageParam[]
 }, LlamaThunkApiConfig>(
   "llamaChat/editMessage",
-  async ({ parent_id, newMessages }, {
+  async ({
+    assistant_uid = generateUniqueID(),
+    parent_id,
+    newMessages,
+  }, {
     getState,
     dispatch,
     extra: { wretch },
@@ -40,6 +47,7 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
           thread,
           newMessages,
           assistantParams,
+          assistant_uid,
         });
 
       for await (const action of streamToAssistantAction(body)) {

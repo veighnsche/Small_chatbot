@@ -13,7 +13,9 @@ import { LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { LlamaChatViewSliceState } from "./slices/llamaChatViewSlice.ts";
 import { configureLlamaStore, LlamaActions } from "./stores/llamaStore.ts";
 import { LlamaLoadedSystemMessage } from "./types/LlamaLoadedSystemMessage.ts";
+import { LlamaMessage } from "./types/LlamaMessage.ts";
 import { configureWretch } from "./utils/fetch.ts";
+import { generateUniqueID } from "./utils/uid.ts";
 
 
 export interface LlamaTreeProps {
@@ -57,8 +59,15 @@ class ChatWidgetElement extends HTMLElement {
     llamaEventBus.emit("remove-system-message", id);
   }
 
-  sendMessage(message: string, params? : Partial<LlamaChatParams>) {
-    llamaEventBus.emit("user-message", { message, params });
+  emptyLoadedSystemMessages() {
+    llamaEventBus.emit("empty-system-messages");
+  }
+
+  sendLlamaMessage(message: string, params? : Partial<LlamaChatParams>): Promise<LlamaMessage> {
+    const assistant_uid = generateUniqueID();
+    llamaEventBus.emit("user-message", { message, params, assistant_uid });
+
+    return llamaEventBus.onceAsync("assistant_uid: " + assistant_uid);
   }
 
   setChatParams(params: LlamaChatParams) {

@@ -34,6 +34,16 @@ class EventBus<T extends EventMap> {
     this.on(event, onceCallback);
   }
 
+  onceAsync<K extends keyof T>(event: K): Promise<T[K]> {
+    return new Promise((resolve) => {
+      const onceCallback = (data: T[K]) => {
+        this.off(event, onceCallback);
+        resolve(data);
+      };
+      this.on(event, onceCallback);
+    });
+  }
+
   offAll<K extends keyof T>(event: K): void {
     this.listeners.delete(event);
   }

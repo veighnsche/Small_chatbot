@@ -9,7 +9,7 @@ import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { editLlamaChatParams, LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
-import { loadSystemMessage, removeSystemMessage } from "./slices/llamaChatSlice.ts";
+import { emptyLoadedSystemMessages, loadSystemMessage, removeSystemMessage } from "./slices/llamaChatSlice.ts";
 import { editChatView, LlamaChatViewSliceState, toggleChatView } from "./slices/llamaChatViewSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
 import { llamaOnMessagesSnapshot } from "./thunks/llamaOnMessagesSnapshot.ts";
@@ -27,13 +27,18 @@ const Main = () => {
     dispatch(removeSystemMessage({ id }));
   };
 
-  const handleAddMessage = ({ message, params }: { message: string, params?: Partial<LlamaChatParams>}) => {
+  const handleEmptyLoadedSystemMessages = () => {
+    dispatch(emptyLoadedSystemMessages());
+  };
+
+  const handleAddMessage = ({ message, params, assistant_uid }: { message: string, params?: Partial<LlamaChatParams>, assistant_uid: string }) => {
     dispatch(llamaSseAddMessage({
       newMessages: [{
         role: "user",
         content: message,
       }],
-      params
+      params,
+      assistant_uid,
     }));
   };
 
@@ -53,6 +58,7 @@ const Main = () => {
     const subs = [
       llamaEventBus.on("load-system-message", handleLoadSystemMessage),
       llamaEventBus.on("remove-system-message", handleRemoveLoadedSystemMessage),
+      llamaEventBus.on("empty-system-messages", handleEmptyLoadedSystemMessages),
       llamaEventBus.on("user-message", handleAddMessage),
       llamaEventBus.on("chat-params", handleEditChatParams),
       llamaEventBus.on("chat-view", handleEditChatView),
@@ -82,17 +88,11 @@ const Main = () => {
   const largeClass = isLarge ? "large" : "";
 
   const isOpen = useLlamaSelector((state) => state.llamaChatView.isOpen);
-  // if (!isOpen) {
-  //   return (
-  //     <IconButton className="open-chat-button" onClick={() => dispatch(toggleChatView())}>
-  //       <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
-  //     </IconButton>
-  //   );
-  // }
 
   return (
     <>
-      <IconButton style={{ display: isOpen ? "none" : "flex" }} className="open-chat-button" onClick={() => dispatch(toggleChatView())}>
+      <IconButton style={{ display: isOpen ? "none" : "flex" }} className="open-chat-button"
+                  onClick={() => dispatch(toggleChatView())}>
         <img width={32} height={32} src={OpenChatIcon} alt="Open Chat"/>
       </IconButton>
       <div style={{ display: isOpen ? "grid" : "none" }} className={`box-container ${historyClass} ${largeClass}`}>

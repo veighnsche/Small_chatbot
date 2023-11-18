@@ -1,6 +1,9 @@
+import { llamaEventBus } from "../../services/llamaEventBus.ts";
 import {
   appendAssistantStreamContent,
-  appendAssistantStreamFunctionCallArguments, setSseId,
+  appendAssistantStreamFunctionCallArguments,
+  setError,
+  setSseId,
   startAssistantStream,
   startAssistantStreamFunctionCall,
 } from "../../slices/llamaChatSlice";
@@ -38,9 +41,12 @@ export async function* streamToAssistantAction(body: ReadableStream<Uint8Array>)
       if ("cleanup" in delta) {
         yield setSseId({ sseId: undefined });
       }
-    }
-    if ("error" in body) {
-
+      if ("error" in delta) {
+        yield setError({ error: delta.error });
+      }
+      if ("assistant_uid" in delta && "assistant_message" in delta) {
+        llamaEventBus.emit("assistant_uid: " + delta.assistant_uid, delta.assistant_message);
+      }
     }
   } catch (err) {
     console.error("Error converting to assistant action:", err);

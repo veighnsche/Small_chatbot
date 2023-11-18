@@ -3,7 +3,7 @@ import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/co
 import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AuthMiddleware, ReqBody, ResLocals } from "../types/auth";
-import { AssistantParamsBody } from "../types/bodies";
+import { AssistantParamsBody, AssistantUniqueIDBody } from "../types/bodies";
 import { ChatDocLocals, SseLocals, ThreadLocals } from "../types/locals";
 import { withDefaultParameters } from "../utils/assistant";
 import { getLastId } from "../utils/messages";
@@ -12,7 +12,11 @@ import { combineChatDeltasIntoSingleMsg, createEventData } from "../utils/stream
 /**
  * Streams the assistant's response to the client.
  */
-const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantParamsBody>, res: ResLocals<ThreadLocals & ChatDocLocals & SseLocals>, next) => {
+const streamAssistantResponse: AuthMiddleware = async (
+  req: ReqBody<AssistantParamsBody & AssistantUniqueIDBody>,
+  res: ResLocals<ThreadLocals & ChatDocLocals & SseLocals>,
+  next,
+) => {
   if (!res.locals.thread || !res.locals.chatDocRepo || !res.locals.sse) {
     console.log(res.locals);
     throw new Error("The messages, chatDocRepo and sse id must be initialized before calling the assistant.");
@@ -20,6 +24,7 @@ const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantPar
 
   const messages = res.locals.thread;
   const functions = req.body.assistantParams.functions;
+  const assistant_uid = req.body.assistant_uid;
 
   const assistantParams: ChatCompletionCreateParamsNonStreaming = {
     ...req.body.assistantParams,
@@ -54,10 +59,12 @@ const streamAssistantResponse: AuthMiddleware = async (req: ReqBody<AssistantPar
   }
 
   const combinedAssistantMessage = combineChatDeltasIntoSingleMsg(deltas);
-  const assistantMessage = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
+  const assistant_message = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
 
-  await res.locals.chatDocRepo.addMessage(assistantMessage);
-  res.locals.thread.push(assistantMessage);
+  res.write(`data: ${JSON.stringify({ assistant_message, assistant_uid })}\n\n`);
+
+  await res.locals.chatDocRepo.addMessage(assistant_message);
+  res.locals.thread.push(assistant_message);
 
   next();
 };

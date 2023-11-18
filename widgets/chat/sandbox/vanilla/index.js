@@ -20,17 +20,23 @@ document.getElementById('google-signin-btn').addEventListener('click', onGoogleS
 
 // widget.js
 function initializeLlamaTree() {
+
+  /**
+   * @type {ChatWidgetElement}
+   */
   const llamaTree = document.querySelector('llama-tree-chat-widget')
   if (!llamaTree) {
     return setTimeout(initializeLlamaTree, 500) // Check every 500ms if llamaTree is available
   }
 
   document.getElementById('send-message-btn').addEventListener('click', sendMessage)
-  function sendMessage() {
+  async function sendMessage() {
     const input = document.getElementById('message-input')
     const message = input.value
     input.value = ''
-    llamaTree.sendMessage(message)
+    const assistantMessage = await llamaTree.sendLlamaMessage(message)
+
+    console.log('Assistant message', assistantMessage)
   }
 
   document.getElementById('load-system-message-btn').addEventListener('click', loadSystemMessage)
@@ -52,7 +58,7 @@ function initializeLlamaTree() {
 
   document.getElementById('set-function-call-btn').addEventListener('click', setFunctionCall)
 
-  function setFunctionCall() {
+  async function setFunctionCall() {
     llamaTree.loadSystemMessage({
       title: 'Motivation',
       content: '```markdown\n' +
@@ -67,7 +73,7 @@ function initializeLlamaTree() {
         '```',
     });
 
-    llamaTree.sendMessage('Translate into Dutch', {
+    await llamaTree.sendLlamaMessage('Translate into Dutch', {
       function_call: { name: "set_motivation" },
       functions: [
         {
@@ -104,9 +110,9 @@ function initializeLlamaTree() {
         // onFunctionCall: (functionName, args) => {
         //   console.log('Function call', functionCall)
         // },
-        onLlamaAction: (action) => {
-          console.log('Llama action', action)
-        },
+        // onLlamaAction: (action) => {
+        //   console.log('Llama action', action)
+        // },
       })
 
       llamaTree.setChatView({

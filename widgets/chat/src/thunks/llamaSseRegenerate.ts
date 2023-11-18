@@ -4,11 +4,13 @@ import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
 import { setLastMessageId } from "../slices/llamaChatSlice";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
+import { generateUniqueID } from "../utils/uid.ts";
 import { streamToAssistantAction } from "./shared/stream";
 
 interface SendMessageParams {
   thread: LlamaMessage[];
   assistantParams: LlamaChatParams;
+  assistant_uid: string;
 }
 
 export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConfig>(
@@ -36,6 +38,7 @@ export const llamaSseRegenerate = createAsyncThunk<void, void, LlamaThunkApiConf
       const body = await wretch(`chat/${chatId}/regenerate`).post<SendMessageParams>({
         thread: slicedThread,
         assistantParams,
+        assistant_uid: generateUniqueID(),
       });
 
       for await (const action of streamToAssistantAction(body)) {

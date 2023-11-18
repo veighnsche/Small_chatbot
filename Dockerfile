@@ -1,7 +1,7 @@
 # STEP 1: Start building the main TypeScript application
 FROM node:18 AS app-builder
 
-RUN npm install -g npm@10.2.3
+RUN npm install -g npm@10.2.4
 
 # STEP 2: Set the working directory for the main app
 WORKDIR /usr/src/app
@@ -21,7 +21,7 @@ RUN npm run build
 # STEP 7: Start building the widget
 FROM node:18 AS widget-builder
 
-RUN npm install -g npm@10.2.3
+RUN npm install -g npm@10.2.4
 
 # STEP 8: Set the working directory for the widget
 WORKDIR /usr/src/app

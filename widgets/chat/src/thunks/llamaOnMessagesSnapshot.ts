@@ -32,11 +32,7 @@ export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chatId?: string 
 
 export const unsubscribeFromLlamaMessages = createAsyncThunk<void, void, LlamaThunkApiConfig>(
   "llamaChat/unsubscribeFromLlamaMessages",
-  async (_, { dispatch }) => {
-    if (!unsubscribe) {
-      return;
-    }
-    dispatch(reset());
-    unsubscribe();
+  () => {
+    unsubscribe?.();
   },
 );
