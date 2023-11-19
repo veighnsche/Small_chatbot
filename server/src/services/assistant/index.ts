@@ -11,7 +11,10 @@ export async function* callAssistantStream(
   sseId: string,
 ): AsyncGenerator<ChatCompletionChunk.Choice> {
   // Create a stream for chat completions
-  const chatCompletionStream = await llamaChatCompletionStream(assistantParams);
+  const chatCompletionStream = await llamaChatCompletionStream(assistantParams).catch((e) => {
+    console.error(e);
+    throw e;
+  });
 
   // Check if the result is iterable
   // if (typeof chatCompletionStream[Symbol.asyncIterator] === "function") {

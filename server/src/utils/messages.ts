@@ -34,6 +34,8 @@ export function makeArgs(args: string): any {
     return json;
   }
 
+  console.log(args);
+
   console.error("makeArgs: could not fix JSON");
   throw new Error("Argument could not be parsed as JSON, do you need more tokens?");
 }

@@ -19,7 +19,7 @@ const streamAssistantResponse: AuthMiddleware = async (
 ) => {
   if (!res.locals.thread || !res.locals.chatDocRepo || !res.locals.sse) {
     console.log(res.locals);
-    throw new Error("The messages, chatDocRepo and sse id must be initialized before calling the assistant.");
+    next(new Error("The messages, chatDocRepo and sse id must be initialized before calling the assistant."));
   }
 
   const messages = res.locals.thread;
@@ -34,8 +34,9 @@ const streamAssistantResponse: AuthMiddleware = async (
 
   res.write(`event: START\ndata: ${createEventData("assistant: start", { status: "start", name: "assistant" })}\n\n`);
 
-  const deltas: ChatCompletionChunk.Choice.Delta[] = [];
   try {
+    const deltas: ChatCompletionChunk.Choice.Delta[] = [];
+
     for await (const { delta, finish_reason } of callAssistantStream(assistantParams, res.locals.sse.id)) {
       if (!finish_reason) {
         deltas.push(delta);
@@ -48,25 +49,20 @@ const streamAssistantResponse: AuthMiddleware = async (
         })}\n\n`);
       }
     }
+
+    const combinedAssistantMessage = combineChatDeltasIntoSingleMsg(deltas);
+    const assistant_message = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
+
+    await res.locals.chatDocRepo.addMessage(assistant_message);
+    res.locals.thread.push(assistant_message);
+
+    res.write(`data: ${JSON.stringify({ assistant_message, assistant_uid })}\n\n`);
+    next();
   } catch (err) {
+    console.error(err);
     next(err);
-    res.write(`event: ERROR\ndata: ${createEventData("assistant: error", {
-      name: "assistant",
-      status: "finish",
-      finish_reason: "error",
-    })}\n\n`);
     return;
   }
-
-  const combinedAssistantMessage = combineChatDeltasIntoSingleMsg(deltas);
-  const assistant_message = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
-
-  res.write(`data: ${JSON.stringify({ assistant_message, assistant_uid })}\n\n`);
-
-  await res.locals.chatDocRepo.addMessage(assistant_message);
-  res.locals.thread.push(assistant_message);
-
-  next();
 };
 
 /**

@@ -49,6 +49,12 @@ export async function streamToAssistantAction(
         llamaStreamContext.stopAssistantStream();
         llamaEventBus.emit("assistant_uid: " + delta.assistant_uid, delta.assistant_message);
       }
+      if ("EVENT_TYPE" in delta && "EVENT_DATA" in delta) {
+        if (delta.EVENT_TYPE === "assistant: error") {
+          llamaStreamContext.stopAssistantStream();
+          dispatch(setError({ error: delta.EVENT_DATA.message }));
+        }
+      }
     }
   } catch (err) {
     console.error("Error converting to assistant action:", err);

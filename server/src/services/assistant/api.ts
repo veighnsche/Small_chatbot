@@ -6,7 +6,7 @@ import { IO_AZURE_OPENAI_ENDPOINT, IO_AZURE_OPENAI_KEY, OPENAI_KEY } from "../en
 
 class AssistantApi {
   chatCompletionStream: (params: ChatCompletionCreateParamsNonStreaming) => Promise<Stream<ChatCompletionChunk>>;
-  chatCompletion: (params: ChatCompletionCreateParamsNonStreaming) => Promise<ChatCompletion>
+  chatCompletion: (params: ChatCompletionCreateParamsNonStreaming) => Promise<ChatCompletion>;
 
   constructor() {
     const openaiKey = OPENAI_KEY;
@@ -43,7 +43,7 @@ class AssistantApi {
           "Content-Type": "application/json",
           "iO-GPT-Subscription-Key": IO_AZURE_OPENAI_KEY,
         },
-      }
+      };
 
       this.chatCompletionStream = async (params: ChatCompletionCreateParamsNonStreaming) => {
         const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
@@ -52,7 +52,12 @@ class AssistantApi {
             ...params,
             stream: true,
           }),
+        }).catch((e) => {
+          console.error(e);
+          throw e;
         });
+
+        await this.assertError(response);
 
         // Wrap the async generator within a Stream object
         return new Stream(() => this.streamGenerator(response.body), null);
@@ -62,10 +67,23 @@ class AssistantApi {
         const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
           ...init,
           body: JSON.stringify(params),
+        }).catch((e) => {
+          console.error(e);
+          throw e;
         });
 
+        await this.assertError(response);
+
         return await response.json();
-      }
+      };
+    }
+  }
+
+  private async assertError(response: Response) {
+    if (response.status < 200 || response.status >= 300) {
+      const errorJson = await response.json();
+      console.error(errorJson);
+      throw new Error(errorJson.error.message);
     }
   }
 
@@ -111,7 +129,7 @@ class AssistantApi {
         } else if (jsonString.startsWith("event: ")) {
           console.log({ event: jsonString });
         } else if (jsonString.startsWith("data: [DONE]")) {
-          yield { done: true }
+          yield { done: true };
         }
       }
     }

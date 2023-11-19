@@ -74,6 +74,8 @@ function initializeLlamaTree() {
     });
 
     await llamaTree.sendLlamaMessage('Translate into Dutch', {
+      model: 'gpt-3.5-turkish',
+      max_tokens: 100,
       function_call: { name: "set_motivation" },
       functions: [
         {

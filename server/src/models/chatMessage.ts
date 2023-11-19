@@ -35,6 +35,7 @@ export class LlamaMessage implements ILlamaMessage {
       return new LlamaMessage(args.explanation, timestamp, parentId, message.role, parsedFunctionCall);
     }
 
+    console.trace(message);
     throw new Error("fromChatCompletionMessage: Message must have content or function call");
   }
 
