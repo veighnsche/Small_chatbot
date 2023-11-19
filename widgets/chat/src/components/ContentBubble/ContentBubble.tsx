@@ -20,9 +20,7 @@ import "./ContentBubble.css";
 import { useLlamaContentBubble } from "./useLlamaContentBubble.ts";
 
 export const ContentBubble = (message: LlamaMessage) => {
-  const {
-    role,
-  } = message;
+  const { role } = message;
 
   switch (role) {
     case "user":
@@ -39,42 +37,28 @@ export const ContentBubble = (message: LlamaMessage) => {
   }
 };
 
-const User = ({
-  content,
-  parent_id,
-  iter,
-}: LlamaMessage) => {
-  const {
-    isEditing,
-    onStartEdit,
-    onCancelEdit,
-  } = useLlamaContentBubble.user();
+const User = ({ content, parent_id, iter }: LlamaMessage) => {
+  const { isEditing, onStartEdit, onCancelEdit } = useLlamaContentBubble.user();
 
   return (
     <div className="content-bubble-container user">
       <div className="content-bubble-wrapper">
         <div className="content-header">
-          <img
-            className="role-icon"
-            src={UserIcon}
-            alt={`user icon`}
-          />
+          <img className="role-icon" src={UserIcon} alt={`user icon`} />
           <span>You</span>
         </div>
         <div className="content-text">
           {isEditing ? (
-            <InputEdit
-              content={content || ""}
-              parent_id={parent_id}
-              onCancel={onCancelEdit}
-            />
-          ) : <p>{content}</p>}
+            <InputEdit content={content || ""} parent_id={parent_id} onCancel={onCancelEdit} />
+          ) : (
+            <p>{content}</p>
+          )}
         </div>
         <div className="content-actions">
-          <Iterator parent_id={parent_id} iter={iter}/>
+          <Iterator parent_id={parent_id} iter={iter} />
           {!isEditing ? (
             <IconButton className="on-user-hover" onClick={onStartEdit} title={"Edit"}>
-              <img src={Edit} alt="edit icon"/>
+              <img src={Edit} alt="edit icon" />
             </IconButton>
           ) : null}
         </div>
@@ -83,28 +67,22 @@ const User = ({
   );
 };
 
-const FunctionCall = ({
-  content,
-  function_call,
-  ...rest
-}: LlamaMessage) => {
+const FunctionCall = ({ content, function_call, ...rest }: LlamaMessage) => {
   return (
     <>
-      <Assistant {...{ content, ...rest }}/>
-      <System {...{
-        content: `${function_call?.name}${SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE}${function_call?.arguments}`,
-        function_call, ...rest,
-      }}/>
+      <System
+        {...{
+          content: `${function_call?.name}${SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE}${function_call?.arguments}`,
+          function_call,
+          ...rest,
+        }}
+      />
+      <Assistant {...{ content, ...rest }} />
     </>
   );
 };
 
-const Assistant = ({
-  content,
-  id,
-  parent_id,
-  iter,
-}: LlamaMessage) => {
+const Assistant = ({ content, id, parent_id, iter }: LlamaMessage) => {
   const isLastAssistantMessage = useLlamaSelector((state) => {
     return state.llamaChat.lastMessageId === id;
   });
@@ -112,34 +90,31 @@ const Assistant = ({
     <div className="content-bubble-container assistant">
       <div className="content-bubble-wrapper">
         <div className="content-header">
-          <img
-            className="role-icon"
-            src={AssistantIcon}
-            alt={`assistant icon`}
-          />
+          <img className="role-icon" src={AssistantIcon} alt={`assistant icon`} />
           <span>Assistant</span>
         </div>
         <div className="content-text">
           <p>{content}</p>
         </div>
         <div className="content-actions">
-          <Iterator parent_id={parent_id} iter={iter}/>
-          <CopyToClipboard content={content || ""}/>
-          {isLastAssistantMessage ? <Regenerate/> : null}
+          <Iterator parent_id={parent_id} iter={iter} />
+          <CopyToClipboard content={content || ""} />
+          {isLastAssistantMessage ? <Regenerate /> : null}
         </div>
       </div>
     </div>
   );
 };
 
-const System = ({ content: THIS_CONTENT_HAS_2_VALUES, function_call, id }: LlamaMessage) => { // THIS_CONTENT_HAS_2_VALUES = Technical debt = out of scope
-  const [title, content] = THIS_CONTENT_HAS_2_VALUES!.split(SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE); // SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE = Technical debt = out of scope
+const System = ({ content: systemContent, function_call, id }: LlamaMessage) => {
   const [isVisible, setIsVisible] = useState(false);
   const dispatch = useLlamaDispatch();
 
   const toggleContent = () => {
     setIsVisible(!isVisible);
   };
+
+  const [title, content] = systemContent!.split(SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE);
 
   return (
     <div className={`content-bubble-container system ${function_call ? "function-call" : ""}`}>
@@ -152,12 +127,17 @@ const System = ({ content: THIS_CONTENT_HAS_2_VALUES, function_call, id }: Llama
           />
           <span>{title}</span>
           <IconButton onClick={toggleContent} title={isVisible ? "Hide Content" : "Show Content"}>
-            <img src={isVisible ? ContentHideIcon : ContentShowIcon}
-                 alt={`${isVisible ? "Hide Content" : "Show Content"} icon`}/>
+            <img
+              src={isVisible ? ContentHideIcon : ContentShowIcon}
+              alt={`${isVisible ? "Hide Content" : "Show Content"} icon`}
+            />
           </IconButton>
           {id.startsWith("system-") ? (
-            <IconButton onClick={() => dispatch(removeSystemMessage({ id }))} title="Clear A Loaded System Message">
-              <img src={CrossIcon} alt="Clear A Loaded System Message icon"/>
+            <IconButton
+              onClick={() => dispatch(removeSystemMessage({ id }))}
+              title="Clear A Loaded System Message"
+            >
+              <img src={CrossIcon} alt="Clear A Loaded System Message icon" />
             </IconButton>
           ) : null}
         </div>

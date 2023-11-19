@@ -4,19 +4,23 @@
     bottom: 0;
     right: 32px;
     height: 600px;
-    border: 2px solid #888;
+    border: 2px solid #e0e0e0;
     border-bottom: 0;
-    background-color: #f5f5f5;
+    background-color: #f8f8f8;
     display: grid;
     grid-template-columns: 240px 360px;
     grid-template-rows: 4rem 1fr auto 2rem 2rem;
     grid-template-areas:
-        "history chat"
-        "history chat"
-        "history input"
-        "new input"
-        "new title";
+    "history chat"
+    "history chat"
+    "history input"
+    "new input"
+    "new title";
     transition: grid-template-columns 300ms ease-in-out, height 300ms ease-in-out;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    font-family: 'Arial', sans-serif;
+    color: #333;
 }
 
 .box-container.large {
@@ -34,15 +38,23 @@
 
 .open-chat-button {
     z-index: 9999;
-    background-color: #f5f5f5;
+    background-color: #ffffff;
     position: fixed;
-    bottom: 0;
-    right: 32px;
+    bottom: 20px; /* Adjust the distance from the bottom */
+    right: 20px; /* Adjust the distance from the right */
     height: 48px;
     width: 48px;
-    border: 2px solid #888;
+    border: 2px solid #e0e0e0;
     border-bottom: none;
+    border-radius: 50%; /* Make the button round */
     display: flex;
     justify-content: center;
     align-items: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: background-color 300ms ease-in-out;
+}
+
+.open-chat-button:hover {
+    background-color: #f0f0f0;
+    cursor: pointer;
 }

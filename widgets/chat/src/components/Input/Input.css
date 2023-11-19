@@ -1,10 +1,17 @@
+/* Input.css */
+
+.input-container {
+    margin: 0 0.5rem;
+    grid-area: input;
+}
+
 .chat-input-wrapper {
     z-index: 10;
     padding: 0.5rem;
     background-color: white;
     position: relative;
     border: 1.5px solid #ccc;
-    border-radius: 8px 8px calc(8px + 0.25rem) 8px;
+    border-radius: 8px;
 }
 
 .chat-input {
@@ -26,5 +33,4 @@
     position: absolute;
     bottom: 0.25rem;
     right: 0.25rem;
-    /* Style your button as needed */
 }

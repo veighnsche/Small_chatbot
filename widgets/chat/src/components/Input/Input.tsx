@@ -20,7 +20,7 @@ export const Input = () => {
   const isStreaming = !!sseId;
 
   return (
-    <div style={{ margin: "0 0.5rem", gridArea: "input" }}>
+    <div className="input-container">
       <div className="chat-input-wrapper">
         <textarea
           className="chat-input"
@@ -34,11 +34,11 @@ export const Input = () => {
         <div className="icon-button-container">
           {isStreaming ? (
             <IconButton circle onClick={() => dispatch(llamaSseStop({ sseId }))} title={"Stop Streaming"}>
-              <img src={StopIcon} alt={"Stop Streaming icon"}/>
+              <img src={StopIcon} alt={"Stop Streaming icon"} />
             </IconButton>
           ) : (
             <IconButton circle onClick={handleSend} title={"Send"}>
-              <img src={MessageSendIcon} alt={"Send icon"}/>
+              <img src={MessageSendIcon} alt={"Send icon"} />
             </IconButton>
           )}
         </div>

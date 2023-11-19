@@ -11,7 +11,7 @@ export const Chat = () => {
     return (
       <div className="empty-chat-container">
         <p className="empty-state-message">
-          The Assistant can make mistakes, it's just mechanical numbers that generates language
+          The Assistant can make mistakes;<br/> it's just a machine generating language.
         </p>
       </div>
     );

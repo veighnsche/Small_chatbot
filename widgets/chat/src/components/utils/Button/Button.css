@@ -32,3 +32,11 @@
 .secondary-button:active {
     background-color: #e6e6e6;
 }
+
+/* Button.css */
+
+.primary-button:focus,
+.secondary-button:focus {
+    outline: none;
+    box-shadow: 0 0 4px #007bff; /* Add a subtle box shadow on focus */
+}

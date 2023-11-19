@@ -1,19 +1,26 @@
 .new-chat-button {
     grid-area: new;
-    height: calc(4rem + 2px); /* 2px for border */
+    height: 4rem; /* Remove the calculation */
+    padding: 0 16px; /* Add horizontal padding */
+    margin-left: -2px;
     border: none;
-    background-color: #007bff; /* Adjusted color */
+    background-color: #007bff;
     color: white;
     font-size: 1.2rem;
     cursor: pointer;
-    box-sizing: border-box;
+    border-bottom-left-radius: 10px;
+    display: flex; /* Center text vertically and horizontally */
+    align-items: center;
+    justify-content: center;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
+    transition: background-color 0.3s, transform 0.1s; /* Add a subtle transform effect */
 }
 
 .new-chat-button:hover {
-    background-color: #0056b3; /* Darker shade for hover effect */
+    background-color: #0056b3;
+    transform: scale(1.05); /* Slightly scale up on hover */
 }
 
 .new-chat-button:focus {

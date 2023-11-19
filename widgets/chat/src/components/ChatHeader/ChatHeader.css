@@ -2,14 +2,14 @@
     grid-area: title;
     display: flex;
     align-items: center;
-    justify-content: space-between; /* Adjusted for better spacing */
-    border-bottom: 1px solid #888;
-    padding: 0 1rem; /* Added padding to the container for consistent spacing */
+    justify-content: space-between;
+    border-bottom: 1px solid #e0e0e0; /* Lighter border color */
+    padding: 8px 16px; /* Added padding for consistent spacing */
     z-index: 10;
 }
 
 .header-actions {
     display: flex;
-    gap: 0.5rem;
+    gap: 8px; /* Adjusted gap for better spacing */
     align-items: center;
 }

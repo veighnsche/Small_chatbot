@@ -3,5 +3,21 @@
     display: flex;
     flex-direction: column;
     overflow-y: auto;
-    border-right: 1px solid #888;
+    border-right: 1px solid #e0e0e0; /* Updated border color to a lighter gray */
+    background-color: #fff; /* Added a white background */
+    border-top-left-radius: 16px;
+}
+
+.history-list-wrapper::-webkit-scrollbar {
+    width: 8px;
+}
+
+.history-list-wrapper::-webkit-scrollbar-thumb {
+    background-color: #888; /* Styling scrollbar thumb */
+    border-radius: 4px;
+}
+
+.history-list-wrapper::-webkit-scrollbar-track {
+    background-color: #f0f0f0; /* Styling scrollbar track */
+    border-radius: 4px;
 }

@@ -1,16 +1,17 @@
+/* Keep your existing CSS selectors and styles */
 .history-item-wrapper {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 1rem;
-    border-bottom: 1px solid #888;
+    padding: 1rem;
+    border-bottom: 1px solid #e0e0e0; /* Lighter border color */
     cursor: pointer;
     transition: background-color 0.3s;
-    background-color: #ddd;
+    background-color: #f8f8f8; /* Lighter background color */
 }
 
 .history-item-wrapper:hover {
-    background-color: #f5f5f5;
+    background-color: #f0f0f0; /* Slightly darker background on hover */
 }
 
 .history-item-button {
@@ -18,19 +19,19 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 0.5rem 1rem;
+    padding: 1rem;
     cursor: pointer;
     transition: background-color 0.3s;
-    background-color: #fefefe;
+    background-color: #fff; /* White background */
     width: 100%;
     text-align: left;
-    border-bottom: 1px solid #888;
+    border-bottom: 1px solid #e0e0e0; /* Lighter border color */
     box-sizing: border-box;
 }
 
 .history-item-button:hover,
 .history-item-button:focus {
-    background-color: #f5f5f5;
+    background-color: #f0f0f0; /* Slightly darker background on hover/focus */
     outline: none;
 }
 
@@ -44,13 +45,15 @@
 
 .action {
     display: flex;
+    gap: 8px; /* Added gap between icons */
 }
 
 .edit-input {
     border: none;
-    border-bottom: 1px solid #888;
+    border-bottom: 1px solid #e0e0e0; /* Lighter border color */
     font-size: 1rem;
     font-weight: bold;
     color: #333;
     width: 100%;
+    padding: 0.5rem 0; /* Added padding for better input appearance */
 }

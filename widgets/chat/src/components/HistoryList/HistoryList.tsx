@@ -9,9 +9,9 @@ export const HistoryList = () => {
   } = useLlamaHistoryList();
 
   return (
-    <div className={`history-list-wrapper`}>
+    <div className="history-list-wrapper">
       {history.map((chat) => (
-        <HistoryItem key={chat.id} {...chat} selected={selectedChatId(chat.id)}/>
+        <HistoryItem key={chat.id} {...chat} selected={selectedChatId(chat.id)} />
       ))}
     </div>
   );

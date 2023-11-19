@@ -14,35 +14,27 @@ export const ChatHeader = () => {
   const dispatch = useLlamaDispatch();
   const { isHistoryDrawerOpen, isLarge } = useLlamaSelector(state => state.llamaChatView);
 
-  const { history, resize } = {
-    history: {
-      icon: isHistoryDrawerOpen ? CloseHistoryIcon : OpenHistoryIcon,
-      title: isHistoryDrawerOpen ? "Close History" : "Open History",
-    },
-    resize: {
-      icon: isLarge ? ShrinkIcon : EnlargeIcon,
-      title: isLarge ? "Shrink" : "Enlarge",
-    },
-  };
+  const historyTitle = isHistoryDrawerOpen ? "Close History" : "Open History";
+  const resizeTitle = isLarge ? "Shrink" : "Enlarge";
 
   return (
     <div className="header-container">
       <div className="header-actions">
-        <IconButton onClick={() => dispatch(toggleHistoryDrawer())} title={history.title}>
-          <img src={history.icon} alt={`${history.title} icon`}/>
+        <IconButton onClick={() => dispatch(toggleHistoryDrawer())} title={historyTitle}>
+          <img src={isHistoryDrawerOpen ? CloseHistoryIcon : OpenHistoryIcon} alt={`${historyTitle} icon`} />
         </IconButton>
-        {!isHistoryDrawerOpen ? (
+        {!isHistoryDrawerOpen && (
           <IconButton onClick={() => dispatch(reset())} title="New Chat">
-            <img src={NewChatIcon} alt="New Chat icon"/>
+            <img src={NewChatIcon} alt="New Chat icon" />
           </IconButton>
-        ) : null}
+        )}
       </div>
       <div className="header-actions">
-        <IconButton onClick={() => dispatch(toggleSize())} title={resize.title}>
-          <img src={resize.icon} alt={`${resize.title} icon`}/>
+        <IconButton onClick={() => dispatch(toggleSize())} title={resizeTitle}>
+          <img src={isLarge ? ShrinkIcon : EnlargeIcon} alt={`${resizeTitle} icon`} />
         </IconButton>
         <IconButton onClick={() => dispatch(toggleChatView())} title="Minimize Chat">
-          <img src={CloseChatIcon} alt="Minimize Chat icon"/>
+          <img src={CloseChatIcon} alt="Minimize Chat icon" />
         </IconButton>
       </div>
     </div>

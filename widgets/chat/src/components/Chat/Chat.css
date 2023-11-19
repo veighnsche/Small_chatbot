@@ -14,20 +14,17 @@
     font-style: italic;
 }
 
-.empty-state-message {
-    width: 33%;
+.empty-state-message,
+.error-message {
+    width: 50%; /* Adjusted width for better readability */
     text-align: center;
     padding: 1rem;
-    border: 1px solid #888;
-    background-color: #dedede;
+    border: 1px solid #e0e0e0; /* Lighter border color */
+    background-color: #f8f8f8; /* Lighter background color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Added a subtle box shadow */
+    margin: 1rem auto; /* Center the message containers */
 }
 
 .error-message {
-    margin-left: 1rem;
     color: maroon;
-    width: 33%;
-    text-align: center;
-    padding: 1rem;
-    border: 1px solid #888;
-    background-color: #dedede;
 }
