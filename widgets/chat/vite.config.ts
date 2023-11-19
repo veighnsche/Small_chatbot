@@ -13,6 +13,7 @@ export default defineConfig({
       entry: "src/index.tsx",
       name: "LlamaTreeChatWidget",
       fileName: (format) => `llama-tree-chat-widget.${format}.js`,
+      formats: ["es"],
     },
   },
 });

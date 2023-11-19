@@ -21,14 +21,18 @@ const create: AuthMiddleware = async (req, res: ResLocals<ChatIdLocals>, next) =
  */
 const addMessages: AuthMiddleware = async (req: ReqBody<NewMessagesBody>, res: ResLocals<ThreadLocals & ChatDocLocals>, next) => {
   if (!res.locals.thread || !res.locals.chatDocRepo) {
-    throw new Error("The messages and chatDocRepo must be initialized before calling the assistant.");
+    next(new Error("The messages and chatDocRepo must be initialized before calling the assistant."));
   }
 
   const prevMessages = res.locals.thread;
   const newMessages = await LlamaMessage.fromChatCompletionMessages(req.body.newMessages, getLastId(prevMessages));
-  await res.locals.chatDocRepo.addMessages(newMessages);
-  res.locals.thread.push(...newMessages);
-  next();
+  try {
+    await res.locals.chatDocRepo.addMessages(newMessages);
+    res.locals.thread.push(...newMessages);
+    next();
+  } catch (err) {
+    next(err);
+  }
 };
 
 /**
@@ -36,7 +40,7 @@ const addMessages: AuthMiddleware = async (req: ReqBody<NewMessagesBody>, res: R
  */
 const deleteAllChats: AuthMiddleware = async (_, res: ResLocals<ChatColLocals>, next) => {
   if (!res.locals.chatColRepo) {
-    throw new Error("The chatColRepo must be initialized before deleting all chats.");
+    next(new Error("The chatColRepo must be initialized before deleting all chats."));
   }
 
   await res.locals.chatColRepo.deleteAllChats();
@@ -48,7 +52,7 @@ const deleteAllChats: AuthMiddleware = async (_, res: ResLocals<ChatColLocals>, 
  */
 const deleteChat: AuthMiddleware = async (_, res: ResLocals<ChatDocLocals>, next) => {
   if (!res.locals.chatDocRepo) {
-    throw new Error("The chatDocRepo must be initialized before deleting a chat.");
+    next(new Error("The chatDocRepo must be initialized before deleting a chat."));
   }
 
   await res.locals.chatDocRepo.deleteChat();
@@ -60,7 +64,7 @@ const deleteChat: AuthMiddleware = async (_, res: ResLocals<ChatDocLocals>, next
  */
 const editTitle: AuthMiddleware = async (req: ReqBody<EditChatTitleBody>, res: ResLocals<ChatDocLocals>, next) => {
   if (!res.locals.chatDocRepo) {
-    throw new Error("The chatDocRepo must be initialized before deleting a chat.");
+    next(new Error("The chatDocRepo must be initialized before deleting a chat."));
   }
 
   await res.locals.chatDocRepo.editTitle(req.body.title);

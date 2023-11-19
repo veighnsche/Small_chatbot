@@ -1,8 +1,8 @@
 .box-container {
     z-index: 9999;
     position: fixed;
-    bottom: 0;
-    right: 32px;
+    bottom: 20px;
+    right: 20px;
     height: 600px;
     border: 2px solid #e0e0e0;
     border-bottom: 0;

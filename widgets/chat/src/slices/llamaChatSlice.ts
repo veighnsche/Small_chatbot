@@ -2,7 +2,8 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { LlamaChat } from "../types/LlamaChat";
 import { LlamaLoadedSystemMessage } from "../types/LlamaLoadedSystemMessage.ts";
 import { LlamaMessage } from "../types/LlamaMessage";
-import { addIters, makeChildrensMap, traverseToLastMessageId } from "../utils/messages";
+import { addIters, getLastMessageId, makeChildrensMap, traverseToLastMessageId } from "../utils/messages";
+
 
 export type LlamaChatAction = ReturnType<typeof llamaChatSlice.actions[keyof typeof llamaChatSlice.actions]>
 
@@ -15,6 +16,7 @@ export interface LlamaChatState {
   itersMap: Record<LlamaMessage["id"], number>; // the number represents the idx of the child message
   lastMessageId: LlamaMessage["id"];
   error?: string;
+  isStreaming: boolean;
 }
 
 const initialState: LlamaChatState = {
@@ -26,6 +28,7 @@ const initialState: LlamaChatState = {
   itersMap: {},
   lastMessageId: "-1",
   error: undefined,
+  isStreaming: false,
 };
 
 const llamaChatSlice = createSlice({
@@ -36,12 +39,9 @@ const llamaChatSlice = createSlice({
       state.error = undefined;
       state.messages = addIters(action.payload.messages);
       state.childrensMap = makeChildrensMap(state.messages);
-
-      const lastMessage = state.messages[state.messages.length - 1];
-      if (lastMessage) {
-        state.lastMessageId = lastMessage.id;
-      }
+      state.lastMessageId = getLastMessageId(state.messages, state.isStreaming);
     },
+
 
     setSseId: (state, action: PayloadAction<{ sseId?: string }>) => {
       state.sseId = action.payload.sseId;
@@ -91,7 +91,38 @@ const llamaChatSlice = createSlice({
 
     setError: (state, action: PayloadAction<{ error: string }>) => {
       state.error = action.payload.error;
-    }
+    },
+  },
+  extraReducers: {
+    "llamaChat/addMessage/pending": (state) => {
+      state.isStreaming = true;
+    },
+    "llamaChat/addMessage/fulfilled": (state) => {
+      state.isStreaming = false;
+    },
+    "llamaChat/addMessage/rejected": (state) => {
+      state.isStreaming = false;
+    },
+
+    "llamaChat/regenerate/pending": (state) => {
+      state.isStreaming = true;
+    },
+    "llamaChat/regenerate/fulfilled": (state) => {
+      state.isStreaming = false;
+    },
+    "llamaChat/regenerate/rejected": (state) => {
+      state.isStreaming = false;
+    },
+
+    "llamaChat/editMessage/pending": (state) => {
+      state.isStreaming = true;
+    },
+    "llamaChat/editMessage/fulfilled": (state) => {
+      state.isStreaming = false;
+    },
+    "llamaChat/editMessage/rejected": (state) => {
+      state.isStreaming = false;
+    },
   },
 });
 

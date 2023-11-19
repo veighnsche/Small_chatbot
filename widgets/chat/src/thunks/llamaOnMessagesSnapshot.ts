@@ -21,11 +21,13 @@ export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chatId?: string 
     const messagesCol = collection(userDocRef, "chats", chatId, "messages");
 
     unsubscribe = onSnapshot(messagesCol, (snapshot) => {
-      const messages = snapshot.docs.map((doc) => ({
+      const messages = snapshot.docs
+        .map((doc) => ({
         id: doc.id,
         ...doc.data(),
-      }));
-      dispatch(setMessages({ messages: messages as LlamaMessage[] }));
+      } as LlamaMessage))
+
+      dispatch(setMessages({ messages }));
     });
   },
 );

@@ -72,7 +72,7 @@ export function traverseToLastMessageId(
     const iter = itersMap[parent_id] || children.length; // Use the iter value if available, otherwise take the last child
 
     const childId = children[iter - 1];
-     // if the iter is 1 too high (so childId = undefined), then it's regenerating the last message
+    // if the iter is 1 too high (so childId = undefined), then it's regenerating the last message
     if (!childId) return parent_id;
 
     return findLastMessageId(childId);
@@ -92,7 +92,7 @@ export function loadedSystemToLlama(loadedSystemMessage: LlamaLoadedSystemMessag
       current: 1,
       total: 1,
     },
-  }
+  };
 }
 
 export function processSystemMessagesToLlama(thread: LlamaMessage[], loadedSystemMessages: any[]): LlamaMessage[] {
@@ -120,5 +120,76 @@ export function loadedSystemToChatParam(loadedSystemMessage: LlamaLoadedSystemMe
   return {
     role: "system",
     content: loadedSystemMessage.title + SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE + loadedSystemMessage.content,
+  };
+}
+
+export function findLastAssistantMessageId(messages: LlamaMessage[]): string | undefined {
+  for (let i = messages.length - 1; i >= 0; i--) {
+    if (messages[i].role === "assistant") {
+      // scenario: [...first messages, assistant, ...last messages] -> assistant id
+      return messages[i].id;
+    }
+  }
+  return undefined;
+}
+
+export function getLastMessageId(messages: LlamaMessage[], isStreaming: boolean): string {
+  const messagesLength = messages.length;
+  if (messagesLength === 0) {
+    // scenario: [] -> "-1"
+    return "-1";
+  }
+
+  const lastMessage = messages[messagesLength - 1];
+
+  switch (lastMessage.role) {
+    case "assistant":
+      // scenario: [...first messages, assistant] -> assistant id
+      return lastMessage.id;
+
+    case "system":
+      // scenario: [...first messages, system] -> last assistant id || "-1"
+      return findLastAssistantMessageId(messages) || "-1";
+
+    case "user":
+      if (!isStreaming) {
+        // scenario: [...first messages, user] -> last assistant id || "-1"
+        return findLastAssistantMessageId(messages) || "-1";
+      }
+
+      if (messagesLength > 1) {
+        const lastLastMessage = messages[messagesLength - 2];
+        if (lastLastMessage.role === "user") {
+          // scenario: [...first messages, user, user] -> last assistant id || "-1"
+          return findLastAssistantMessageId(messages) || "-1";
+        }
+        if (lastLastMessage.role === "system") {
+          for (let i = messagesLength - 3; i >= 0; i--) {
+            switch (messages[i].role) {
+              case "system":
+                // scenario: [...first messages, ...system, user] -> continue
+                continue;
+
+              case "assistant":
+                // scenario: [...first messages, assistant, ...system, user] -> assistant id
+                return messages[i].id;
+
+              case "user":
+                // scenario: [...first messages, user, ...system, user] -> last assistant id || "-1"
+                return findLastAssistantMessageId(messages) || "-1";
+            }
+          }
+          // scenario: [...system, user] -> user id
+          return lastMessage.id;
+        }
+        // scenario: [...first messages, assistant, user] -> user id
+        return lastMessage.id;
+      }
+      // scenario: [user] -> user id
+      return lastMessage.id;
+
+    default:
+      // scenario: [...first messages, unknown] -> "-1"
+      return "-1";
   }
 }
