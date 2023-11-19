@@ -3,6 +3,7 @@ import { LlamaChat } from "../types/LlamaChat";
 import { LlamaLoadedSystemMessage } from "../types/LlamaLoadedSystemMessage.ts";
 import { LlamaMessage } from "../types/LlamaMessage";
 import { addIters, getLastMessageId, makeChildrensMap, traverseToLastMessageId } from "../utils/messages";
+import { generateUniqueID } from "../utils/uid.ts";
 
 
 export type LlamaChatAction = ReturnType<typeof llamaChatSlice.actions[keyof typeof llamaChatSlice.actions]>
@@ -48,6 +49,7 @@ const llamaChatSlice = createSlice({
     },
 
     setCurrentChatId: (state, action: PayloadAction<{ chatId: string }>) => {
+      state.loadedSystemMessages = [];
       state.messages = [];
       state.itersMap = {};
       state.currentChatId = action.payload.chatId;
@@ -65,20 +67,20 @@ const llamaChatSlice = createSlice({
       state.lastMessageId = traverseToLastMessageId(state.childrensMap, state.itersMap, action.payload.parent_id); // DEPRECATED: New approach is to place this in the LlamaThreadMemoizer
     },
 
-    loadSystemMessage: (state, action: PayloadAction<{ message: Omit<LlamaLoadedSystemMessage, "id"> }>) => {
-      state.loadedSystemMessages.push({
-        id: `system-${Date.now().toString() + "." + Math.random().toString().slice(2)}`,
-        ...action.payload.message,
-      });
+    loadSystemMessages: (state, action: PayloadAction<{ messages: Omit<LlamaLoadedSystemMessage, "id">[] }>) => {
+      state.loadedSystemMessages = [
+        ...state.loadedSystemMessages,
+        ...action.payload.messages.map(message => ({
+          id: `system-${generateUniqueID()}`,
+          ...message,
+        })),
+      ];
     },
 
-    removeSystemMessage: (state, action: PayloadAction<{ id: string }>) => {
+    removeSystemMessages: (state, action: PayloadAction<{ ids: string[] }>) => {
       // what is more performant? splice or filter?
       // answer: splice is more performant
-      const index = state.loadedSystemMessages.findIndex((message) => message.id === action.payload.id);
-      if (index !== -1) {
-        state.loadedSystemMessages.splice(index, 1);
-      }
+      state.loadedSystemMessages = state.loadedSystemMessages.filter((message) => !action.payload.ids.includes(message.id));
     },
 
     emptyLoadedSystemMessages: (state) => {
@@ -132,8 +134,8 @@ export const {
   setSseId,
   setLastMessageId,
   setIter,
-  loadSystemMessage,
-  removeSystemMessage,
+  loadSystemMessages,
+  removeSystemMessages,
   emptyLoadedSystemMessages,
   reset,
   setError,

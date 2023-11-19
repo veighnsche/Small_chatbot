@@ -7,7 +7,7 @@ import Edit from "../../assets/edit.svg";
 import FunctionCallIcon from "../../assets/function-call.svg";
 import SystemIcon from "../../assets/system.svg";
 import UserIcon from "../../assets/user.svg";
-import { removeSystemMessage } from "../../slices/llamaChatSlice.ts";
+import { removeSystemMessages } from "../../slices/llamaChatSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
 import { LlamaMessage } from "../../types/LlamaMessage.ts";
 import { SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE } from "../../utils/messages.ts";
@@ -134,7 +134,7 @@ const System = ({ content: systemContent, function_call, id }: LlamaMessage) => 
           </IconButton>
           {id.startsWith("system-") ? (
             <IconButton
-              onClick={() => dispatch(removeSystemMessage({ id }))}
+              onClick={() => dispatch(removeSystemMessages({ ids: [id] }))}
               title="Clear A Loaded System Message"
             >
               <img src={CrossIcon} alt="Clear A Loaded System Message icon" />

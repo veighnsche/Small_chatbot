@@ -24,9 +24,16 @@ const llamaChatParamsSlice = createSlice({
       Object.assign(state, action.payload);
       return state;
     },
+    updateLlamaChatParams: (state, action: PayloadAction<(params: LlamaChatParams) => Partial<LlamaChatParams>>) => {
+      Object.assign(state, action.payload(state));
+      return state;
+    }
   },
 });
 
-export const { editLlamaChatParams } = llamaChatParamsSlice.actions;
+export const {
+  editLlamaChatParams,
+  updateLlamaChatParams,
+} = llamaChatParamsSlice.actions;
 
 export default llamaChatParamsSlice.reducer;

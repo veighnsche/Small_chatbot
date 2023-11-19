@@ -9,8 +9,8 @@ import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
 import { useLlamaStreamingWrite } from "./providers/LlamaStreamingProvider.tsx";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
-import { editLlamaChatParams, LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
-import { emptyLoadedSystemMessages, loadSystemMessage, removeSystemMessage } from "./slices/llamaChatSlice.ts";
+import { editLlamaChatParams, LlamaChatParams, updateLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
+import { emptyLoadedSystemMessages, loadSystemMessages, removeSystemMessages } from "./slices/llamaChatSlice.ts";
 import { editChatView, LlamaChatViewSliceState, toggleChatView } from "./slices/llamaChatViewSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
 import { llamaOnMessagesSnapshot } from "./thunks/llamaOnMessagesSnapshot.ts";
@@ -21,12 +21,12 @@ const Main = () => {
   const dispatch = useLlamaDispatch();
   const llamaStreamContext = useLlamaStreamingWrite()
 
-  const handleLoadSystemMessage = (systemMessageToLoad: Omit<LlamaLoadedSystemMessage, "id">) => {
-    dispatch(loadSystemMessage({ message: systemMessageToLoad }));
+  const handleLoadSystemMessages = (messages: Omit<LlamaLoadedSystemMessage, "id">[]) => {
+    dispatch(loadSystemMessages({ messages }));
   };
 
-  const handleRemoveLoadedSystemMessage = (id: string) => {
-    dispatch(removeSystemMessage({ id }));
+  const handleRemoveLoadedSystemMessages = (ids: string[]) => {
+    dispatch(removeSystemMessages({ ids }));
   };
 
   const handleEmptyLoadedSystemMessages = () => {
@@ -45,8 +45,12 @@ const Main = () => {
     }));
   };
 
-  const handleEditChatParams = (params: Partial<LlamaChatParams>) => {
-    dispatch(editLlamaChatParams(params));
+  const handleEditChatParams = (params: Partial<LlamaChatParams> | ((params: LlamaChatParams) => Partial<LlamaChatParams>)) => {
+    if (typeof params === "function") {
+      dispatch(updateLlamaChatParams(params));
+    } else {
+      dispatch(editLlamaChatParams(params));
+    }
   };
 
   const handleEditChatView = (view: Partial<LlamaChatViewSliceState>) => {
@@ -59,8 +63,8 @@ const Main = () => {
 
   useEffect(() => {
     const subs = [
-      llamaEventBus.on("load-system-message", handleLoadSystemMessage),
-      llamaEventBus.on("remove-system-message", handleRemoveLoadedSystemMessage),
+      llamaEventBus.on("load-system-messages", handleLoadSystemMessages),
+      llamaEventBus.on("remove-system-messages", handleRemoveLoadedSystemMessages),
       llamaEventBus.on("empty-system-messages", handleEmptyLoadedSystemMessages),
       llamaEventBus.on("user-message", handleAddMessage),
       llamaEventBus.on("chat-params", handleEditChatParams),

@@ -53,11 +53,19 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   loadSystemMessage(systemMessage: LlamaLoadedSystemMessage) {
-    llamaEventBus.emit("load-system-message", systemMessage);
+    llamaEventBus.emit("load-system-messages", [systemMessage]);
   }
 
   removeLoadedSystemMessage(id: string) {
-    llamaEventBus.emit("remove-system-message", id);
+    llamaEventBus.emit("remove-system-messages", [id]);
+  }
+
+  loadSystemMessages(systemMessages: LlamaLoadedSystemMessage[]) {
+    llamaEventBus.emit("load-system-messages", systemMessages);
+  }
+
+  removeLoadedSystemMessages(ids: string[]) {
+    llamaEventBus.emit("remove-system-messages", ids);
   }
 
   emptyLoadedSystemMessages() {
@@ -71,7 +79,7 @@ class ChatWidgetElement extends HTMLElement {
     return llamaEventBus.onceAsync("assistant_uid: " + assistant_uid);
   }
 
-  setChatParams(params: LlamaChatParams) {
+  setChatParams(params: LlamaChatParams | ((params: LlamaChatParams) => Partial<LlamaChatParams>)) {
     llamaEventBus.emit("chat-params", params);
   }
 

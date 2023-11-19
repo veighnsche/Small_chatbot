@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { useLlamaStreamingRead } from "../../providers/LlamaStreamingProvider.tsx";
-import { threadWithLoadedSystemMessagesMemo } from "../../selectors/threadSse.ts";
+import { threadWithLoadedSystemMessagesMemo } from "../../selectors/threadWithLoadedSystemMessagesMemo.ts";
 import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
 import { unsubscribeFromLlamaMessages } from "../../thunks/llamaOnMessagesSnapshot.ts";
 

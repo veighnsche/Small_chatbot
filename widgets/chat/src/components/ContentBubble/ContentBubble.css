@@ -26,6 +26,10 @@
     background-color: #e6e6e6;
 }
 
+.content-bubble-container.system {
+    padding: 0;
+}
+
 .content-bubble-wrapper {
     width: 100%;
 }
