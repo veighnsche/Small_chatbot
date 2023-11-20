@@ -48,6 +48,10 @@ export async function streamToAssistantAction(
       if ("assistant_uid" in delta && "assistant_message" in delta) {
         llamaStreamContext.stopAssistantStream();
         llamaEventBus.emit("assistant_uid: " + delta.assistant_uid, delta.assistant_message);
+
+        if ("function_call" in delta.assistant_message) {
+          llamaEventBus.emit('function-call', delta.assistant_message.function_call);
+        }
       }
       if ("EVENT_TYPE" in delta && "EVENT_DATA" in delta) {
         if (delta.EVENT_TYPE === "assistant: error") {

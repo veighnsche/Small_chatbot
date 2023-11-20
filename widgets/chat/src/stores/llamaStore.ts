@@ -9,7 +9,6 @@ import llamaChatViewSlice, { LlamaChatViewAction } from "../slices/llamaChatView
 import llamaHistorySlice, { LlamaHistoryAction } from "../slices/llamaHistorySlice";
 import { Wretch } from "../utils/fetch";
 import { actionEmitterMiddleware } from "./middlewares/actionEmitter.ts";
-import { functionCallEmitterMiddleware } from "./middlewares/functionCallEmitter.ts";
 
 
 export interface LlamaStoreExtraArgument {
@@ -36,7 +35,6 @@ export const configureLlamaStore = (extraArgument: LlamaStoreExtraArgument) => c
 
     return defaultMiddleware.concat([
       actionEmitterMiddleware,
-      functionCallEmitterMiddleware,
     ]);
   },
 });
