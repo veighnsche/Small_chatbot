@@ -4,11 +4,21 @@
 
 ## Overview
 
-Llama Tree incorporates an assistant, powered by OpenAI and IOGPT. The assistant is designed to interact with web applications via an API. Initially developed for translation tasks, its functionality has been expanded to support a wider range of tasks.
+### Introduction to Llama Tree
 
-A chat widget, developed as a web component, is also part of the Llama Tree offering. This widget can be integrated into various frontend environments. Positioned at the bottom left of the interface, the widget provides access to the assistant’s capabilities. The integration process requires the inclusion of a script tag in the frontend application.
+Llama Tree integrates an AI assistant, powered by OpenAI and iOgpt, into a chat widget that can be added to any website. This assistant was initially developed for translation tasks but has since expanded its capabilities to cover a broader range of functions. The assistant interacts with users and web applications via an API, facilitating information delivery and task execution.
 
-This README.md provides an introduction to the Llama Tree’s assistant and chat widget, outlining their development, functionality, and integration process.
+### The Llama Tree Chat Widget
+
+The Llama Tree chat widget is positioned in the bottom left corner of a webpage and is designed as a web component for integration into various frontend environments. It is compatible with different types of web applications and aims to provide a consistent user experience across these platforms. The chat widget serves as the interface for user interactions with the AI assistant, enabling a range of functions from simple queries to complex requests.
+
+### Integration Process
+
+Integrating the Llama Tree chat widget into a web application involves adding a script tag to the frontend. This process is designed to be straightforward, with the goal of making the widget easily accessible across different web environments. The widget is intended to augment the functionality of web applications by providing users direct access to the AI assistant's capabilities.
+
+### Functionality and Applications
+
+Llama Tree is suitable for a variety of web applications, including e-commerce sites, educational platforms, and service portals. The AI assistant within the chat widget can handle diverse tasks, from customer service inquiries to providing instant information. Its functionality is designed to enhance user interaction and efficiency on web platforms.
 
 ![screenshot-21-11-23.webp](assets/screenshot-21-11-23.webp)
 
