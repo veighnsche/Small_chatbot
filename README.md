@@ -1,10 +1,11 @@
 # Llama Tree API & Chat Widget
 
 ## Overview
+Llama Tree incorporates an assistant, powered by OpenAI and IOGPT. The assistant is designed to interact with web applications via an API. Initially developed for translation tasks, its functionality has been expanded to support a wider range of tasks.
 
-Llama Tree integrates an assistant powered by OpenAI and iOgpt, with a chat widget on the bottom left part that can be integrated in any site. The assistant is designed to provide information and interact with web applications through an API. Originally developed for translation tasks, it has been expanded to support a wider range of functionalities.
+A chat widget, developed as a web component, is also part of the Llama Tree offering. This widget can be integrated into various frontend environments. Positioned at the bottom left of the interface, the widget provides access to the assistant’s capabilities. The integration process requires the inclusion of a script tag in the frontend application.
 
-The chat widget, developed as a web component, can be integrated into various frontend environments. This widget is designed to be embedded in different types of web applications, providing users with access to the assistant's capabilities. The integration process involves including a script tag in the frontend application.
+This README.md provides an introduction to the Llama Tree’s assistant and chat widget, outlining their development, functionality, and integration process.
 
 ## Technical Stack
 
