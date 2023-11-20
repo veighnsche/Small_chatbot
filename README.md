@@ -1,15 +1,21 @@
 # Llama Tree API & Chat Widget
 
+![llamatree.webp](assets/llama-tree.webp)
+
 ## Overview
+
 Llama Tree incorporates an assistant, powered by OpenAI and IOGPT. The assistant is designed to interact with web applications via an API. Initially developed for translation tasks, its functionality has been expanded to support a wider range of tasks.
 
 A chat widget, developed as a web component, is also part of the Llama Tree offering. This widget can be integrated into various frontend environments. Positioned at the bottom left of the interface, the widget provides access to the assistant’s capabilities. The integration process requires the inclusion of a script tag in the frontend application.
 
 This README.md provides an introduction to the Llama Tree’s assistant and chat widget, outlining their development, functionality, and integration process.
 
+![screenshot-21-11-23.webp](assets/screenshot-21-11-23.webp)
+
 ## Technical Stack
 
 - Node.js
+- Redux toolkit
 - React (for the Chat Widget)
 - TypeScript
 - Docker
@@ -30,6 +36,10 @@ Key directories and files:
 
 1. Create a new Firestore instance and a web app in the Firebase console to obtain the client and admin API keys.
 2. Populate the `.env` file with these keys and other necessary configurations as per `server/.env.example`.
+
+> [!IMPORTANT]
+> Always keep your environment variables secure, especially your Firebase API keys, to prevent unauthorized access.
+
 3. Clone the repository and navigate to the project directory.
 4. Build the Docker images: `docker-compose build`.
 5. Start the Docker containers: `docker-compose up`.
@@ -335,10 +345,16 @@ service cloud.firestore {
 
 Including these security rules ensures that your application's chat data is secure and is accessed appropriately in line with your application's logic and user authentication.
 
+> [!WARNING]
+> Modifying Firebase security rules incorrectly can lead to vulnerabilities. Always review and test rules thoroughly.
+
 ## Current Limitations
 
 - **Fallback Mechanisms**: There are no fallback systems in place yet. This is a proof-of-concept, and while errors are handled and displayed in the widget, the error messaging could be made more user-friendly.
 - **Scaling and Performance**: The project has not been fully tested for scaling and performance, particularly with Firestore and SSE. There are known race conditions that need addressing.
+
+> [!CAUTION]
+> Integrating the chat widget on websites with heavy traffic requires additional considerations for scaling and performance.
 
 ## Future Plans
 
