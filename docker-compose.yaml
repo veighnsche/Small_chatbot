@@ -2,9 +2,9 @@ version: '3.8'
 
 services:
   llama-tree:
-    image: llama-tree:0.1.1
+    image: llama-tree:0.1.3
     ports:
-      - "30001:3001"  # Map the port from the container to your host. Change as needed.
+      - "3001:3001"  # Map the port from the container to your host. Change as needed.
     environment:
       - NODE_ENV=production  # Set additional environment variables if needed
       - LLAMA_TREE_HOST=0.0.0.0
