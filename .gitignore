@@ -8,5 +8,6 @@ server/dist/
 server/src/service-account-key.json
 
 server/.env
+server/.env.dev
 server/.env.resumator
 widgets/chat/sandbox/vanilla/firebaseConfig.js
