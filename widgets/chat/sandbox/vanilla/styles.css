@@ -6,7 +6,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url("https://i.imgur.com/BF3ty6o.jpeg");
+    background-image: url("./llama-tree.webp");
 }
 
 #chat-container {

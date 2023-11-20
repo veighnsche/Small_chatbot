@@ -1,6 +1,6 @@
 # Llama Tree API & Chat Widget
 
-![llamatree.webp](assets/llama-tree.webp)
+<img alt="A screenshot of the llama tree chat widget in the sandbox" src="screenshot-21-11-23.webp" title="Screenshot"/>
 
 ## Overview
 
@@ -19,8 +19,6 @@ Integrating the Llama Tree chat widget into a web application involves adding a 
 ### Functionality and Applications
 
 Llama Tree is suitable for a variety of web applications, including e-commerce sites, educational platforms, and service portals. The AI assistant within the chat widget can handle diverse tasks, from customer service inquiries to providing instant information. Its functionality is designed to enhance user interaction and efficiency on web platforms.
-
-![screenshot-21-11-23.webp](assets/screenshot-21-11-23.webp)
 
 ## Technical Stack
 
