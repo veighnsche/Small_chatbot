@@ -119,12 +119,7 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
 
       try {
         // Call the original method, ensuring 'this' context is preserved
-        await originalMethod.apply(this, {
-          ...res.locals,
-          req,
-          res,
-          next,
-        });
+        await originalMethod.apply(this, ...args);
         next();
       } catch (err) {
         next(err);
