@@ -35,7 +35,7 @@ const Main = () => {
 
   const handleAddMessage = ({ message, params, assistant_uid }: { message: string, params?: Partial<LlamaChatParams>, assistant_uid: string }) => {
     dispatch(llamaSseAddMessage({
-      newMessages: [{
+      clientMessages: [{
         role: "user",
         content: message,
       }],

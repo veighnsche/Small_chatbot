@@ -11,7 +11,7 @@ import { streamToAssistantAction } from "./shared/stream";
 
 interface SendMessageParams {
   thread: LlamaMessage[];
-  newMessages: ChatCompletionMessageParam[];
+  clientMessages: ChatCompletionMessageParam[];
   assistantParams: LlamaChatParams;
   assistant_uid: string;
 }
@@ -19,14 +19,14 @@ interface SendMessageParams {
 export const llamaSseEditMessage = createAsyncThunk<void, {
   assistant_uid?: string,
   parent_id: string,
-  newMessages: ChatCompletionMessageParam[]
+  clientMessages: ChatCompletionMessageParam[]
   llamaStreamContext: LlamaStreamContext,
 }, LlamaThunkApiConfig>(
   "llamaChat/editMessage",
   async ({
     assistant_uid = generateUniqueID(),
     parent_id,
-    newMessages,
+    clientMessages,
     llamaStreamContext,
   }, {
     getState,
@@ -48,14 +48,10 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
       const body = await wretch(`chat/${chatId}`)
         .post<SendMessageParams>({
           thread,
-          newMessages,
+          clientMessages,
           assistantParams,
           assistant_uid,
         });
-
-      // for await (const action of streamToAssistantAction(body)) {
-      //   dispatch(action);
-      // }
 
       await streamToAssistantAction(body, dispatch, llamaStreamContext);
     } catch (err) {

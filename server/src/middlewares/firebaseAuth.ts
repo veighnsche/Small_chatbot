@@ -1,13 +1,13 @@
 import { DecodedIdToken } from "firebase-admin/lib/auth";
 import { ENVIRONMENT } from "../services/environmentVariables";
 import { getAuth } from "../services/firebase";
-import { AuthMiddleware } from "../types/auth";
+import { LlamaMiddleware } from "../types/api/middleware";
 
 /**
  * Authenticate a request using a Firebase ID token.
  * Then, add the user to the request.
  */
-const authenticateRequest: AuthMiddleware = async (req, res, next) => {
+const authenticateRequest: LlamaMiddleware = async (req, res, next) => {
   const token = req.headers.authorization?.split("Bearer ")[1];
 
   if (!token) {

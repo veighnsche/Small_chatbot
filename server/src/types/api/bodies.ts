@@ -1,9 +1,9 @@
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { ChatCompletionMessage } from "openai/src/resources/chat/completions";
-import { LlamaMessage } from "../models/chatMessage";
+import { LlamaMessage } from "../../models/chatMessage";
 
-export interface NewMessagesBody {
-  newMessages: ChatCompletionMessage[],
+export interface ClientMessagesBody {
+  clientMessages: ChatCompletionMessage[],
 }
 
 export interface ThreadBody {

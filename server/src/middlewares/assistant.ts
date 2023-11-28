@@ -1,40 +1,34 @@
 import { ChatCompletionChunk } from "openai/resources/chat";
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
+import { LlamaAsserts } from "../decorators/api";
 import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
-import { AuthMiddleware, ReqBody, ResLocals } from "../types/auth";
-import { AssistantParamsBody, AssistantUniqueIDBody } from "../types/bodies";
-import { ChatDocLocals, SseLocals, ThreadLocals } from "../types/locals";
+import { AssistantParamsBody, AssistantUniqueIDBody } from "../types/api/bodies";
+import { ChatDocLocals, SseLocals, ThreadLocals } from "../types/api/locals";
+import { LlamaReq, LlamaRes } from "../types/api/middleware";
 import { withDefaultParameters } from "../utils/assistant";
 import { getLastId } from "../utils/messages";
 import { combineChatDeltasIntoSingleMsg, createEventData } from "../utils/stream";
 
-/**
- * Streams the assistant's response to the client.
- */
-const streamAssistantResponse: AuthMiddleware = async (
-  req: ReqBody<AssistantParamsBody & AssistantUniqueIDBody>,
-  res: ResLocals<ThreadLocals & ChatDocLocals & SseLocals>,
-  next,
-) => {
-  if (!res.locals.thread || !res.locals.chatDocRepo || !res.locals.sse) {
-    console.log(res.locals);
-    next(new Error("The messages, chatDocRepo and sse id must be initialized before calling the assistant."));
-  }
 
-  const messages = res.locals.thread;
-  const functions = req.body.assistantParams.functions;
-  const assistant_uid = req.body.assistant_uid;
+class AssistantMiddleware {
+  @LlamaAsserts("thread", "assistantParams", "assistant_id", "chatDocRepo", "sse")
+  static async streamAssistantResponse(
+    req: LlamaReq<AssistantParamsBody & AssistantUniqueIDBody>,
+    res: LlamaRes<ThreadLocals & ChatDocLocals & SseLocals>,
+  ): Promise<void> {
+    const messages = res.locals.thread;
+    const functions = req.body.assistantParams.functions;
+    const assistant_uid = req.body.assistant_uid;
 
-  const assistantParams: ChatCompletionCreateParamsNonStreaming = {
-    ...req.body.assistantParams,
-    messages: LlamaMessage.toChatCompletionMessagesParam(messages),
-    functions: functions ? withDefaultParameters(functions) : undefined,
-  };
+    const assistantParams: ChatCompletionCreateParamsNonStreaming = {
+      ...req.body.assistantParams,
+      messages: LlamaMessage.toChatCompletionMessagesParam(messages),
+      functions: functions ? withDefaultParameters(functions) : undefined,
+    };
 
-  res.write(`event: START\ndata: ${createEventData("assistant: start", { status: "start", name: "assistant" })}\n\n`);
+    res.write(`event: START\ndata: ${createEventData("assistant: start", { status: "start", name: "assistant" })}\n\n`);
 
-  try {
     const deltas: ChatCompletionChunk.Choice.Delta[] = [];
 
     for await (const { delta, finish_reason } of callAssistantStream(assistantParams, res.locals.sse.id)) {
@@ -53,39 +47,31 @@ const streamAssistantResponse: AuthMiddleware = async (
     const combinedAssistantMessage = combineChatDeltasIntoSingleMsg(deltas);
     const assistant_message = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
 
+    /**
+     * MOVE THIS OUT OF HERE: ID: RACE CONDITION
+     */
     await res.locals.chatDocRepo.addMessage(assistant_message);
     res.locals.thread.push(assistant_message);
-
     res.write(`data: ${JSON.stringify({ assistant_message, assistant_uid })}\n\n`);
-    next();
-  } catch (err) {
-    console.error(err);
-    next(err);
-    return;
-  }
-};
-
-/**
- * Generates a new title for the chat.
- */
-const generateTitle: AuthMiddleware = async (_, res: ResLocals<ThreadLocals & ChatDocLocals>, next) => {
-  if (!res.locals.thread || !res.locals.chatDocRepo) {
-    throw new Error("The messages and chatDocRepo must be initialized before calling the assistant.");
+    /**
+     * MOVE THIS OUT OF HERE: ID: RACE CONDITION
+     */
   }
 
-  const messages = res.locals.thread;
+  @LlamaAsserts("thread", "chatDocRepo")
+  static async generateTitle(_: LlamaReq, res: LlamaRes<ThreadLocals & ChatDocLocals>): Promise<void> {
+    const messages = res.locals.thread;
 
-  const newTitle = await callChatTitleAssistant(messages);
-  await res.locals.chatDocRepo.editTitle(newTitle);
-
-  next();
-};
+    const newTitle = await callChatTitleAssistant(messages);
+    await res.locals.chatDocRepo.editTitle(newTitle);
+  }
+}
 
 export default {
   default: {
-    stream: streamAssistantResponse,
+    stream: AssistantMiddleware.streamAssistantResponse,
   },
   forTitle: {
-    call: generateTitle,
+    call: AssistantMiddleware.generateTitle,
   },
 };

@@ -30,7 +30,7 @@ export const useLlamaInputEdit = ({ content, parent_id, onCancel }: InputEditPro
   const handleSend = async () => {
     await dispatch(llamaSseEditMessage({
       parent_id,
-      newMessages: [{
+      clientMessages: [{
         content: inputValue,
         role: "user",
       }],

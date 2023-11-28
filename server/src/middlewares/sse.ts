@@ -1,61 +1,56 @@
+import { LlamaAsserts } from "../decorators/api";
 import { connectionsEventBus } from "../services/eventBus";
-import { AuthMiddleware } from "../types/auth";
+import { SseLocals } from "../types/api/locals";
+import { LlamaReq, LlamaReqP, LlamaRes } from "../types/api/middleware";
+import { SseIdParams } from "../types/api/params";
 import { createEventData } from "../utils/stream";
+import { generateUniqueID } from "../utils/uid";
 
-/**
- * Initializes the SSE connection.
- */
-const initialize: AuthMiddleware = (_, res, next) => {
-  res.setHeader("Content-Type", "text/event-stream");
-  res.setHeader("Cache-Control", "no-cache");
-  res.setHeader("Connection", "keep-alive");
-  res.flushHeaders();
+class SSEMiddleware {
+  @LlamaAsserts()
+  static initialize(_: LlamaReq, res: LlamaRes<SseLocals>): void {
+    res.setHeader("Content-Type", "text/event-stream");
+    res.setHeader("Cache-Control", "no-cache");
+    res.setHeader("Connection", "keep-alive");
+    res.flushHeaders();
 
-  const id = Date.now().toString() + "." + Math.floor(Math.random() * 10000).toString().padStart(4, "0");
+    const id = generateUniqueID();
+    res.write(`data: ${JSON.stringify({ sseId: id })}\n\n`);
 
-  res.write(`data: ${JSON.stringify({ sseId: id })}\n\n`);
+    connectionsEventBus.on(id, () => {
+      connectionsEventBus.offAll(id);
+      res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`);
+      res.write(`event: CLOSE\ndata: ${createEventData("USER STOP", {})}\n\n`);
+      res.end();
+    });
 
-  connectionsEventBus.on(id, () => {
-    connectionsEventBus.offAll(id);
-    res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`)
-    res.write(`event: CLOSE\ndata: ${createEventData("USER STOP", {})}\n\n`);
+    res.locals.sse = {
+      id,
+      initialized: true,
+      finalized: false,
+    };
+  }
+
+  @LlamaAsserts("sse_id")
+  static stop(req: LlamaReqP<SseIdParams>): void {
+    const id = req.params.sseId;
+    connectionsEventBus.emit(id);
+  }
+
+  @LlamaAsserts("sse")
+  static finalize(_: LlamaReq, res: LlamaRes<SseLocals>): void {
+    connectionsEventBus.offAll(res.locals.sse.id);
+    res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`);
     res.end();
-  });
 
-  res.locals.sse = {
-    id,
-    initialized: true,
-    finalized: false,
-  };
-
-  next();
-};
-
-const stop: AuthMiddleware = (req, res, next) => {
-  const id = req.params.sseId;
-
-  connectionsEventBus.emit(id);
-  next();
+    res.locals.sse.initialized = false;
+    res.locals.sse.finalized = true;
+  }
 }
 
-/**
- * Finalizes the SSE connection.
- */
-const finalize: AuthMiddleware = (_, res, next) => {
-
-  connectionsEventBus.offAll(res.locals.sse.id);
-
-  res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`)
-  res.end();
-
-  res.locals.sse.initialized = false;
-  res.locals.sse.finalized = true;
-
-  next();
-};
 
 export default {
-  initialize,
-  stop,
-  finalize,
+  initialize: SSEMiddleware.initialize,
+  stop: SSEMiddleware.stop,
+  finalize: SSEMiddleware.finalize,
 };

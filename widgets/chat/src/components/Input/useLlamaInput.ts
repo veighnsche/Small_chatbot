@@ -43,7 +43,7 @@ export const useLlamaInput = () => {
     }
     reset();
     await dispatch(llamaSseAddMessage({
-      newMessages: [{
+      clientMessages: [{
         content: inputValue,
         role: "user",
       }],

@@ -121,7 +121,7 @@ function initializeLlamaTree() {
         isOpen: true,
         isHistoryDrawerOpen: true,
         isLarge: true,
-      })
+      });
     }
   })
 }

@@ -1,85 +1,55 @@
-import express from "express";
 import mw from "../middlewares";
+import { llamaRouter } from "../services/router";
 
-const router = express.Router();
+const router = llamaRouter();
 
 router.use(mw.auth.firebase.protect);
-router.use(mw.asserts.auth.userUid);
 
 router.get(
   "/config",
   mw.config.sendEncodedConfig,
 );
 
-router.post(
+router.postSse(
   "/",
-  mw.asserts.body.newMessages,
-  mw.asserts.body.assistantParams,
-  mw.sse.initialize,
-  mw.messages.initialize,
-  mw.try(mw.chat.create),
-  mw.repositories.firestore.chatDoc.initialize,
-  mw.try(mw.chat.messages.add),
-  mw.try(mw.assistant.default.stream),
-  mw.try(mw.assistant.forTitle.call),
-  mw.sse.finalize,
+  mw.chat.create,
+  mw.chat.clientMessages.add,
+  mw.assistant.default.stream,
+  mw.assistant.forTitle.call,
+);
+
+router.postSse(
+  "/:chat_id",
+  mw.chat.clientMessages.add,
+  mw.assistant.default.stream,
+);
+
+router.postSse(
+  "/:chat_id/regenerate",
+  mw.assistant.default.stream,
 );
 
 router.post(
-  "/:chatId",
-  mw.asserts.params.chatId,
-  mw.asserts.body.thread,
-  mw.asserts.body.newMessages,
-  mw.asserts.body.assistantParams,
-  mw.sse.initialize,
-  mw.messages.initialize,
-  mw.repositories.firestore.chatDoc.initialize,
-  mw.try(mw.chat.messages.add),
-  mw.try(mw.assistant.default.stream),
-  mw.sse.finalize,
-);
-
-router.post(
-  "/:chatId/regenerate",
-  mw.asserts.params.chatId,
-  mw.asserts.body.thread,
-  mw.asserts.body.assistantParams,
-  mw.sse.initialize,
-  mw.messages.initialize,
-  mw.repositories.firestore.chatDoc.initialize,
-  mw.try(mw.assistant.default.stream),
-  mw.sse.finalize,
-);
-
-router.post(
-  "/:chatId/title",
-  mw.asserts.params.chatId,
-  mw.asserts.body.editChatTitle,
-  mw.repositories.firestore.chatDoc.initialize,
-  mw.try(mw.chat.title.edit),
+  "/:chat_id/title",
+  mw.chat.title.edit,
   mw[204],
 );
 
 router.delete(
   "/",
-  mw.repositories.firestore.chatCol.initialize,
-  mw.try(mw.chat.delete.all),
+  mw.chat.delete.all,
   mw[204],
 );
 
 router.delete(
-  "/stop/:sseId",
-  mw.asserts.params.sseId,
+  "/stop/:sse_id",
   mw.sse.stop,
   mw[204],
-)
+);
 
 router.delete(
-  "/:chatId",
-  mw.auth.firebase.protect,
-  mw.asserts.params.chatId,
-  mw.repositories.firestore.chatDoc.initialize,
-  mw.try(mw.chat.delete.chat),
+  "/:chat_id",
+  mw.chat.delete.chat,
   mw[204],
 );
 

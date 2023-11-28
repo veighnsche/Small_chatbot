@@ -1,35 +1,39 @@
 {
   "compilerOptions": {
-    "noEmitOnError": false,
+    // Basic Options
+    "target": "es6",                                 // Specify ECMAScript target version
+    "module": "commonjs",                            // Specify module code generation
+    "lib": ["ES6", "dom"],                           // Specify library files to be included in the compilation
+    "outDir": "./dist",                              // Redirect output structure to the directory
+    "rootDir": "./src",                              // Specify the root directory of input files
+    "typeRoots": ["./node_modules/@types"],          // List of folders to include type definitions from
 
-    "strict": false,
-    "noImplicitAny": false,
-    "strictNullChecks": false,
+    // Strict Type-Checking Options
+    "strict": false,                                 // Enable all strict type-checking options
+    "noImplicitAny": true,                           // Raise error on expressions and declarations with an implied 'any' type
+    "strictNullChecks": false,                       // Enable strict null checks
 
-    "allowSyntheticDefaultImports": true,
-    "emitDecoratorMetadata": true,
-    "esModuleInterop": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "lib": [
-      "ES6",
-      "dom"
-    ],
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "outDir": "./dist",
-    "resolveJsonModule": true,
-    "rootDir": "./src",
-    "skipLibCheck": true,
-    "target": "es6",
-    "typeRoots": [
-      "./node_modules/@types"
-    ]
+    // Additional Checks
+    "noEmitOnError": false,                          // Do not emit outputs if any errors were reported
+    "forceConsistentCasingInFileNames": true,        // Disallow inconsistently-cased references to the same file
+
+    // Module Resolution Options
+    "moduleResolution": "node",                      // Resolve module using Node.js style
+    "resolveJsonModule": true,                       // Include modules imported with '.json' extension
+    "esModuleInterop": true,                         // Enables emit interoperability between CommonJS and ES Modules
+    "allowSyntheticDefaultImports": true,            // Allow default imports from modules with no default export
+
+    // Experimental Options
+    "experimentalDecorators": true,                  // Enables experimental support for ES7 decorators
+    "emitDecoratorMetadata": true,                   // Enables experimental support for emitting type metadata for decorators
+
+    // Advanced Options
+    "skipLibCheck": true                             // Skip type checking of default library declaration files
   },
   "exclude": [
-    "node_modules"
+    "node_modules"                                   // Exclude node_modules directory from compilation
   ],
   "include": [
-    "src/**/*.ts"
+    "src/**/*.ts"                                    // Include all TypeScript files in src folder
   ]
 }
