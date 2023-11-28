@@ -4,14 +4,19 @@ import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/co
 import { Stream } from "openai/streaming";
 import { IO_AZURE_OPENAI_ENDPOINT, IO_AZURE_OPENAI_KEY, OPENAI_KEY } from "../environmentVariables";
 
-class AssistantApi {
+export class AssistantApi {
   chatCompletionStream: (params: ChatCompletionCreateParamsNonStreaming) => Promise<Stream<ChatCompletionChunk>>;
   chatCompletion: (params: ChatCompletionCreateParamsNonStreaming) => Promise<ChatCompletion>;
 
-  constructor() {
-    const openaiKey = OPENAI_KEY;
-    const iOazureKey = IO_AZURE_OPENAI_KEY;
-
+  constructor({
+    openaiKey,
+    iOazureKey,
+    iOazureEndpoint,
+  }: {
+    openaiKey?: string;
+    iOazureKey?: string;
+    iOazureEndpoint?: string;
+  }) {
     if (!openaiKey && !iOazureKey) {
       throw new Error("Must have either OPENAI_KEY or IO_AZURE_OPENAI_KEY set.");
     }
@@ -23,7 +28,7 @@ class AssistantApi {
     if (openaiKey) {
       console.info("Using openai as assistant api");
       const openai = new OpenAI({
-        apiKey: OPENAI_KEY,
+        apiKey: openaiKey,
       });
 
       this.chatCompletionStream = (params: ChatCompletionCreateParamsNonStreaming) => openai.chat.completions.create({
@@ -41,12 +46,12 @@ class AssistantApi {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "iO-GPT-Subscription-Key": IO_AZURE_OPENAI_KEY,
+          "iO-GPT-Subscription-Key": iOazureKey,
         },
       };
 
       this.chatCompletionStream = async (params: ChatCompletionCreateParamsNonStreaming) => {
-        const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
+        const response = await fetch(iOazureEndpoint, {
           ...init,
           body: JSON.stringify({
             ...params,
@@ -64,7 +69,7 @@ class AssistantApi {
       };
 
       this.chatCompletion = async (params: ChatCompletionCreateParamsNonStreaming) => {
-        const response = await fetch(IO_AZURE_OPENAI_ENDPOINT, {
+        const response = await fetch(iOazureEndpoint, {
           ...init,
           body: JSON.stringify(params),
         }).catch((e) => {
@@ -137,7 +142,11 @@ class AssistantApi {
 
 }
 
-const assistantApi = new AssistantApi();
+const assistantApi = new AssistantApi({
+  openaiKey: OPENAI_KEY,
+  iOazureKey: IO_AZURE_OPENAI_KEY,
+  iOazureEndpoint: IO_AZURE_OPENAI_ENDPOINT,
+});
 
 export const llamaChatCompletionStream = assistantApi.chatCompletionStream.bind(assistantApi); // what does bind do?
 export const llamaChatCompletion = assistantApi.chatCompletion.bind(assistantApi);

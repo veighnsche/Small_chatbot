@@ -1,12 +1,5 @@
-import { NextFunction, RequestHandler, Router } from "express";
+import { RequestHandler, Router } from "express";
 import mw from "../middlewares";
-import { LlamaReq, LlamaRes } from "../types/api/middleware";
-
-export interface LlamaHandlerParams extends Record<string, any> {
-  req: LlamaReq;
-  res: LlamaRes;
-  next: NextFunction;
-}
 
 interface CustomRouter extends Router {
   postSse: (path: string, ...handlers: RequestHandler[]) => void;

@@ -2,7 +2,7 @@ type EventMap = Record<string, any>;
 
 type EventCallback<T> = (data: T) => void;
 
-class EventBus<T extends EventMap> {
+export class EventBus<T extends EventMap> {
   private listeners: Map<keyof T, Set<EventCallback<any>>> = new Map();
 
   on<K extends keyof T>(event: K, callback: EventCallback<T[K]>): () => void {
