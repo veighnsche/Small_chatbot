@@ -11,3 +11,4 @@ server/.env
 server/.env.dev
 server/.env.resumator
 widgets/chat/sandbox/vanilla/firebaseConfig.js
+/server/coverage/

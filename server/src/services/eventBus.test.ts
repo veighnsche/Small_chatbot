@@ -63,6 +63,4 @@ describe("EventBus", () => {
 		expect(responses).toContain(`Response: ${testData.key}`);
 		expect(mockCallback).toHaveBeenCalledWith(testData);
 	});
-
-	// Additional tests can be added to cover more complex scenarios or error handling
 });

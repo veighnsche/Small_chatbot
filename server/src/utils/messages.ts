@@ -1,14 +1,11 @@
+import { jsonrepair } from "jsonrepair";
 import { ILlamaMessage } from "../types/chat";
-import { fixJSON } from "./json";
 
 export function getLastId(messages: ILlamaMessage[]): string {
 	if (messages.length === 0) return "-1";
 	return messages[messages.length - 1].id;
 }
 
-/**
- *
- */
 export function makeArgs(args: string): any {
 	try {
 		return JSON.parse(args);
@@ -29,13 +26,16 @@ export function makeArgs(args: string): any {
 		}
 	}
 
-	const json = fixJSON(args);
-	if (json) {
-		return json;
+	try {
+		const json = jsonrepair(args);
+		if (json) {
+			return json;
+		}
+	} catch (err) {
+		console.error("makeArgs: could not fix JSON");
 	}
 
 	console.log(args);
 
-	console.error("makeArgs: could not fix JSON");
 	throw new Error("Argument could not be parsed as JSON, do you need more tokens?");
 }

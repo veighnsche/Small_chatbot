@@ -49,6 +49,7 @@ describe("callAssistantStream", () => {
 		connectionsEventBus.emit(mockSseId);
 
 		await generator.next(); // proceed to next yield
+		// TODO: fix this test
 		// await expect(generator.next()).resolves.toEqual({ done: true });
 	});
 
