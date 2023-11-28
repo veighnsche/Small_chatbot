@@ -1,4 +1,3 @@
-import { ChatCompletionChunk } from "openai/resources/chat";
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
 import { LlamaAsserts } from "../decorators/api";
 import { LlamaMessage } from "../models/chatMessage";
@@ -7,71 +6,74 @@ import { AssistantParamsBody, AssistantUniqueIDBody } from "../types/api/bodies"
 import { ChatDocLocals, SseLocals, ThreadLocals } from "../types/api/locals";
 import { LlamaReq, LlamaRes } from "../types/api/middleware";
 import { withDefaultParameters } from "../utils/assistant";
+import { DeltaCombiner } from "../utils/delta";
 import { getLastId } from "../utils/messages";
-import { combineChatDeltasIntoSingleMsg, createEventData } from "../utils/stream";
+import { createEventData } from "../utils/stream";
 
 
 class AssistantMiddleware {
   @LlamaAsserts("thread", "assistantParams", "assistant_id", "chatDocRepo", "sse")
-	static async streamAssistantResponse(
-		req: LlamaReq<AssistantParamsBody & AssistantUniqueIDBody>,
-		res: LlamaRes<ThreadLocals & ChatDocLocals & SseLocals>,
-	): Promise<void> {
-		const messages = res.locals.thread;
-		const functions = req.body.assistantParams.functions;
-		const assistant_uid = req.body.assistant_uid;
+  static async streamAssistantResponse(
+    req: LlamaReq<AssistantParamsBody & AssistantUniqueIDBody>,
+    res: LlamaRes<ThreadLocals & ChatDocLocals & SseLocals>,
+  ): Promise<void> {
+    const messages = res.locals.thread;
+    const functions = req.body.assistantParams.functions;
+    const assistant_uid = req.body.assistant_uid;
 
-		const assistantParams: ChatCompletionCreateParamsNonStreaming = {
-			...req.body.assistantParams,
-			messages: LlamaMessage.toChatCompletionMessagesParam(messages),
-			functions: functions ? withDefaultParameters(functions) : undefined,
-		};
+    const assistantParams: ChatCompletionCreateParamsNonStreaming = {
+      ...req.body.assistantParams,
+      messages: LlamaMessage.toChatCompletionMessagesParam(messages),
+      functions: functions ? withDefaultParameters(functions) : undefined,
+    };
 
-		res.write(`event: START\ndata: ${createEventData("assistant: start", { status: "start", name: "assistant" })}\n\n`);
+    res.write(`event: START\ndata: ${createEventData("assistant: start", { status: "start", name: "assistant" })}\n\n`);
 
-		const deltas: ChatCompletionChunk.Choice.Delta[] = [];
+    const deltas = new DeltaCombiner();
 
-		for await (const { delta, finish_reason } of callAssistantStream(assistantParams, res.locals.sse.id)) {
-			if (!finish_reason) {
-				deltas.push(delta);
-				res.write(`data: ${JSON.stringify(delta)}\n\n`);
-			} else {
-				res.write(`event: STOP\ndata: ${createEventData("assistant: stop", {
-					name: "assistant",
-					status: "finish",
-					finish_reason,
-				})}\n\n`);
-			}
-		}
+    for await (const { delta, finish_reason } of callAssistantStream(assistantParams, res.locals.sse.id)) {
+      if (!finish_reason) {
+        res.write(`data: ${JSON.stringify(delta)}\n\n`);
+        deltas.appendDelta(delta);
+      } else {
+        res.write(`event: STOP\ndata: ${createEventData("assistant: stop", {
+          name: "assistant",
+          status: "finish",
+          finish_reason,
+        })}\n\n`);
+      }
+    }
 
-		const combinedAssistantMessage = combineChatDeltasIntoSingleMsg(deltas);
-		const assistant_message = await LlamaMessage.fromChatCompletionMessage(combinedAssistantMessage, getLastId(messages));
+    const assistant_message = await LlamaMessage.fromChatCompletionMessage(
+      deltas.assistantMessage,
+      getLastId(messages),
+    );
 
-		/**
+    /**
      * MOVE THIS OUT OF HERE: ID: RACE CONDITION
      */
-		await res.locals.chatDocRepo.addMessage(assistant_message);
-		res.locals.thread.push(assistant_message);
-		res.write(`data: ${JSON.stringify({ assistant_message, assistant_uid })}\n\n`);
-		/**
+    await res.locals.chatDocRepo.addMessage(assistant_message);
+    res.locals.thread.push(assistant_message);
+    res.write(`data: ${JSON.stringify({ assistant_message, assistant_uid })}\n\n`);
+    /**
      * MOVE THIS OUT OF HERE: ID: RACE CONDITION
      */
-	}
+  }
 
   @LlamaAsserts("thread", "chatDocRepo")
   static async generateTitle(_: LlamaReq, res: LlamaRes<ThreadLocals & ChatDocLocals>): Promise<void> {
-  	const messages = res.locals.thread;
+    const messages = res.locals.thread;
 
-  	const newTitle = await callChatTitleAssistant(messages);
-  	await res.locals.chatDocRepo.editTitle(newTitle);
+    const newTitle = await callChatTitleAssistant(messages);
+    await res.locals.chatDocRepo.editTitle(newTitle);
   }
 }
 
 export default {
-	default: {
-		stream: AssistantMiddleware.streamAssistantResponse,
-	},
-	forTitle: {
-		call: AssistantMiddleware.generateTitle,
-	},
+  default: {
+    stream: AssistantMiddleware.streamAssistantResponse,
+  },
+  forTitle: {
+    call: AssistantMiddleware.generateTitle,
+  },
 };
