@@ -7,13 +7,13 @@
  * ```
  */
 export const removeKeys = (object: Record<string, any>, keys: string[]): Record<string, any> => {
-  const newObject: Record<string, any> = {};
+	const newObject: Record<string, any> = {};
 
-  Object.keys(object).forEach((key) => {
-    if (!keys.includes(key)) {
-      newObject[key] = object[key];
-    }
-  });
+	Object.keys(object).forEach((key) => {
+		if (!keys.includes(key)) {
+			newObject[key] = object[key];
+		}
+	});
 
-  return newObject;
-}
+	return newObject;
+};

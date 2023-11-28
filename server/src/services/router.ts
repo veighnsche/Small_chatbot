@@ -8,11 +8,11 @@ interface CustomRouter extends Router {
 const expressRouter: CustomRouter = Router() as CustomRouter;
 
 expressRouter.postSse = (path, ...handlers) => {
-  expressRouter.post(path,
-    mw.sse.initialize,
-    ...handlers,
-    mw.sse.finalize,
-  );
+	expressRouter.post(path,
+		mw.sse.initialize,
+		...handlers,
+		mw.sse.finalize,
+	);
 };
 
 export const llamaRouter = () => expressRouter;

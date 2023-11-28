@@ -6,8 +6,8 @@ import { HOST, PORT } from "./services/environmentVariables";
 import { setupRoutes } from "./services/routes";
 
 const port = typeof PORT === "string" ?
-  parseInt(PORT, 10) :
-  PORT;
+	parseInt(PORT, 10) :
+	PORT;
 
 const host = HOST;
 
@@ -20,5 +20,5 @@ setupWidgets(app);
 setupRoutes(app);
 
 app.listen(port, host, () => {
-  console.log(`iO Assistant server is running on http://${host}:${port}`);
+	console.log(`iO Assistant server is running on http://${host}:${port}`);
 });

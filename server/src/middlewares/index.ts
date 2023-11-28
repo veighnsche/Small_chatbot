@@ -7,14 +7,14 @@ import sse from "./sse";
 import config from "./config";
 
 export default {
-  auth: {
-    firebase: firebaseAuth,
-  },
-  log,
-  sse,
-  chat,
-  assistant,
-  config,
-  200: (data: any) => <LlamaMiddleware>((_, res) => res.status(200).send(data)),
-  204: <LlamaMiddleware>((_, res) => res.status(204).send()),
+	auth: {
+		firebase: firebaseAuth,
+	},
+	log,
+	sse,
+	chat,
+	assistant,
+	config,
+	200: (data: any) => <LlamaMiddleware>((_, res) => res.status(200).send(data)),
+	204: <LlamaMiddleware>((_, res) => res.status(204).send()),
 };

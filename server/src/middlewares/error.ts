@@ -1,17 +1,16 @@
 import { NextFunction, Request, Response } from "express";
 import { connectionsEventBus } from "../services/eventBus";
-import { LlamaMiddleware } from "../types/api/middleware";
 
 /**
  * Handles errors by sending a 500 response.
  */
 export const errorHandler = (err: Error, _: Request, res: Response, next: NextFunction) => {
-  console.trace({ 'error in errorHandler in the middlewares:': err.message });
+  console.trace({ "error in errorHandler in the middlewares:": err.message });
 
   if (res.locals.sse.initialized) {
     connectionsEventBus.offAll(res.locals.sse.id);
     res.write(`event: ERROR\ndata: ${JSON.stringify({ error: err.message })}\n\n`);
-    res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`)
+    res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`);
     return res.end();
   } else if (res.headersSent) {
     return next(err);
