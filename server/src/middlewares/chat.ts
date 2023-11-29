@@ -7,11 +7,11 @@ import { getLastId } from "../utils/messages";
 
 class ChatMiddleware {
   @LlamaAsserts("chatColRepo")
-	static async createChat(_: LlamaReq, res: LlamaRes<ChatColLocals & ChatIdLocals>): Promise<void> {
-		const chatId = await res.locals.chatColRepo.newChat("New chat");
-		res.write(`data: ${JSON.stringify({ chatId })}\n\n`);
-		res.locals.chat_id = chatId;
-	}
+  static async createChat(_: LlamaReq, res: LlamaRes<ChatColLocals & ChatIdLocals>): Promise<void> {
+    const chatId = await res.locals.chatColRepo.newChat("New chat");
+    res.write(`data: ${JSON.stringify({ chatId })}\n\n`);
+    res.locals.chat_id = chatId;
+  }
 
   @LlamaAsserts("clientMessages", "thread", "chatDocRepo")
   static async addMessages(req: LlamaReq<ClientMessagesBody>, res: LlamaRes<ThreadLocals & ChatDocLocals>): Promise<void> {
@@ -41,15 +41,15 @@ class ChatMiddleware {
 }
 
 export default {
-	create: ChatMiddleware.createChat,
-	title: {
-		edit: ChatMiddleware.editChatTitle,
-	},
-	clientMessages: {
-		add: ChatMiddleware.addMessages,
-	},
-	delete: {
-		all: ChatMiddleware.deleteAllChats,
-		chat: ChatMiddleware.deleteChat,
-	},
+  create: ChatMiddleware.createChat,
+  title: {
+    edit: ChatMiddleware.editChatTitle,
+  },
+  clientMessages: {
+    add: ChatMiddleware.addMessages,
+  },
+  delete: {
+    all: ChatMiddleware.deleteAllChats,
+    chat: ChatMiddleware.deleteChat,
+  },
 };

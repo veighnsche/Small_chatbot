@@ -13,11 +13,12 @@ export class DeltaCombiner {
     if ("role" in delta) {
       this.incompleteMessage.role = delta.role;
     }
-    if ("content" in delta && delta.content !== null) {
+    if ("content" in delta) {
       this.incompleteMessage.content += delta.content;
     }
     if ("function_call" in delta) {
       if ("name" in delta.function_call) {
+        this.incompleteMessage.content = "";
         this.incompleteMessage.function_call = {
           name: delta.function_call.name,
           arguments: "",

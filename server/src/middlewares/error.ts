@@ -5,16 +5,16 @@ import { connectionsEventBus } from "../services/eventBus";
  * Handles errors by sending a 500 response.
  */
 export const errorHandler = (err: Error, _: Request, res: Response, next: NextFunction) => {
-	console.trace({ "error in errorHandler in the middlewares:": err.message });
+  console.trace({ "error in errorHandler in the middlewares:": err.message });
 
-	if (res.locals.sse.initialized) {
-		connectionsEventBus.offAll(res.locals.sse.id);
-		res.write(`event: ERROR\ndata: ${JSON.stringify({ error: err.message })}\n\n`);
-		res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`);
-		return res.end();
-	} else if (res.headersSent) {
-		return next(err);
-	} else {
-		return res.status(500).json({ error: err.message });
-	}
+  if (res.locals.sse.initialized) {
+    connectionsEventBus.offAll(res.locals.sse.id);
+    res.write(`event: ERROR\ndata: ${JSON.stringify({ error: err.message })}\n\n`);
+    res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`);
+    return res.end();
+  } else if (res.headersSent) {
+    return next(err);
+  } else {
+    return res.status(500).json({ error: err.message });
+  }
 };
