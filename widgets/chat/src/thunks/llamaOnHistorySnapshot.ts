@@ -40,5 +40,6 @@ export const unsubscribeFromLlamaHistory = createAsyncThunk<void, void, LlamaThu
     }
     dispatch(setHistory({ history: [] }));
     unsubscribe();
+    unsubscribe = null;
   },
 );

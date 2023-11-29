@@ -36,5 +36,6 @@ export const unsubscribeFromLlamaMessages = createAsyncThunk<void, void, LlamaTh
   "llamaChat/unsubscribeFromLlamaMessages",
   () => {
     unsubscribe?.();
+    unsubscribe = null;
   },
 );
