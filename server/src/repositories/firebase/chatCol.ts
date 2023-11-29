@@ -6,12 +6,12 @@ export class ChatCollectionRepository {
   private db: admin.firestore.Firestore;
   private chatCol: admin.firestore.CollectionReference;
 
-  constructor(userId: string) {
+  constructor(user_id: string) {
     this.db = getDatabase();
 
     this.chatCol = this.db
       .collection("assistantChat")
-      .doc(userId)
+      .doc(user_id)
       .collection("chats");
   }
 
@@ -25,6 +25,7 @@ export class ChatCollectionRepository {
       const chatRef = await this.chatCol.add(conversation);
       return chatRef.id;
     } catch (error) {
+      console.trace("Error creating chat", { error });
       throw new Error(`Error creating chat: ${error}`);
     }
   }

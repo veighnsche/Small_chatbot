@@ -6,7 +6,7 @@ import { useLlamaRegenerate } from "./useLlamaRegenerate.ts";
 export const Regenerate = () => {
   const { onRegenerate, disabled } = useLlamaRegenerate();
 
-  const isStreaming = useLlamaSelector((state) => !!state.llamaChat.sseId);
+  const isStreaming = useLlamaSelector((state) => !!state.llamaChat.sse_id);
 
   return (
     <IconButton

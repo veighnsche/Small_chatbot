@@ -9,7 +9,7 @@ jest.mock("../eventBus");
 jest.mock("./api");
 
 describe("callAssistantStream", () => {
-  const mockSseId = "test-sse-id";
+  const mockSse_id = "test-sse-id";
   const mockAssistantParams: ChatCompletionCreateParamsNonStreaming = {
     model: "mocked model",
     messages: [{ role: "user", content: "mocked message" }],
@@ -26,12 +26,12 @@ describe("callAssistantStream", () => {
       },
     };
     llamaChatCompletionStream.mockResolvedValue(mockChatCompletionStream);
-    // @ts-ignore
+    // @ts-expect-error: mockClear comes from jest, but not from the actual connectionEventBus
     connectionsEventBus.on.mockClear();
   });
 
   it("should create a chat completion stream", async () => {
-    const generator = callAssistantStream(mockAssistantParams, mockSseId);
+    const generator = callAssistantStream(mockAssistantParams, mockSse_id);
 
     await expect(generator.next()).resolves.toEqual({ value: { text: "mocked choice" }, done: false });
     expect(llamaChatCompletionStream).toHaveBeenCalledWith(mockAssistantParams);
@@ -39,14 +39,14 @@ describe("callAssistantStream", () => {
 
   it("should handle stream errors correctly", async () => {
     llamaChatCompletionStream.mockRejectedValue(new Error("stream error"));
-    const generator = callAssistantStream(mockAssistantParams, mockSseId);
+    const generator = callAssistantStream(mockAssistantParams, mockSse_id);
 
     await expect(generator.next()).rejects.toThrow("stream error");
   });
 
   it("should stop yielding new values when stop event is emitted", async () => {
-    const generator = callAssistantStream(mockAssistantParams, mockSseId);
-    connectionsEventBus.emit(mockSseId);
+    const generator = callAssistantStream(mockAssistantParams, mockSse_id);
+    connectionsEventBus.emit(mockSse_id);
 
     await generator.next(); // proceed to next yield
     // TODO: fix this test

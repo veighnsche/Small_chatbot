@@ -8,12 +8,12 @@ export const llamaApiDeleteConversation = createAsyncThunk<void, void, LlamaThun
     extra: { wretch },
   }) => {
     const state = getState();
-    const chatId = state.llamaChat.currentChatId;
+    const chat_id = state.llamaChat.currentChat_id;
 
     try {
-      await wretch(`chat/${chatId}`).delete();
+      await wretch(`chat/${chat_id}`).delete();
     } catch (err) {
-      console.error(err);
+      console.trace(err);
       throw new Error("Failed to send message");
     }
   },

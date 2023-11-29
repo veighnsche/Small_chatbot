@@ -7,7 +7,7 @@ import { ChatDocLocals, SseLocals, ThreadLocals } from "../types/api/locals";
 import { LlamaReq, LlamaRes } from "../types/api/middleware";
 import { withDefaultParameters } from "../utils/assistant";
 import { DeltaCombiner } from "../utils/delta";
-import { getLastId } from "../utils/messages";
+import { getLast_id } from "../utils/messages";
 import { createEventData } from "../utils/stream";
 
 
@@ -46,7 +46,7 @@ class AssistantMiddleware {
 
     const assistant_message = await LlamaMessage.fromChatCompletionMessage(
       deltas.assistantMessage,
-      getLastId(messages),
+      getLast_id(messages),
     );
 
     /**

@@ -1,24 +1,24 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { collection, onSnapshot } from "firebase/firestore";
-import { reset, setCurrentChatId, setMessages } from "../slices/llamaChatSlice";
+import { reset, setCurrentChat_id, setMessages } from "../slices/llamaChatSlice";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
 
 let unsubscribe: (() => void) | null = null;
 
-export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chatId?: string }, LlamaThunkApiConfig>(
+export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chat_id?: string }, LlamaThunkApiConfig>(
   "llamaChat/subscribeToLlamaMessages",
-  async ({ chatId }, { dispatch, extra: { userDocRef } }) => {
+  async ({ chat_id }, { dispatch, extra: { userDocRef } }) => {
     dispatch(unsubscribeFromLlamaMessages());
 
-    if (!chatId) {
+    if (!chat_id) {
       dispatch(reset());
       return;
     }
 
-    dispatch(setCurrentChatId({ chatId }));
+    dispatch(setCurrentChat_id({ chat_id }));
 
-    const messagesCol = collection(userDocRef, "chats", chatId, "messages");
+    const messagesCol = collection(userDocRef, "chats", chat_id, "messages");
 
     unsubscribe = onSnapshot(messagesCol, (snapshot) => {
       const messages = snapshot.docs

@@ -14,7 +14,7 @@ export interface ChatColLocals {
   chatColRepo: ChatCollectionRepository,
 }
 
-export interface ChatIdLocals {
+export interface Chat_idLocals {
   chat_id: string,
 }
 

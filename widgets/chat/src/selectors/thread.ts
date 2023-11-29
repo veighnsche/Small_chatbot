@@ -10,16 +10,16 @@ import { makeThreadFromLastMessage } from "../utils/messages";
  *
  * @class LlamaMemoizer
  *
- * @property {string|undefined} chatId - The current chat ID. Used to check if the chat context has changed.
+ * @property {string|undefined} chat_id - The current chat ID. Used to check if the chat context has changed.
  * @property {number} messagesLength - Length of the messages array. Used to detect changes in the number of messages.
- * @property {string} lastMessageId - The ID of the last message. Used to determine if the latest message has changed.
+ * @property {string} lastMessage_id - The ID of the last message. Used to determine if the latest message has changed.
  * @property {LlamaMessage[]} result - Cached result of the memoization process.
  * @property {Record<string, LlamaMessage>} denormalizedMessages - Denormalized messages for efficient access.
  *
  * @method threadMemo
  *   Computes and memoizes chat threads based on the current state.
  *   This method should be called to get the memoized thread data.
- *   If the relevant parts of the state (currentChatId, messages, lastMessageId) haven't changed, it returns the memoized result.
+ *   If the relevant parts of the state (currentChat_id, messages, lastMessage_id) haven't changed, it returns the memoized result.
  *   Otherwise, it recomputes the result.
  *
  *   @param {RootLlamaState} state - The current state of the Redux store.
@@ -33,29 +33,29 @@ import { makeThreadFromLastMessage } from "../utils/messages";
  *   const memoizedThread = llamaMemoizerInstance.threadMemo(someReduxState);
  */
 export class LlamaMemoizer {
-  private chatId: string | undefined = undefined;
+  private chat_id: string | undefined = undefined;
   private messagesLength: number = 0;
-  private lastMessageId: LlamaMessage["id"] = "-1";
+  private lastMessage_id: LlamaMessage["id"] = "-1";
   private denormalizedMessages: Record<LlamaMessage["id"], LlamaMessage> = {};
 
   private result: LlamaMessage[] = [];
 
   public threadMemo(state: RootLlamaState): LlamaMessage[] {
-    const { currentChatId, messages, lastMessageId } = state.llamaChat;
+    const { currentChat_id, messages, lastMessage_id } = state.llamaChat;
 
-    if (this.chatId !== currentChatId || this.messagesLength !== messages.length) {
+    if (this.chat_id !== currentChat_id || this.messagesLength !== messages.length) {
       this.denormalizedMessages = denormalize(messages);
     }
 
     if (
-      this.chatId !== currentChatId ||
+      this.chat_id !== currentChat_id ||
       this.messagesLength !== messages.length ||
-      this.lastMessageId !== lastMessageId
+      this.lastMessage_id !== lastMessage_id
     ) {
-      this.result = makeThreadFromLastMessage(this.denormalizedMessages, lastMessageId);
-      this.chatId = currentChatId;
+      this.result = makeThreadFromLastMessage(this.denormalizedMessages, lastMessage_id);
+      this.chat_id = currentChat_id;
       this.messagesLength = messages.length;
-      this.lastMessageId = lastMessageId;
+      this.lastMessage_id = lastMessage_id;
     }
 
     return this.result;

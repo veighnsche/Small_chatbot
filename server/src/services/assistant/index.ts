@@ -8,17 +8,17 @@ import ChatCompletionCreateParams = Chat.ChatCompletionCreateParams;
 
 export async function* callAssistantStream(
   assistantParams: ChatCompletionCreateParamsNonStreaming,
-  sseId: string,
+  sse_id: string,
 ): AsyncGenerator<ChatCompletionChunk.Choice> {
   // Create a stream for chat completions
   const chatCompletionStream = await llamaChatCompletionStream(assistantParams).catch((e: any) => {
-    console.error(e);
+    console.trace(e);
     throw e;
   });
 
   // Listen for stop events
   let shouldStop = false;
-  connectionsEventBus.on(sseId, () => {
+  connectionsEventBus.on(sse_id, () => {
     shouldStop = true;
   });
 
@@ -70,11 +70,13 @@ export const callChatTitleAssistant = async (chatMessages: LlamaMessage[]): Prom
 
   const message = completion.choices[0].message;
   if (!message.function_call) {
+    console.trace("No function call was returned from the naming assistant.", { message });
     throw new Error("No function call was returned from the naming assistant.");
   }
 
   const args = JSON.parse(message.function_call.arguments);
   if (!args.title) {
+    console.trace("No title was returned from the naming assistant.", { message });
     throw new Error("No title was returned from the naming assistant.");
   }
 

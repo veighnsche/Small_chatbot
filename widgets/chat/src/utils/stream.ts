@@ -31,7 +31,8 @@ function* uint8ArrayToObjGenerator<T extends Record<string, any>>(data: Uint8Arr
       try {
         yield JSON.parse(jsonString.slice(6));
       } catch (e) {
-        console.error("Failed to parse JSON:", e, jsonString);
+        console.trace("Failed to parse JSON:", e, jsonString);
+        throw new Error("Failed to parse JSON");
       }
     } else if (jsonString.startsWith("event: ")) {
       console.log(jsonString);
@@ -49,6 +50,7 @@ export async function* streamToObject(body: ReadableStream<Uint8Array>): AsyncGe
       yield* uint8ArrayToObjGenerator(chunk);
     }
   } catch (err) {
-    console.error("Error reading SSE:", err);
+    console.trace("Error reading SSE:", err);
+    throw new Error("Error reading SSE");
   }
 }

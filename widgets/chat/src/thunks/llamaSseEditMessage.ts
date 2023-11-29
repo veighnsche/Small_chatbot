@@ -3,10 +3,10 @@ import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
 import { LlamaStreamContext } from "../providers/LlamaStreamingProvider.tsx";
 import { threadMemo } from "../selectors/thread";
 import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
-import { setLastMessageId } from "../slices/llamaChatSlice";
+import { setLastMessage_id } from "../slices/llamaChatSlice";
 import { LlamaThunkApiConfig } from "../stores/llamaStore";
 import { LlamaMessage } from "../types/LlamaMessage";
-import { generateUniqueID } from "../utils/uid.ts";
+import { generateUnique_id } from "../utils/uid.ts";
 import { streamToAssistantAction } from "./shared/stream";
 
 interface SendMessageParams {
@@ -24,7 +24,7 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
 }, LlamaThunkApiConfig>(
   "llamaChat/editMessage",
   async ({
-    assistant_uid = generateUniqueID(),
+    assistant_uid = generateUnique_id(),
     parent_id,
     clientMessages,
     llamaStreamContext,
@@ -33,19 +33,20 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
     dispatch,
     extra: { wretch },
   }) => {
-    dispatch(setLastMessageId({ messageId: parent_id }));
+    dispatch(setLastMessage_id({ message_id: parent_id }));
 
     const state = getState();
     const thread = threadMemo(state);
-    const chatId = state.llamaChat.currentChatId;
+    const chat_id = state.llamaChat.currentChat_id;
     const assistantParams = state.llamaChatParams;
 
-    if (!chatId) {
-      throw new Error("No chatId");
+    if (!chat_id) {
+      console.trace("No chat_id");
+      throw new Error("No chat_id");
     }
 
     try {
-      const body = await wretch(`chat/${chatId}`)
+      const body = await wretch(`chat/${chat_id}`)
         .post<SendMessageParams>({
           thread,
           clientMessages,

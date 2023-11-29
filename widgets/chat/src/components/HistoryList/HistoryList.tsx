@@ -5,13 +5,13 @@ import "./HistoryList.css";
 export const HistoryList = () => {
   const {
     history,
-    selectedChatId,
+    selectedChat_id,
   } = useLlamaHistoryList();
 
   return (
     <div className="history-list-wrapper">
       {history.map((chat) => (
-        <HistoryItem key={chat.id} {...chat} selected={selectedChatId(chat.id)} />
+        <HistoryItem key={chat.id} {...chat} selected={selectedChat_id(chat.id)} />
       ))}
     </div>
   );

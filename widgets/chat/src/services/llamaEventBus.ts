@@ -21,7 +21,8 @@ class EventBus<T extends EventMap> {
       try {
         callback(data);
       } catch (error) {
-        console.error(`Error occurred in callback for event: ${String(event)}`, error);
+        console.trace(`Error occurred in callback for event: ${String(event)}`, error);
+        throw error;
       }
     });
   }
@@ -53,7 +54,8 @@ class EventBus<T extends EventMap> {
       try {
         await callback(data);
       } catch (error) {
-        console.error(`Error occurred in async callback for event: ${String(event)}`, error);
+        console.trace(`Error occurred in async callback for event: ${String(event)}`, error);
+        throw error;
       }
     }
   }
@@ -64,7 +66,8 @@ class EventBus<T extends EventMap> {
       try {
         responses.push(callback(data));
       } catch (error) {
-        console.error(`Error occurred in callback for event: ${String(event)}`, error);
+        console.trace(`Error occurred in callback for event: ${String(event)}`, error);
+        throw error;
       }
     });
     return responses;

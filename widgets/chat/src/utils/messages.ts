@@ -32,16 +32,16 @@ export const addIters = (messages: LlamaMessage[]): LlamaMessage[] => {
 
 export const makeThreadFromLastMessage = (
   messagesMap: Record<LlamaMessage["id"], LlamaMessage>,
-  lastMessageId: LlamaMessage["id"],
+  lastMessage_id: LlamaMessage["id"],
 ): LlamaMessage[] => {
   const thread: LlamaMessage[] = [];
-  let currentMessageId = lastMessageId;
+  let currentMessage_id = lastMessage_id;
 
-  while (currentMessageId !== "-1") {
-    const currentMessage = messagesMap[currentMessageId];
+  while (currentMessage_id !== "-1") {
+    const currentMessage = messagesMap[currentMessage_id];
     if (currentMessage) {
       thread.unshift(currentMessage);
-      currentMessageId = currentMessage.parent_id;
+      currentMessage_id = currentMessage.parent_id;
     } else {
       break;
     }
@@ -60,25 +60,25 @@ export function makeChildrensMap(messages: LlamaMessage[]): Record<LlamaMessage[
   }, {} as Record<LlamaMessage["id"], LlamaMessage["id"][]>);
 }
 
-export function traverseToLastMessageId(
+export function traverseToLastMessage_id(
   childrensMap: Record<LlamaMessage["id"], LlamaMessage["id"][]>,
   itersMap: LlamaChatState["itersMap"],
   parent_id: string,
 ) {
-  function findLastMessageId(parent_id: string): string {
+  function findLastMessage_id(parent_id: string): string {
     const children = childrensMap[parent_id];
     if (!children) return parent_id;
 
     const iter = itersMap[parent_id] || children.length; // Use the iter value if available, otherwise take the last child
 
-    const childId = children[iter - 1];
-    // if the iter is 1 too high (so childId = undefined), then it's regenerating the last message
-    if (!childId) return parent_id;
+    const child_id = children[iter - 1];
+    // if the iter is 1 too high (so child_id = undefined), then it's regenerating the last message
+    if (!child_id) return parent_id;
 
-    return findLastMessageId(childId);
+    return findLastMessage_id(child_id);
   }
 
-  return findLastMessageId(parent_id);
+  return findLastMessage_id(parent_id);
 }
 
 export function loadedSystemToLlama(loadedSystemMessage: LlamaLoadedSystemMessage, parent_id: string): LlamaMessage {
@@ -123,7 +123,7 @@ export function loadedSystemToChatParam(loadedSystemMessage: LlamaLoadedSystemMe
   };
 }
 
-export function findLastAssistantMessageId(messages: LlamaMessage[]): string | undefined {
+export function findLastAssistantMessage_id(messages: LlamaMessage[]): string | undefined {
   for (let i = messages.length - 1; i >= 0; i--) {
     if (messages[i].role === "assistant") {
       // scenario: [...first messages, assistant, ...last messages] -> assistant id
@@ -133,7 +133,7 @@ export function findLastAssistantMessageId(messages: LlamaMessage[]): string | u
   return undefined;
 }
 
-export function getLastMessageId(messages: LlamaMessage[], isStreaming: boolean): string {
+export function getLastMessage_id(messages: LlamaMessage[], isStreaming: boolean): string {
   const messagesLength = messages.length;
   if (messagesLength === 0) {
     // scenario: [] -> "-1"
@@ -149,19 +149,19 @@ export function getLastMessageId(messages: LlamaMessage[], isStreaming: boolean)
 
     case "system":
       // scenario: [...first messages, system] -> last assistant id || "-1"
-      return findLastAssistantMessageId(messages) || "-1";
+      return findLastAssistantMessage_id(messages) || "-1";
 
     case "user":
       if (!isStreaming) {
         // scenario: [...first messages, user] -> last assistant id || "-1"
-        return findLastAssistantMessageId(messages) || "-1";
+        return findLastAssistantMessage_id(messages) || "-1";
       }
 
       if (messagesLength > 1) {
         const lastLastMessage = messages[messagesLength - 2];
         if (lastLastMessage.role === "user") {
           // scenario: [...first messages, user, user] -> last assistant id || "-1"
-          return findLastAssistantMessageId(messages) || "-1";
+          return findLastAssistantMessage_id(messages) || "-1";
         }
         if (lastLastMessage.role === "system") {
           for (let i = messagesLength - 3; i >= 0; i--) {
@@ -176,7 +176,7 @@ export function getLastMessageId(messages: LlamaMessage[], isStreaming: boolean)
 
               case "user":
                 // scenario: [...first messages, user, ...system, user] -> last assistant id || "-1"
-                return findLastAssistantMessageId(messages) || "-1";
+                return findLastAssistantMessage_id(messages) || "-1";
             }
           }
           // scenario: [...system, user] -> user id

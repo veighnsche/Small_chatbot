@@ -57,8 +57,8 @@ const Main = () => {
     dispatch(editChatView(view));
   };
 
-  const handleSetCurrentChatId = (chatId: string) => {
-    dispatch(llamaOnMessagesSnapshot({ chatId }));
+  const handleSetCurrentChat_id = (chat_id: string) => {
+    dispatch(llamaOnMessagesSnapshot({ chat_id }));
   };
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const Main = () => {
       llamaEventBus.on("user-message", handleAddMessage),
       llamaEventBus.on("chat-params", handleEditChatParams),
       llamaEventBus.on("chat-view", handleEditChatView),
-      llamaEventBus.on("chat-id", handleSetCurrentChatId),
+      llamaEventBus.on("chat-id", handleSetCurrentChat_id),
     ];
 
     return () => {

@@ -31,10 +31,12 @@ export const configureWretch = ({ url, user }: { url: string; user: User }): Wre
 
     if (res.ok) {
       if (res.body === null) {
+        console.trace("No body");
         throw new Error("Failed to send message");
       }
       return res.body;
     } else {
+      console.trace(`${res.status}: Failed to send message`);
       throw new Error(`${res.status}: Failed to send message`);
     }
   };

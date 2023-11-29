@@ -108,7 +108,7 @@ describe("withDefaultParameters", () => {
     ];
 
     const modifiedFunctionDefinition = withDefaultParameters(customFunctionDefinition);
-    // @ts-ignore
+    // @ts-expect-error: We know that the function definition has an explanation property
     expect(modifiedFunctionDefinition[0].parameters.properties.explanation).toEqual({
       type: "string",
       description: "Custom explanation",

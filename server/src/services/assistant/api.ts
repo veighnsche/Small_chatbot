@@ -18,10 +18,12 @@ export class AssistantApi {
     iOazureEndpoint?: string;
   }) {
     if (!openaiKey && !iOazureKey) {
+      console.trace("Must have either OPENAI_KEY or IO_AZURE_OPENAI_KEY set.")
       throw new Error("Must have either OPENAI_KEY or IO_AZURE_OPENAI_KEY set.");
     }
 
     if (openaiKey && iOazureKey) {
+      console.trace("Cannot have both OPENAI_KEY and IO_AZURE_OPENAI_KEY set.")
       throw new Error("Cannot have both OPENAI_KEY and IO_AZURE_OPENAI_KEY set.");
     }
 
@@ -73,7 +75,7 @@ export class AssistantApi {
           ...init,
           body: JSON.stringify(params),
         }).catch((e) => {
-          console.error(e);
+          console.trace(e);
           throw e;
         });
 
@@ -87,7 +89,7 @@ export class AssistantApi {
   private async assertError(response: Response) {
     if (response.status < 200 || response.status >= 300) {
       const errorJson = await response.json();
-      console.error(errorJson);
+      console.trace(errorJson);
       throw new Error(errorJson.error.message);
     }
   }

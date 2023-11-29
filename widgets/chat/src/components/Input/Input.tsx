@@ -16,8 +16,8 @@ export const Input = () => {
   } = useLlamaInput();
 
   const dispatch = useLlamaDispatch();
-  const sseId = useLlamaSelector((state) => state.llamaChat.sseId);
-  const isStreaming = !!sseId;
+  const sse_id = useLlamaSelector((state) => state.llamaChat.sse_id);
+  const isStreaming = !!sse_id;
 
   return (
     <div className="input-container">
@@ -33,7 +33,7 @@ export const Input = () => {
         />
         <div className="icon-button-container">
           {isStreaming ? (
-            <IconButton circle onClick={() => dispatch(llamaSseStop({ sseId }))} title={"Stop Streaming"}>
+            <IconButton circle onClick={() => dispatch(llamaSseStop({ sse_id }))} title={"Stop Streaming"}>
               <img src={StopIcon} alt={"Stop Streaming icon"} />
             </IconButton>
           ) : (

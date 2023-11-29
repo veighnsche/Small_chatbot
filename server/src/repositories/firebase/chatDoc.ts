@@ -7,21 +7,26 @@ export class ChatDocumentRepository {
   private chatDoc: admin.firestore.DocumentReference;
   private messagesCol: admin.firestore.CollectionReference;
 
-  constructor(userId: string, conversationId: string) {
+  constructor(user_id: string, conversation_id: string) {
     this.db = getDatabase();
 
     this.chatDoc = this.db
       .collection("assistantChat")
-      .doc(userId)
+      .doc(user_id)
       .collection("chats")
-      .doc(conversationId);
+      .doc(conversation_id);
 
     this.messagesCol = this.chatDoc.collection("messages");
   }
 
   async addMessage(message: LlamaMessage): Promise<void> {
-    await this.messagesCol.doc(message.id).set(message.toRecord());
-    await this.chatDoc.update({ updated: new Date() });
+    try {
+      await this.messagesCol.doc(message.id).set(message.toRecord());
+      await this.chatDoc.update({ updated: new Date() });
+    } catch (error) {
+      console.trace("Error adding message", { message, error });
+      throw new Error(`Error adding message: ${error}`);
+    }
   }
 
   async addMessages(messages: LlamaMessage[]): Promise<void> {

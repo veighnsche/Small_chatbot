@@ -84,7 +84,7 @@ const FunctionCall = ({ content, function_call, ...rest }: LlamaMessage) => {
 
 const Assistant = ({ content, id, parent_id, iter }: LlamaMessage) => {
   const isLastAssistantMessage = useLlamaSelector((state) => {
-    return state.llamaChat.lastMessageId === id;
+    return state.llamaChat.lastMessage_id === id;
   });
   return (
     <div className="content-bubble-container assistant">

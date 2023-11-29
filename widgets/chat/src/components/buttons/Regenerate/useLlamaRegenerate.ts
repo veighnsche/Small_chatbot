@@ -3,7 +3,7 @@ import { useLlamaDispatch, useLlamaSelector } from "../../../stores/llamaStore.t
 import { llamaSseRegenerate } from "../../../thunks/llamaSseRegenerate.ts";
 
 export const useLlamaRegenerate = () => {
-  const chatId = useLlamaSelector((state) => state.llamaChat.currentChatId);
+  const chat_id = useLlamaSelector((state) => state.llamaChat.currentChat_id);
   const dispatch = useLlamaDispatch();
   const llamaStreamContext = useLlamaStreamingWrite();
 
@@ -11,7 +11,7 @@ export const useLlamaRegenerate = () => {
     dispatch(llamaSseRegenerate({ llamaStreamContext }));
   };
 
-  const disabled = !chatId;
+  const disabled = !chat_id;
 
   return {
     onRegenerate,

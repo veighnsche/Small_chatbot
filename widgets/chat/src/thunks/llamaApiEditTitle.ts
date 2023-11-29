@@ -12,12 +12,12 @@ export const llamaApiEditTitle = createAsyncThunk<void, SendMessageParams, Llama
     extra: { wretch },
   }) => {
     const state = getState();
-    const chatId = state.llamaChat.currentChatId;
+    const chat_id = state.llamaChat.currentChat_id;
 
     try {
-      await wretch(`chat/${chatId}/title`).post<SendMessageParams>({ title });
+      await wretch(`chat/${chat_id}/title`).post<SendMessageParams>({ title });
     } catch (err) {
-      console.error(err);
+      console.trace(err);
       throw new Error("Failed to send message");
     }
   },

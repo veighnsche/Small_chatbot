@@ -4,7 +4,7 @@ describe("createEventData", () => {
 
   test("should generate a correct event data string", () => {
     const type = "USER_LOGIN";
-    const data = { userId: "1234", timestamp: "2021-09-01T12:00:00Z" };
+    const data = { user_id: "1234", timestamp: "2021-09-01T12:00:00Z" };
 
     const result = createEventData(type, data);
 
@@ -16,7 +16,7 @@ describe("createEventData", () => {
 
   test("encode different types and data correctly", () => {
     const type = "PAGE_VIEW";
-    const data = { pageId: "home", duration: 300 };
+    const data = { page_id: "home", duration: 300 };
 
     const result = createEventData(type, data);
 

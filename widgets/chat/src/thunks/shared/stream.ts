@@ -1,6 +1,6 @@
 import { LlamaStreamContext } from "../../providers/LlamaStreamingProvider.tsx";
 import { llamaEventBus } from "../../services/llamaEventBus.ts";
-import { setError, setSseId } from "../../slices/llamaChatSlice";
+import { setError, setSse_id } from "../../slices/llamaChatSlice";
 import { useLlamaDispatch } from "../../stores/llamaStore";
 import { streamToObject } from "../../utils/stream";
 import { llamaOnMessagesSnapshot } from "../llamaOnMessagesSnapshot.ts";
@@ -18,11 +18,11 @@ export async function streamToAssistantAction(
 ): Promise<void> {
   try {
     for await (const delta of streamToObject(body)) {
-      if ("sseId" in delta) {
-        dispatch(setSseId({ sseId: delta.sseId }));
+      if ("sse_id" in delta) {
+        dispatch(setSse_id({ sse_id: delta.sse_id }));
       }
-      if ("chatId" in delta) {
-        dispatch(llamaOnMessagesSnapshot({ chatId: delta.chatId }));
+      if ("chat_id" in delta) {
+        dispatch(llamaOnMessagesSnapshot({ chat_id: delta.chat_id }));
       }
       if ("role" in delta) {
         llamaStreamContext.startAssistantStream({ role: delta.role });
@@ -39,7 +39,7 @@ export async function streamToAssistantAction(
         }
       }
       if ("cleanup" in delta) {
-        dispatch(setSseId({ sseId: undefined }));
+        dispatch(setSse_id({ sse_id: undefined }));
       }
       if ("error" in delta) {
         llamaStreamContext.stopAssistantStream();
@@ -61,6 +61,6 @@ export async function streamToAssistantAction(
       }
     }
   } catch (err) {
-    console.error("Error converting to assistant action:", err);
+    console.trace("Error converting to assistant action:", err);
   }
 }

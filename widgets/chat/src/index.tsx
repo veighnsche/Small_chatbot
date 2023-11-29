@@ -16,7 +16,7 @@ import { configureLlamaStore, LlamaActions } from "./stores/llamaStore.ts";
 import { LlamaLoadedSystemMessage } from "./types/LlamaLoadedSystemMessage.ts";
 import { LlamaMessage } from "./types/LlamaMessage.ts";
 import { configureWretch } from "./utils/fetch.ts";
-import { generateUniqueID } from "./utils/uid.ts";
+import { generateUnique_id } from "./utils/uid.ts";
 
 export interface LlamaTreeProps {
   user: User;
@@ -83,13 +83,13 @@ class ChatWidgetElement extends HTMLElement {
     return this;
   }
 
-  setChatId(chatId: string) {
-    llamaEventBus.emit("chat-id", chatId);
+  setChat_id(chat_id: string) {
+    llamaEventBus.emit("chat-id", chat_id);
     return this;
   }
 
   async sendLlamaMessage(message: string, params?: Partial<LlamaChatParams>): Promise<LlamaMessage> {
-    const assistantUid = generateUniqueID();
+    const assistantUid = generateUnique_id();
     llamaEventBus.emit("user-message", { message, params, assistantUid });
     return llamaEventBus.onceAsync("assistant_uid: " + assistantUid);
   }
@@ -126,6 +126,7 @@ class ChatWidgetElement extends HTMLElement {
 
   private validateInitialization() {
     if (!this.root || !this.reactRoot || !this.url) {
+      console.trace("ChatWidgetElement is not fully initialized.");
       throw new Error("ChatWidgetElement is not fully initialized.");
     }
   }

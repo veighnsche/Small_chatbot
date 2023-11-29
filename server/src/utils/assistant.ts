@@ -14,7 +14,7 @@ export const withDefaultParameters = (functionDefinitions: ChatCompletionCreateP
   // Merge the original properties with the metadata properties
   const mergedProperties = {
     ...functionCallMetadataProperties,
-    ...functionCallInfo.parameters.properties as {},
+    ...functionCallInfo.parameters.properties as object,
   };
 
   // Merge the original required properties with the metadata properties

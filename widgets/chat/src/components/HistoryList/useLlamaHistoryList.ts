@@ -4,7 +4,7 @@ import { useLlamaDispatch, useLlamaSelector } from "../../stores/llamaStore.ts";
 import { llamaOnHistorySnapshot, unsubscribeFromLlamaHistory } from "../../thunks/llamaOnHistorySnapshot.ts";
 
 export const useLlamaHistoryList = () => {
-  const selectedChatId = useLlamaSelector(makeIsSelectedChatMemo);
+  const selectedChat_id = useLlamaSelector(makeIsSelectedChatMemo);
   const history = useLlamaSelector((state) => state.llamaHistory.history);
   const dispatch = useLlamaDispatch();
 
@@ -18,6 +18,6 @@ export const useLlamaHistoryList = () => {
 
   return {
     history,
-    selectedChatId,
+    selectedChat_id: selectedChat_id,
   };
 }

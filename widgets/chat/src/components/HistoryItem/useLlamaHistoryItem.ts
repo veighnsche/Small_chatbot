@@ -20,7 +20,7 @@ export const useLlamaHistoryItem = ({ id, title, selected }: LlamaHistoryItemPro
   };
 
   const onHistorySelect = () => {
-    dispatch(llamaOnMessagesSnapshot({ chatId: id }));
+    dispatch(llamaOnMessagesSnapshot({ chat_id: id }));
   };
 
   const onEditCheck = () => {

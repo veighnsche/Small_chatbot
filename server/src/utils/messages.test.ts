@@ -1,6 +1,6 @@
 import { jsonrepair } from "jsonrepair";
 import { ILlamaMessage } from "../types/chat";
-import { getLastId, makeArgs } from "./messages";
+import { getLast_id, parseArguments } from "./messages";
 
 jest.mock("jsonrepair", () => {
   return {
@@ -8,9 +8,9 @@ jest.mock("jsonrepair", () => {
   };
 });
 
-describe("getLastId", () => {
+describe("getLast_id", () => {
   test("should return -1 when messages is empty", () => {
-    expect(getLastId([])).toBe("-1");
+    expect(getLast_id([])).toBe("-1");
   });
 
   test("should return the id of the last message in the list", () => {
@@ -18,7 +18,7 @@ describe("getLastId", () => {
       { id: "1", content: "First", role: "user", parent_id: "-1" },
       { id: "99", content: "Last", role: "user", parent_id: "1" },
     ];
-    expect(getLastId(messages)).toBe("99");
+    expect(getLast_id(messages)).toBe("99");
   });
 });
 
@@ -28,18 +28,18 @@ describe("makeArgs", () => {
   const repairedJSON = "{\"key\":\"value\"}";
 
   test("should parse valid JSON string", () => {
-    expect(makeArgs(validJSON)).toEqual({ key: "value" });
+    expect(parseArguments(validJSON)).toEqual({ key: "value" });
   });
 
   test("should throw error when unable to parse non-JSON", () => {
     expect(() => {
-      makeArgs("Not a JSON string");
+      parseArguments("Not a JSON string");
     }).toThrow();
   });
 
   test("should call jsonrepair on invalid JSON and successfully parse", () => {
     (jsonrepair as jest.Mock).mockImplementationOnce(() => repairedJSON);
-    expect(makeArgs(invalidJSON)).toEqual("{\"key\":\"value\"}");
+    expect(parseArguments(invalidJSON)).toEqual({ key: "value" });
     expect(jsonrepair).toHaveBeenCalledWith(invalidJSON);
   });
 
@@ -55,7 +55,7 @@ describe("makeArgs", () => {
 
     // Assert that an error is thrown
     expect(() => {
-      makeArgs(invalidJSON);
+      parseArguments(invalidJSON);
     }).toThrow();
 
     // Assert that console.log and console.error methods were called
