@@ -92,7 +92,7 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
 				case "chatDocRepo":
 					if (!res.locals.chatDocRepo) {
 						const userUid = req.user?.uid;
-						const chatId = res.locals.chatId || req.params.chatId;
+						const chatId = res.locals.chat_id || req.params.chat_id;
 
 						if (!userUid) {
 							next(new Error(`${name}: User UID has not been found to initialize chat doc`));

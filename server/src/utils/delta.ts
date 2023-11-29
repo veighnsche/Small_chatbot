@@ -13,7 +13,7 @@ export class DeltaCombiner {
     if ("role" in delta) {
       this.incompleteMessage.role = delta.role;
     }
-    if ("content" in delta) {
+    if ("content" in delta && delta.content !== null) {
       this.incompleteMessage.content += delta.content;
     }
     if ("function_call" in delta) {

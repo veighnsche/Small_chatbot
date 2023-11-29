@@ -10,7 +10,7 @@ class ChatMiddleware {
 	static async createChat(_: LlamaReq, res: LlamaRes<ChatColLocals & ChatIdLocals>): Promise<void> {
 		const chatId = await res.locals.chatColRepo.newChat("New chat");
 		res.write(`data: ${JSON.stringify({ chatId })}\n\n`);
-		res.locals.chatId = chatId;
+		res.locals.chat_id = chatId;
 	}
 
   @LlamaAsserts("clientMessages", "thread", "chatDocRepo")

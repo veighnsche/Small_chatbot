@@ -15,7 +15,7 @@ export interface ChatColLocals {
 }
 
 export interface ChatIdLocals {
-  chatId: string,
+  chat_id: string,
 }
 
 export interface SseLocals {
