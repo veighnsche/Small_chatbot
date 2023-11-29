@@ -1,4 +1,4 @@
-import { LlamaAsserts } from "../decorators/api";
+import { LlamaAsserts } from "../decorators/asserts";
 import { connectionsEventBus } from "../services/eventBus";
 import { SseLocals } from "../types/api/locals";
 import { LlamaReq, LlamaReqP, LlamaRes } from "../types/api/middleware";

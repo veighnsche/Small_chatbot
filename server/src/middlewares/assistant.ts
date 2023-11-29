@@ -1,5 +1,5 @@
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
-import { LlamaAsserts } from "../decorators/api";
+import { LlamaAsserts } from "../decorators/asserts";
 import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AssistantParamsBody, AssistantUniqueIDBody } from "../types/api/bodies";

@@ -1,4 +1,4 @@
-import { LlamaAsserts } from "../decorators/api";
+import { LlamaAsserts } from "../decorators/asserts";
 import { LlamaMessage } from "../models/chatMessage";
 import { ClientMessagesBody, EditChatTitleBody } from "../types/api/bodies";
 import { Chat_idLocals, ChatColLocals, ChatDocLocals, ThreadLocals } from "../types/api/locals";
