@@ -1,6 +1,5 @@
-import OpenAI from "openai/index";
-import { withDefaultParameters } from "./assistant";
-import ChatCompletionCreateParams = OpenAI.ChatCompletionCreateParams;
+import { ChatCompletionCreateParams } from "openai/src/resources/chat/completions";
+import { withDefaultParameters } from "../assistant";
 
 jest.mock("openai"); // If necessary, to mock the openai SDK
 
@@ -108,7 +107,7 @@ describe("withDefaultParameters", () => {
     ];
 
     const modifiedFunctionDefinition = withDefaultParameters(customFunctionDefinition);
-    // @ts-expect-error: We know that the function definition has an explanation property
+    // @ts-ignore
     expect(modifiedFunctionDefinition[0].parameters.properties.explanation).toEqual({
       type: "string",
       description: "Custom explanation",

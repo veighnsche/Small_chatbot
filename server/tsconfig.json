@@ -10,7 +10,7 @@
 
     // Strict Type-Checking Options
     "strict": false,                                 // Enable all strict type-checking options
-    "noImplicitAny": true,                           // Raise error on expressions and declarations with an implied 'any' type
+    "noImplicitAny": false,                           // Raise error on expressions and declarations with an implied 'any' type
     "strictNullChecks": false,                       // Enable strict null checks
 
     // Additional Checks

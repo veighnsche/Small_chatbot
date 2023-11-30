@@ -1,11 +1,12 @@
-import OpenAI from "openai";
-import { Chat, ChatCompletionMessage } from "openai/resources/chat";
+import {
+  ChatCompletionMessage,
+  ChatCompletionMessageParam,
+} from "openai/resources/chat";
+import { ChatCompletionRole } from "openai/src/resources/chat/completions";
 import { ILlamaMessage } from "../types/chat";
 import { parseArguments } from "../utils/messages";
 import { removeKeys } from "../utils/object";
 import { getTimeStamp } from "../utils/time";
-import ChatCompletionMessageParam = Chat.ChatCompletionMessageParam;
-import ChatCompletionRole = OpenAI.ChatCompletionRole;
 
 export const SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE = "[END OF SYSTEM MESSAGE TITLE]";
 
@@ -85,7 +86,7 @@ export class LlamaMessage implements ILlamaMessage {
       };
 
       return {
-        role: this.role,
+        role: "function",
         content: null,
         function_call: {
           name: this.function_call.name,

@@ -1,6 +1,6 @@
 import { jsonrepair } from "jsonrepair";
-import { ILlamaMessage } from "../types/chat";
-import { getLast_id, parseArguments } from "./messages";
+import { ILlamaMessage } from "../../types/chat";
+import { getLast_id, parseArguments } from "../messages";
 
 jest.mock("jsonrepair", () => {
   return {

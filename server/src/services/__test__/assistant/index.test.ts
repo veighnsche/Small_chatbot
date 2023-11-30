@@ -1,12 +1,12 @@
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
-import { LlamaMessage } from "../../models/chatMessage";
-import { connectionsEventBus } from "../eventBus";
-import { llamaChatCompletion, llamaChatCompletionStream } from "./api";
-import { callAssistantStream, callChatTitleAssistant } from "./index";
+import { LlamaMessage } from "../../../models/chatMessage";
+import { connectionsEventBus } from "../../eventBus";
+import { llamaChatCompletion, llamaChatCompletionStream } from "../../assistant/api";
+import { callAssistantStream, callChatTitleAssistant } from "../../assistant";
 
-jest.mock("../eventBus");
+jest.mock("../../eventBus");
 
-jest.mock("./api");
+jest.mock("../../assistant/api");
 
 describe("callAssistantStream", () => {
   const mockSse_id = "test-sse-id";

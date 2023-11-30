@@ -16,10 +16,22 @@ export async function* callAssistantStream(
     throw e;
   });
 
+  // check is it is an iterable stream
+  if (!chatCompletionStream[Symbol.asyncIterator]) {
+    console.trace("callAssistantStream: chatCompletionStream is not an iterable stream", { chatCompletionStream });
+    throw new Error("callAssistantStream: chatCompletionStream is not an iterable stream");
+  }
+
   // Listen for stop events
   let shouldStop = false;
   connectionsEventBus.on(sse_id, () => {
-    shouldStop = true;
+    try {
+      // Stop the stream
+      chatCompletionStream.controller.abort()
+    } catch (e) {
+      console.trace(e);
+      shouldStop = true;
+    }
   });
 
   // Iterate over the completion stream

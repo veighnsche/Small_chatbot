@@ -1,12 +1,12 @@
 import express from "express";
-import chatRouter from "../api/chat";
-import pingRouter from "../api/ping";
-import { errorHandler } from "../middlewares/error";
-import { setupRoutes } from "./routes";
+import chatRouter from "../../api/chat";
+import pingRouter from "../../api/ping";
+import { errorHandler } from "../../middlewares/error";
+import { setupRoutes } from "../routes";
 
-jest.mock("../api/chat", () => jest.fn());
-jest.mock("../api/ping", () => jest.fn());
-jest.mock("../middlewares/error", () => ({ errorHandler: jest.fn() }));
+jest.mock("../../api/chat", () => jest.fn());
+jest.mock("../../api/ping", () => jest.fn());
+jest.mock("../../middlewares/error", () => ({ errorHandler: jest.fn() }));
 
 describe("setupRoutes", () => {
   let app: express.Application;

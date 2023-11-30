@@ -1,5 +1,5 @@
 // Assuming your file is named firebase.js
-import * as firebase from "./firebase";
+import * as firebase from "../firebase";
 import admin from "firebase-admin";
 
 jest.mock("firebase-admin", () => {

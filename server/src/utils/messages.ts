@@ -27,7 +27,7 @@ export function parseArguments(args: string): any {
   }
 
   try {
-    console.log("trying to fix JSON")
+    console.log("trying to fix JSON");
     const repairedJson = jsonrepair(args);
     const json = JSON.parse(repairedJson);
     if (json) {

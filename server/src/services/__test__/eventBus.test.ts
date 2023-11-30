@@ -1,4 +1,4 @@
-import { EventBus } from "./eventBus";
+import { EventBus } from "../eventBus";
 
 describe("EventBus", () => {
   let eventBus: EventBus<{ testEvent: typeof testData }>;

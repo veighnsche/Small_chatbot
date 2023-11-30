@@ -1,5 +1,5 @@
 import { ChatCompletionChunk } from "openai/resources/chat";
-import { DeltaCombiner } from "./delta";
+import { DeltaCombiner } from "../delta";
 
 describe("DeltaCombiner", () => {
   let deltaCombiner: DeltaCombiner;

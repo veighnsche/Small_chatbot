@@ -24,14 +24,14 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
         switch (prop) {
         case "sse_id":
           if (!req.params.sse_id) {
-            console.trace(`${name}: req.params.sse_id: Required.`)
+            console.trace(`${name}: req.params.sse_id: Required.`);
             next(new Error(`${name}: req.params.sse_id: Required.`));
           }
           break;
 
         case "chat_id":
           if (!req.params.chat_id) {
-            console.trace(`${name}: req.params.chat_id: Required.`)
+            console.trace(`${name}: req.params.chat_id: Required.`);
             next(new Error(`${name}: req.params.chat_id: Required.`));
           }
           break;
@@ -40,7 +40,7 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
           try {
             assertArray(req.body.clientMessages);
           } catch (err) {
-            console.trace(`${name}: req.body.clientMessages: ${(err as Error).message}`)
+            console.trace(`${name}: req.body.clientMessages: ${(err as Error).message}`);
             next(new Error(`${name}: req.body.clientMessages: ${(err as Error).message}`));
           }
 
@@ -48,7 +48,7 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
             try {
               assertChatCompletionMessage(message);
             } catch (err) {
-              console.trace(`${name}: req.body.clientMessages: ${(err as Error).message}`)
+              console.trace(`${name}: req.body.clientMessages: ${(err as Error).message}`);
               next(new Error(`${name}: req.body.clientMessages: ${(err as Error).message}`));
             }
           }
@@ -58,21 +58,21 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
           try {
             assertModel(req.body.assistantParams.model);
           } catch (err) {
-            console.trace(`${name}: req.body.assistantParams.model: ${(err as Error).message}`)
+            console.trace(`${name}: req.body.assistantParams.model: ${(err as Error).message}`);
             next(new Error(`${name}: req.body.assistantParams.model: ${(err as Error).message}`));
           }
           break;
 
         case "assistant_id":
           if (!req.body.assistant_uid) {
-            console.trace(`${name}: req.body.assistant_uid: Required.`)
+            console.trace(`${name}: req.body.assistant_uid: Required.`);
             next(new Error(`${name}: req.body.assistant_uid: Required.`));
           }
           break;
 
         case "title":
           if (!req.body.title) {
-            console.trace(`${name}: req.body.title: Required.`)
+            console.trace(`${name}: req.body.title: Required.`);
             next(new Error(`${name}: req.body.title: Required.`));
           }
           break;
@@ -89,7 +89,7 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
             const userUid = req.user?.uid;
 
             if (!userUid) {
-              console.trace(`${name}: User UID has not been found to initialize chat col`)
+              console.trace(`${name}: User UID has not been found to initialize chat col`);
               next(new Error(`${name}: User UID has not been found to initialize chat col`));
             }
 
@@ -103,12 +103,12 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
             const chat_id = res.locals.chat_id || req.params.chat_id;
 
             if (!user_id) {
-              console.trace(`${name}: User_id has not been found to initialize chat doc`)
+              console.trace(`${name}: User_id has not been found to initialize chat doc`);
               next(new Error(`${name}: User_id has not been found to initialize chat doc`));
             }
 
             if (!chat_id) {
-              console.trace(`${name}: Chat_id has not been found to initialize chat doc`)
+              console.trace(`${name}: Chat_id has not been found to initialize chat doc`);
               next(new Error(`${name}: Chat_id has not been found to initialize chat doc`));
             }
 
@@ -118,7 +118,7 @@ export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | 
 
         case "sse":
           if (!res.locals.sse) {
-            console.trace(`${name}: SSE has not been initialized`)
+            console.trace(`${name}: SSE has not been initialized`);
             next(new Error(`${name}: SSE has not been initialized`));
           }
           break;

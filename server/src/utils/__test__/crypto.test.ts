@@ -1,5 +1,5 @@
 import CryptoJS from "crypto-js";
-import { encodeMessage } from "./crypto";
+import { encodeMessage } from "../crypto";
 
 describe("encodeMessage", () => {
   const key = "my-32-bit-secret-key123456789012";

@@ -1,5 +1,5 @@
-import mw from "../middlewares";
-import { llamaRouter } from "./router";
+import mw from "../../middlewares";
+import { llamaRouter } from "../router";
 
 jest.mock("express", () => {
   return {
@@ -9,7 +9,7 @@ jest.mock("express", () => {
   };
 });
 
-jest.mock("../middlewares", () => ({
+jest.mock("../../middlewares", () => ({
   sse: {
     initialize: jest.fn(),
     finalize: jest.fn(),

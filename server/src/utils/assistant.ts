@@ -1,6 +1,5 @@
 import { JSONSchema7 as JSONSchema } from "json-schema";
-import OpenAI from "openai";
-import ChatCompletionCreateParams = OpenAI.ChatCompletionCreateParams;
+import { ChatCompletionCreateParams } from "openai/resources/chat";
 
 
 export const functionCallMetadataProperties: Record<string, unknown> = {

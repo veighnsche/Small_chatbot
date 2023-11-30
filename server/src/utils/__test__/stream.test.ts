@@ -1,4 +1,4 @@
-import { createEventData } from "./stream";
+import { createEventData } from "../stream";
 
 describe("createEventData", () => {
 

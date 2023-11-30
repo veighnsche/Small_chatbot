@@ -1,6 +1,6 @@
 import { OpenAI } from "openai";
 import fetchMock from "jest-fetch-mock";
-import { AssistantApi } from "./api";
+import { AssistantApi } from "../../assistant/api";
 
 jest.mock("openai", () => ({
   OpenAI: jest.fn().mockImplementation(() => ({

@@ -1,7 +1,7 @@
 import { NextFunction } from "express";
 import rateLimit from "express-rate-limit";
-import { LlamaReq, LlamaRes } from "../types/api/middleware";
-import { getRateLimiter } from "./rateLimiter"; // Adjust the import path as necessary
+import { LlamaReq, LlamaRes } from "../../types/api/middleware";
+import { getRateLimiter } from "../rateLimiter"; // Adjust the import path as necessary
 
 jest.mock("express-rate-limit", () => {
   return jest.fn(() => (req: LlamaReq, res: LlamaRes, next: NextFunction) => next()); // Mock implementation returns a dummy middleware function

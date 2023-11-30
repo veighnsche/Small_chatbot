@@ -1,4 +1,4 @@
-import { removeKeys } from "./object";
+import { removeKeys } from "../object";
 
 describe("removeKeys", () => {
 
