@@ -37,6 +37,10 @@ export const makeThreadFromLastMessage = (
   const thread: LlamaMessage[] = [];
   let currentMessage_id = lastMessage_id;
 
+  if (Object.keys(messagesMap).length === 0) {
+    return thread;
+  }
+
   while (currentMessage_id !== "-1") {
     const currentMessage = messagesMap[currentMessage_id];
 
