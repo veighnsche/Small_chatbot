@@ -1,7 +1,5 @@
 export async function getTimeStamp(): Promise<string> {
-  // random number between 1 and 26
-  const randomNumber = Math.floor(Math.random() * 26) + 1;
-  await wait(randomNumber);
+  await wait(1);
   return Date.now().toString(36);
 }
 
