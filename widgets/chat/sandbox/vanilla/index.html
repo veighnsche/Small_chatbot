@@ -5,6 +5,14 @@
     <title>Chat Widget Sandbox</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <link rel="stylesheet" href="styles.css">
+    <script type="module">
+      // workaround for Uncaught Error: @vitejs/plugin-react can't detect preamble. Something is wrong. See https://github.com/vitejs/vite-plugin-react/pull/11#discussion_r430879201
+      import RefreshRuntime from 'http://localhost:5173/@react-refresh'
+      RefreshRuntime.injectIntoGlobalHook(window)
+      window.$RefreshReg$ = () => {}
+      window.$RefreshSig$ = () => (type) => type
+      window.__vite_plugin_react_preamble_installed__ = true
+    </script>
 </head>
 <body>
 <div id="chat-container">
@@ -41,7 +49,9 @@
         <button id="set-function-call-btn">Set Function Call</button>
     </div>
 </div>
-<script type="module" src="http://localhost:3001/module"></script>
+<!-- Entry point -->
+<llama-tree-chat-widget url="http://localhost:3001"></llama-tree-chat-widget>
+<script type="module" src="../../src/index.tsx"></script>
 <script type="module" src="index.js"></script>
 </body>
 </html>

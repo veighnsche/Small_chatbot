@@ -3,7 +3,8 @@ node_modules/
 .idea
 
 package-lock.json
-server/dist/
+/server/dist/
+/server/coverage/
 
 server/src/service-account-key.json
 
@@ -11,4 +12,3 @@ server/.env
 server/.env.dev
 server/.env.resumator
 widgets/chat/sandbox/vanilla/firebaseConfig.js
-/server/coverage/

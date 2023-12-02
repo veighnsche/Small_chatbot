@@ -8,6 +8,7 @@ const app = initializeApp(firebaseConfig)
 const auth = getAuth(app)
 
 async function onGoogleSignIn() {
+  console.log('Sign in with Google')
   const provider = new GoogleAuthProvider()
   try {
     await signInWithPopup(auth, provider)

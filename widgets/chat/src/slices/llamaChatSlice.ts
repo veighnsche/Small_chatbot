@@ -95,36 +95,35 @@ const llamaChatSlice = createSlice({
       state.error = action.payload.error;
     },
   },
-  extraReducers: {
-    "llamaChat/addMessage/pending": (state) => {
-      state.isStreaming = true;
-    },
-    "llamaChat/addMessage/fulfilled": (state) => {
-      state.isStreaming = false;
-    },
-    "llamaChat/addMessage/rejected": (state) => {
-      state.isStreaming = false;
-    },
-
-    "llamaChat/regenerate/pending": (state) => {
-      state.isStreaming = true;
-    },
-    "llamaChat/regenerate/fulfilled": (state) => {
-      state.isStreaming = false;
-    },
-    "llamaChat/regenerate/rejected": (state) => {
-      state.isStreaming = false;
-    },
-
-    "llamaChat/editMessage/pending": (state) => {
-      state.isStreaming = true;
-    },
-    "llamaChat/editMessage/fulfilled": (state) => {
-      state.isStreaming = false;
-    },
-    "llamaChat/editMessage/rejected": (state) => {
-      state.isStreaming = false;
-    },
+  extraReducers: (builder) => {
+    builder
+      .addCase("llamaChat/addMessage/pending", (state) => {
+        state.isStreaming = true;
+      })
+      .addCase("llamaChat/addMessage/fulfilled", (state) => {
+        state.isStreaming = false;
+      })
+      .addCase("llamaChat/addMessage/rejected", (state) => {
+        state.isStreaming = false;
+      })
+      .addCase("llamaChat/regenerate/pending", (state) => {
+        state.isStreaming = true;
+      })
+      .addCase("llamaChat/regenerate/fulfilled", (state) => {
+        state.isStreaming = false;
+      })
+      .addCase("llamaChat/regenerate/rejected", (state) => {
+        state.isStreaming = false;
+      })
+      .addCase("llamaChat/editMessage/pending", (state) => {
+        state.isStreaming = true;
+      })
+      .addCase("llamaChat/editMessage/fulfilled", (state) => {
+        state.isStreaming = false;
+      })
+      .addCase("llamaChat/editMessage/rejected", (state) => {
+        state.isStreaming = false;
+      });
   },
 });
 

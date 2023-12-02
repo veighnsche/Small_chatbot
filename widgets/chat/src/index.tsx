@@ -32,8 +32,21 @@ class ChatWidgetElement extends HTMLElement {
   private url?: string;
   private subs: (() => void)[] = [];
 
+  static get observedAttributes() {
+    return ['url'];
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (name === 'url' && newValue !== oldValue) {
+      this.setUrl(newValue);
+    }
+  }
+
   connectedCallback() {
     this.initializeRoot();
+    if (this.getAttribute('url')) {
+      this.setUrl(this.getAttribute('url')!);
+    }
   }
 
   setUrl(url: string) {
@@ -126,7 +139,7 @@ class ChatWidgetElement extends HTMLElement {
 
   private validateInitialization() {
     if (!this.root || !this.reactRoot || !this.url) {
-      console.trace("ChatWidgetElement is not fully initialized.");
+      console.trace("ChatWidgetElement is not fully initialized.", { root: this.root, reactRoot: this.reactRoot, url: this.url });
       throw new Error("ChatWidgetElement is not fully initialized.");
     }
   }
