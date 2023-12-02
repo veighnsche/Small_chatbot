@@ -6,7 +6,7 @@ import { ChatCompletionRole } from "openai/src/resources/chat/completions";
 import { ILlamaMessage } from "../types/chat";
 import { parseArguments } from "../utils/messages";
 import { removeKeys } from "../utils/object";
-import { getTimeStamp } from "../utils/time";
+import { getTimeStamp } from "../utils/uid";
 
 export const SYMBOL_END_OF_SYSTEM_MESSAGE_TITLE = "[END OF SYSTEM MESSAGE TITLE]";
 
@@ -20,7 +20,7 @@ export class LlamaMessage implements ILlamaMessage {
   ) {
   }
 
-  static async fromChatCompletionMessage(message: ChatCompletionMessage, parent_id: string): Promise<LlamaMessage> {
+  static async createFromChatCompletionMessage(message: ChatCompletionMessage, parent_id: string): Promise<LlamaMessage> {
     const timestamp = await getTimeStamp();
 
     if (message.content) {
@@ -51,7 +51,7 @@ export class LlamaMessage implements ILlamaMessage {
     // used for...of to ensure that the messages are processed in order
     for (const message of messages) {
       const newParent_id = results.length > 0 ? results[results.length - 1].id : parent_id;
-      const appChatMessage = await LlamaMessage.fromChatCompletionMessage(message, newParent_id);
+      const appChatMessage = await LlamaMessage.createFromChatCompletionMessage(message, newParent_id);
       results.push(appChatMessage);
     }
 
@@ -86,7 +86,7 @@ export class LlamaMessage implements ILlamaMessage {
       };
 
       return {
-        role: "function",
+        role: "assistant",
         content: null,
         function_call: {
           name: this.function_call.name,

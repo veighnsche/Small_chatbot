@@ -44,7 +44,7 @@ class AssistantMiddleware {
       }
     }
 
-    const assistant_message = await LlamaMessage.fromChatCompletionMessage(
+    const assistant_message = await LlamaMessage.createFromChatCompletionMessage(
       deltas.assistantMessage,
       getLast_id(messages),
     );
