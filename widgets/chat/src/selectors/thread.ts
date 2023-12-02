@@ -47,11 +47,13 @@ export class LlamaMemoizer {
       this.denormalizedMessages = denormalize(messages);
     }
 
-    if (
+    const shallRecompute = (
       this.chat_id !== currentChat_id ||
       this.messagesLength !== messages.length ||
       this.lastMessage_id !== lastMessage_id
-    ) {
+    );
+
+    if (shallRecompute) {
       this.result = makeThreadFromLastMessage(this.denormalizedMessages, lastMessage_id);
       this.chat_id = currentChat_id;
       this.messagesLength = messages.length;

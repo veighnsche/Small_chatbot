@@ -1,11 +1,10 @@
-import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useState } from "react";
+import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffect, useState } from "react";
+import { llamaEventBus } from "../services/llamaEventBus.ts";
 import { LlamaMessage } from "../types/LlamaMessage.ts";
 
 type LlamaStreamingContext = [LlamaMessage | null, Dispatch<SetStateAction<LlamaMessage | null>>];
 
 const llamaStreamingContext = createContext<LlamaStreamingContext>(null!);
-
-export type LlamaStreamContext = ReturnType<typeof useLlamaStreamingWrite>;
 
 export const useLlamaStreamingRead = () => {
   const [llamaStreaming] = useContext(llamaStreamingContext);
@@ -13,10 +12,12 @@ export const useLlamaStreamingRead = () => {
   return llamaStreaming;
 }
 
-export const useLlamaStreamingWrite = () => {
-  const [_, setLlamaStreaming] = useContext(llamaStreamingContext);
+export const LlamaStreamingProvider = ({ children }: {
+  children: ReactNode
+}) => {
+  const [llamaStreaming, setLlamaStreaming] = useState<LlamaMessage | null>(null);
 
-  function startAssistantStream({ role }: { role: "assistant" }): void {
+  function initiateStream({ role }: { role: "assistant" }): void {
     setLlamaStreaming({
       id: "stream",
       parent_id: "-1",
@@ -29,7 +30,7 @@ export const useLlamaStreamingWrite = () => {
     });
   }
 
-  function startAssistantStreamFunctionCall({ name }: { name: string }): void {
+  function beginFunctionStreaming({ name }: { name: string }): void {
     setLlamaStreaming(message => {
       if (message) {
         return {
@@ -44,7 +45,7 @@ export const useLlamaStreamingWrite = () => {
     });
   }
 
-  function appendAssistantStreamContent({ content }: { content: string }): void {
+  function addToStreamContent({ content }: { content: string }): void {
     setLlamaStreaming(message => {
       if (message) {
         return {
@@ -56,7 +57,7 @@ export const useLlamaStreamingWrite = () => {
     });
   }
 
-  function appendAssistantStreamFunctionCallArguments({ arguments: args }: { arguments: string }): void {
+  function extendFunctionArguments({ arguments: args }: { arguments: string }): void {
     setLlamaStreaming(message => {
       if (message && message.function_call) {
         return {
@@ -71,24 +72,24 @@ export const useLlamaStreamingWrite = () => {
     });
   }
 
-  function stopAssistantStream(): void {
+  function terminateStream(): void {
     // assistantStream = undefined;
     setLlamaStreaming(null);
   }
 
-  return {
-    startAssistantStream,
-    startAssistantStreamFunctionCall,
-    appendAssistantStreamContent,
-    appendAssistantStreamFunctionCallArguments,
-    stopAssistantStream,
-  };
-};
+  useEffect(() => {
+    const subs = [
+      llamaEventBus.on("initiate-stream", initiateStream),
+      llamaEventBus.on("begin-function-streaming", beginFunctionStreaming),
+      llamaEventBus.on("add-to-stream-content", addToStreamContent),
+      llamaEventBus.on("extend-function-arguments", extendFunctionArguments),
+      llamaEventBus.on("terminate-stream", terminateStream),
+    ];
 
-export const LlamaStreamingProvider = ({ children }: {
-  children: ReactNode
-}) => {
-  const [llamaStreaming, setLlamaStreaming] = useState<LlamaMessage | null>(null);
+    return () => {
+      subs.forEach((unsub) => unsub());
+    };
+  }, []);
 
   return (
     <llamaStreamingContext.Provider value={[llamaStreaming, setLlamaStreaming]}>

@@ -6,9 +6,13 @@ import { LlamaMessage } from "../types/LlamaMessage";
 
 let unsubscribe: (() => void) | null = null;
 
-export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chat_id?: string }, LlamaThunkApiConfig>(
+export const llamaOnMessagesSnapshot = createAsyncThunk<void, {
+  chat_id?: string;
+}, LlamaThunkApiConfig>(
   "llamaChat/subscribeToLlamaMessages",
-  async ({ chat_id }, { dispatch, extra: { userDocRef } }) => {
+  async ({
+    chat_id,
+  }, { dispatch, extra: { userDocRef } }) => {
     dispatch(unsubscribeFromLlamaMessages());
 
     if (!chat_id) {
@@ -23,9 +27,9 @@ export const llamaOnMessagesSnapshot = createAsyncThunk<void, { chat_id?: string
     unsubscribe = onSnapshot(messagesCol, (snapshot) => {
       const messages = snapshot.docs
         .map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      } as LlamaMessage))
+          id: doc.id,
+          ...doc.data(),
+        } as LlamaMessage));
 
       dispatch(setMessages({ messages }));
     });

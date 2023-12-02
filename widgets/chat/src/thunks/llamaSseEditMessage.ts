@@ -1,6 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { ChatCompletionMessageParam } from "openai/resources/chat/completions";
-import { LlamaStreamContext } from "../providers/LlamaStreamingProvider.tsx";
 import { threadMemo } from "../selectors/thread";
 import { LlamaChatParams } from "../slices/llamaChatParamsSlice.ts";
 import { setLastMessage_id } from "../slices/llamaChatSlice";
@@ -20,14 +19,12 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
   assistant_uid?: string,
   parent_id: string,
   clientMessages: ChatCompletionMessageParam[]
-  llamaStreamContext: LlamaStreamContext,
 }, LlamaThunkApiConfig>(
   "llamaChat/editMessage",
   async ({
     assistant_uid = generateUnique_id(),
     parent_id,
     clientMessages,
-    llamaStreamContext,
   }, {
     getState,
     dispatch,
@@ -54,7 +51,7 @@ export const llamaSseEditMessage = createAsyncThunk<void, {
           assistant_uid,
         });
 
-      await streamToAssistantAction(body, dispatch, llamaStreamContext);
+      await streamToAssistantAction(body, dispatch);
     } catch (err) {
       console.error(err);
       throw new Error("Failed to send message");

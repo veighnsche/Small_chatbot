@@ -7,7 +7,6 @@ import { HistoryList } from "./components/HistoryList/HistoryList.tsx";
 import { Input } from "./components/Input/Input.tsx";
 import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
-import { useLlamaStreamingWrite } from "./providers/LlamaStreamingProvider.tsx";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
 import { editLlamaChatParams, LlamaChatParams, updateLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { emptyLoadedSystemMessages, loadSystemMessages, removeSystemMessages } from "./slices/llamaChatSlice.ts";
@@ -19,7 +18,6 @@ import { LlamaLoadedSystemMessage } from "./types/LlamaLoadedSystemMessage.ts";
 
 const Main = () => {
   const dispatch = useLlamaDispatch();
-  const llamaStreamContext = useLlamaStreamingWrite()
 
   const handleLoadSystemMessages = (messages: Omit<LlamaLoadedSystemMessage, "id">[]) => {
     dispatch(loadSystemMessages({ messages }));
@@ -41,7 +39,6 @@ const Main = () => {
       }],
       params,
       assistant_uid,
-      llamaStreamContext,
     }));
   };
 

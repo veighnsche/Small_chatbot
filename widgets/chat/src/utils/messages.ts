@@ -53,7 +53,7 @@ export const makeThreadFromLastMessage = (
         messagesMap,
         lastMessage_id,
         thread,
-      })
+      });
       // Break if the message doesn't exist or points to itself
       break;
     }
@@ -191,7 +191,7 @@ export function getLastMessage_id(messages: LlamaMessage[], isStreaming: boolean
 
               case "assistant":
                 // scenario: [...first messages, assistant, ...system, user] -> assistant id
-                return messages[i].id;
+                return lastMessage.id;
 
               case "user":
                 // scenario: [...first messages, user, ...system, user] -> last assistant id || "-1"

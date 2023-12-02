@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { llamaEventBus } from "../services/llamaEventBus.ts";
 import { LlamaChat } from "../types/LlamaChat";
 import { LlamaLoadedSystemMessage } from "../types/LlamaLoadedSystemMessage.ts";
 import { LlamaMessage } from "../types/LlamaMessage";
@@ -39,13 +40,18 @@ const llamaChatSlice = createSlice({
     setMessages: (state, action: PayloadAction<{ messages: LlamaMessage[] }>) => {
       state.error = undefined;
       state.messages = addIters(action.payload.messages);
+      llamaEventBus.emit("terminate-stream");
       state.childrensMap = makeChildrensMap(state.messages);
       state.lastMessage_id = getLastMessage_id(state.messages, state.isStreaming);
     },
 
 
-    setSse_id: (state, action: PayloadAction<{ sse_id?: string }>) => {
+    setSse_id: (state, action: PayloadAction<{ sse_id: string }>) => {
       state.sse_id = action.payload.sse_id;
+    },
+
+    clearSse_id: (state) => {
+      state.sse_id = undefined;
     },
 
     setCurrentChat_id: (state, action: PayloadAction<{ chat_id: string }>) => {
@@ -131,6 +137,7 @@ export const {
   setMessages,
   setCurrentChat_id,
   setSse_id,
+  clearSse_id,
   setLastMessage_id,
   setIter,
   loadSystemMessages,
