@@ -44,7 +44,7 @@
   },
   "scripts": {
     "start": "ts-node src/index.ts",
-    "dev": "nodemon src/index.ts",
+    "dev:server": "nodemon src/index.ts",
     "build": "tsc",
     "deploy": "firebase deploy --only functions",
     "test": "jest --coverage",

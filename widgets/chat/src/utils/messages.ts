@@ -39,6 +39,21 @@ export const makeThreadFromLastMessage = (
 
   while (currentMessage_id !== "-1") {
     const currentMessage = messagesMap[currentMessage_id];
+
+    // infinite loop protection
+    if (!currentMessage || currentMessage_id === currentMessage.parent_id) {
+      console.trace("makeThreadFromLastMessage infinite loop protection triggered");
+      console.log({
+        currentMessage_id,
+        currentMessage,
+        messagesMap,
+        lastMessage_id,
+        thread,
+      })
+      // Break if the message doesn't exist or points to itself
+      break;
+    }
+
     if (currentMessage) {
       thread.unshift(currentMessage);
       currentMessage_id = currentMessage.parent_id;
