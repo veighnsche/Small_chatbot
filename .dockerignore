@@ -1,41 +1,15 @@
-# Node modules and log files
-node_modules/
-#npm-debug.log
-#yarn-error.log
-#.env
-server/.env.example
+/.github
+/.idea
+/.vscode
+/.run
+/llama-tree-api.iml
+/README.md
+/screenshot-21-11-23.webp
+/LICENSE
+/docker-compose.yaml
+.gitignore
 
-# Ignore the build directory
-dist/
-
-# Include the build dir of the widget
-#!widgets/chat/build/**/*
-
-# Ignore editor specific files
-#*.iml
-#**/.vscode
-#**/.idea
-#
-## Ignore all log files
-#**/*.log
-#
-## Ignore specific directories or files you know you don't need in your Docker image
-#**/*.md
-#**/README.md
-
-# Ignore widget node_modules and ignore the src folder to ensure it doesn't get added.
-widgets/chat/node_modules/
-widgets/chat/build/
-#widgets/chat/src/index.tsx
-#widgets/chat/src/react-app-env.d.ts
-#widgets/chat/src/reportWebVitals.ts
-#widgets/chat/src/setupTests.ts
-widgets/chat/.env
-#widgets/chat/.env.example
-#
-## You might also want to ignore test setup and config files
-#**/setupTests.ts
-#**/*.test.ts
-#**/*.test.tsx
-#**/*.spec.ts
-#**/*.spec.tsx
+coverage
+dist
+node_modules
+__test__

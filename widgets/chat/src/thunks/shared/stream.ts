@@ -55,6 +55,9 @@ export async function streamToAssistantAction(
           llamaEventBus.emit("terminate-stream");
           dispatch(setError({ error: delta.EVENT_DATA.message }));
         }
+        if (delta.EVENT_TYPE === "USER STOP") {
+          dispatch(clearSse_id());
+        }
       }
     }
   } catch (err) {

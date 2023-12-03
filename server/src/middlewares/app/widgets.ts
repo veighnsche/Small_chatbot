@@ -18,22 +18,27 @@ export function setupWidgets(app: Application) {
 function generateWidgetScript(serverUrl: string) {
   // language=JavaScript
   const widgetSetup = `
-    const llamaTree = createChatWidget();
-    document.body.appendChild(llamaTree);
+    /**
+     * This looks like JS code,
+     * but it's actually a template string.
+     * @type {HTMLElement}
+     */
+    const llamaTree = createChatWidget()
+    document.body.appendChild(llamaTree)
 
-    const llamaScript = createWidgetScript('${serverUrl}');
-    document.head.appendChild(llamaScript);
+    const llamaScript = createWidgetScript('${serverUrl}')
+    document.head.appendChild(llamaScript)
 
     function createChatWidget() {
-      return document.createElement('llama-tree-chat-widget');
+      return document.createElement('llama-tree-chat-widget')
     }
 
     function createWidgetScript(url) {
-      const script = document.createElement('script');
-      script.type = 'module';
-      script.src = url + '/llama-tree-chat-widget.es.js';
-      script.onload = () => llamaTree.setUrl(url);
-      return script;
+      const script = document.createElement('script')
+      script.type = 'module'
+      script.src = url + '/llama-tree-chat-widget.es.js'
+      script.onload = () => llamaTree.setUrl(url)
+      return script
     }
   `;
 

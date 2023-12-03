@@ -6,14 +6,14 @@ export default defineConfig(({ mode }) => {
 
   const config = {
     plugins: [react()],
-    define: {
-      "process.env": process.env,
-    },
   }
 
   if (mode === 'production') {
     return {
       ...config,
+      // define: {
+      //   "process.env.NODE_ENVIRONMENT": "production"
+      // },
       build: {
         lib: {
           entry: "src/index.tsx",
