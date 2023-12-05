@@ -107,15 +107,7 @@ function initializeLlamaTree() {
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
-      await llamaTree.setProps({
-        user,
-        // onFunctionCall: (functionName, args) => {
-        //   console.log('Function call', functionCall)
-        // },
-        // onLlamaAction: (action) => {
-        //   console.log('Llama action', action)
-        // },
-      })
+      await llamaTree.setUser(user)
 
       llamaTree.setChatView({
         isOpen: true,
