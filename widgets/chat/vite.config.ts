@@ -28,7 +28,7 @@ export default defineConfig(({ mode }) => {
   } else {
     return {
       ...config,
-      publicDir: "sandbox/vanilla",
+      publicDir: "../../sandbox/vanilla",
     };
   }
 });

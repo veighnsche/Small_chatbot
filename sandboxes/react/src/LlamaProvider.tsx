@@ -18,15 +18,15 @@ interface LlamaTreeProviderProps {
   onInitialize?: (llamaTree: IChatWidgetElement) => void;
 }
 
-type LlamaQueueActions = {
+interface LlamaQueueAction {
   method: keyof IChatWidgetElement;
-  args: any[]
-}[];
+  args: any[];
+}
 
 interface LlamaTreeContextType {
   llamaTree: IChatWidgetElement | null;
-  llamaQueue: LlamaQueueActions;
-  setLlamaQueue: Dispatch<SetStateAction<LlamaQueueActions>>;
+  llamaQueue: LlamaQueueAction[];
+  setLlamaQueue: Dispatch<SetStateAction<LlamaQueueAction[]>>;
 }
 
 const LlamaTreeContext = createContext<LlamaTreeContextType>({
@@ -40,11 +40,11 @@ export const useLlamaTree = (): IChatWidgetElement => {
 
   // Function to queue actions
   const queueAction = (methodName: keyof IChatWidgetElement, args: any[]) => {
-    setLlamaQueue((prevQueue: LlamaQueueActions) => [...prevQueue, { method: methodName, args }]);
+    setLlamaQueue((prevQueue: LlamaQueueAction[]) => [...prevQueue, { method: methodName, args }]);
   };
 
   const placeInQueue = (methodName: keyof IChatWidgetElement, args: any[], index: number) => {
-    setLlamaQueue((prevQueue: LlamaQueueActions) => {
+    setLlamaQueue((prevQueue: LlamaQueueAction[]) => {
       if (index > prevQueue.length) {
         return [...prevQueue, { method: methodName, args }];
       }
@@ -76,7 +76,7 @@ export const useLlamaTree = (): IChatWidgetElement => {
 
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
   const [llamaTree, setLlamaTree] = useState<IChatWidgetElement | null>(null);
-  const [llamaQueue, setLlamaQueue] = useState<LlamaQueueActions>([]);
+  const [llamaQueue, setLlamaQueue] = useState<LlamaQueueAction[]>([]);
 
   function initializeLlamaTree(retries = 10) {
     const llamaTreeCheck: IChatWidgetElement | null = document.querySelector("llama-tree-chat-widget");
