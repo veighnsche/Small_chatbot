@@ -1,11 +1,11 @@
 {
   "name": "example",
-  "version": "1.0.0",
+  "version": "0.1.0",
   "main": "index.js",
   "license": "MIT",
   "scripts": {
-    "start": "parcel index.html",
-    "build": "parcel build index.html"
+    "dev:export-react-example": "parcel src/index.html",
+    "build": "parcel build src/index.html"
   },
   "dependencies": {
     "react-app-polyfill": "^1.0.0"
@@ -18,7 +18,8 @@
   "devDependencies": {
     "@types/react": "^16.9.11",
     "@types/react-dom": "^16.8.4",
-    "parcel": "^1.12.3",
-    "typescript": "^3.4.5"
+    "parcel": "1.12.3",
+    "typescript": "^3.4.5",
+    "firebase": "^10.7.0"
   }
 }

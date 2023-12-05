@@ -21,44 +21,42 @@ import { generateUnique_id } from "./utils/uid.ts";
 export interface LlamaTreeProps {
   user: User;
   customCssUrl?: string;
-  onLlamaAction?: (action: LlamaActions) => void;
-  onFunctionCall?: (functionCall: ChatCompletionMessage.FunctionCall) => void;
 }
 
 class ChatWidgetElement extends HTMLElement {
   private root?: ShadowRoot;
   private reactRoot?: ReactDOM.Root;
   private styleLink?: HTMLLinkElement;
+
   private url?: string;
-  private subs: (() => void)[] = [];
+  private user?: User;
 
-  static get observedAttributes() {
-    return ['url'];
-  }
-
-  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
-    if (name === 'url' && newValue !== oldValue) {
-      this.setUrl(newValue);
+  async connectedCallback() {
+    this.root = this.attachShadow({ mode: "open" });
+    this.reactRoot = ReactDOM.createRoot(this.root);
+    const url = this.getAttribute("url");
+    if (url) {
+      await this.setUrl(url);
     }
   }
 
-  connectedCallback() {
-    this.initializeRoot();
-    if (this.getAttribute('url')) {
-      this.setUrl(this.getAttribute('url')!);
-    }
+  test() {
+    console.log("test");
   }
 
-  setUrl(url: string) {
+  async setUrl(url: string) {
     this.url = url;
     this.appendStyleSheet(url);
+    await this.renderWidget();
   }
 
-  async setProps(props: LlamaTreeProps) {
-    this.validateInitialization();
-    this.applyCustomCss(props.customCssUrl);
-    this.subscribeToEvents(props);
-    await this.renderWidget(props);
+  async setUser(user: User) {
+    this.user = user;
+    await this.renderWidget();
+  }
+
+  async setCustomCssUrl(url: string) {
+    this.styleLink!.href = url;
   }
 
   loadSystemMessage(systemMessage: LlamaLoadedSystemMessage) {
@@ -119,11 +117,6 @@ class ChatWidgetElement extends HTMLElement {
     this.unmountComponent();
   }
 
-  private initializeRoot() {
-    this.root = this.attachShadow({ mode: "open" });
-    this.reactRoot = ReactDOM.createRoot(this.root);
-  }
-
   private appendStyleSheet(url: string) {
     this.styleLink = document.createElement("link");
     this.styleLink.rel = "stylesheet";
@@ -131,32 +124,13 @@ class ChatWidgetElement extends HTMLElement {
     this.root?.appendChild(this.styleLink);
   }
 
-  private applyCustomCss(customCssUrl?: string) {
-    if (customCssUrl) {
-      this.styleLink!.href = customCssUrl;
-    }
-  }
-
-  private validateInitialization() {
-    if (!this.root || !this.reactRoot || !this.url) {
-      console.trace("ChatWidgetElement is not fully initialized.", { root: this.root, reactRoot: this.reactRoot, url: this.url });
-      throw new Error("ChatWidgetElement is not fully initialized.");
-    }
-  }
-
-  private subscribeToEvents(props: LlamaTreeProps) {
-    if (props.onFunctionCall) {
-      this.subs.push(this.onFunctionCall(props.onFunctionCall));
+  private async renderWidget() {
+    if (!this.root || !this.reactRoot || !this.url || !this.user) {
+      return;
     }
 
-    if (props.onLlamaAction) {
-      this.subs.push(this.onLlamaAction(props.onLlamaAction));
-    }
-  }
-
-  private async renderWidget(props: LlamaTreeProps) {
-    const token = await props.user.getIdToken();
-    const firebaseConfig = await this.fetchChatConfig(token, props);
+    const token = await this.user.getIdToken();
+    const firebaseConfig = await this.fetchChatConfig(token, this.user.uid);
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
 
@@ -181,10 +155,10 @@ class ChatWidgetElement extends HTMLElement {
       }
     });
 
-    await auth.updateCurrentUser(props.user);
+    await auth.updateCurrentUser(this.user);
   }
 
-  private async fetchChatConfig(token: string, props: LlamaTreeProps) {
+  private async fetchChatConfig(token: string, uid: string) {
     const response = await fetch(`${this.url}/api/v1/chat/config`, {
       method: "GET",
       headers: {
@@ -192,12 +166,11 @@ class ChatWidgetElement extends HTMLElement {
       },
     });
     const data = await response.text();
-    return decodeMessage(props.user.uid, data);
+    return decodeMessage(uid, data);
   }
 
   private unmountComponent() {
     this.reactRoot?.unmount();
-    this.subs.forEach((unsub) => unsub());
   }
 }
 

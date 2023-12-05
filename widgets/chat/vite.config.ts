@@ -11,9 +11,11 @@ export default defineConfig(({ mode }) => {
   if (mode === 'production') {
     return {
       ...config,
-      // define: {
-      //   "process.env.NODE_ENVIRONMENT": "production"
-      // },
+      define: {
+        "process.env": {
+          NODE_ENV: '"production"',
+        },
+      },
       build: {
         lib: {
           entry: "src/index.tsx",

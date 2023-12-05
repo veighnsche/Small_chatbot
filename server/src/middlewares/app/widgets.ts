@@ -15,32 +15,37 @@ export function setupWidgets(app: Application) {
   });
 }
 
-function generateWidgetScript(serverUrl: string) {
+async function generateWidgetScript(serverUrl: string) {
   // language=JavaScript
   const widgetSetup = `
-    /**
-     * This looks like JS code,
-     * but it's actually a template string.
-     * @type {HTMLElement}
-     */
-    const llamaTree = createChatWidget()
-    document.body.appendChild(llamaTree)
+    async function createWidgetScript(url) {
+      const script = document.createElement('script');
+      script.type = 'module';
+      script.src = url + '/llama-tree-chat-widget.es.js';
 
-    const llamaScript = createWidgetScript('${serverUrl}')
-    document.head.appendChild(llamaScript)
+      script.onload = () => {
+        const llamaTree = document.createElement('llama-tree-chat-widget');
+        document.body.appendChild(llamaTree);
+        llamaTree.setUrl(url);
+      };
 
-    function createChatWidget() {
-      return document.createElement('llama-tree-chat-widget')
+      script.onerror = (e) => {
+       throw new Error('Error loading Llama Tree chat widget script: ' + e);
+      };
+
+      document.head.appendChild(script);
     }
 
-    function createWidgetScript(url) {
-      const script = document.createElement('script')
-      script.type = 'module'
-      script.src = url + '/llama-tree-chat-widget.es.js'
-      script.onload = () => llamaTree.setUrl(url)
-      return script
+    async function init() {
+      if (document.readyState === 'loading') {
+        await new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve));
+      }
+      await createWidgetScript('${serverUrl}');
     }
+
+    init().catch(e => console.error('Error initializing Llama Tree chat widget:', e));
   `;
 
-  return Terser.minify(widgetSetup).then((result) => result.code);
+  const result = await Terser.minify(widgetSetup);
+  return result.code;
 }
