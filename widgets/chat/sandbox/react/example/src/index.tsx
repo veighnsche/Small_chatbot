@@ -1,11 +1,11 @@
 import * as React from 'react';
 import * as ReactDOM from "react-dom";
-import { Thing, LlamaTreeProvider } from '../../dist';
+import { LlamaTreeProvider } from '../../dist';
 
 const App = () => {
   return (
     <LlamaTreeProvider url={"http://localhost:3001"}>
-      <Thing />
+      <div>hello</div>
     </LlamaTreeProvider>
   );
 };

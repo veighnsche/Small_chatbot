@@ -18,10 +18,10 @@ interface LlamaTreeProviderProps {
   onInitialize?: (llamaTree: IChatWidgetElement) => void;
 }
 
-type LlamaQueueActions = Array<{
+type LlamaQueueActions = {
   method: keyof IChatWidgetElement;
   args: any[]
-}>;
+}[];
 
 interface LlamaTreeContextType {
   llamaTree: IChatWidgetElement | null;
@@ -78,15 +78,6 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
   const [llamaTree, setLlamaTree] = useState<IChatWidgetElement | null>(null);
   const [llamaQueue, setLlamaQueue] = useState<LlamaQueueActions>([]);
 
-  useEffect(() => {
-    // Initialize LlamaTree when the component mounts
-    if (!url) {
-      return;
-    }
-
-    initializeLlamaTree();
-  }, []);
-
   function initializeLlamaTree(retries = 10) {
     const llamaTreeCheck: IChatWidgetElement | null = document.querySelector("llama-tree-chat-widget");
     if (!llamaTreeCheck) {
@@ -131,7 +122,11 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
   return (
     <>
       <Helmet>
-        <script type="module" src={`${url}/module`}/>
+        <script
+          type="module"
+          src={`${url}/module`}
+          onLoad={() => initializeLlamaTree(10)}
+        />
       </Helmet>
       <LlamaTreeContext.Provider value={{
         llamaTree,
