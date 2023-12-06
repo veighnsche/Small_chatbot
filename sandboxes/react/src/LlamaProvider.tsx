@@ -95,11 +95,7 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
     setLlamaTree(llamaTreeCheck);
   }
 
-  async function runQueue() {
-    if (!llamaTree) {
-      return;
-    }
-
+  async function runQueue(llamaTree: IChatWidgetElement) {
     for await (const { method, args } of llamaQueue) {
       const possibleMethod = llamaTree[method];
       if (typeof possibleMethod === "function") {
@@ -121,29 +117,25 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
   }
 
   useEffect(() => {
-    runQueue().catch(console.error);
+    if (llamaTree) {
+      runQueue(llamaTree).catch(console.error)
+    }
   }, [llamaTree]);
 
   useEffect(() => {
-    // Function to dynamically load a script
-    const loadScript = () => {
-      const script = document.createElement("script");
-      script.src = `${url}/module`; // Replace `${url}/module` with your script URL
-      script.type = "module";
-      script.async = true;
+    const script = document.createElement("script");
+    script.src = `${url}/module`; // Replace `${url}/module` with your script URL
+    script.type = "module";
+    script.async = true;
 
-      // Optional: Add an onLoad event listener
-      script.onload = () => {
-        console.log("Script loaded!");
-        initializeLlamaTree(10); // Call your function after the script is loaded
-      };
-
-      // Append the script to the document head
-      document.head.appendChild(script);
+    // Optional: Add an onLoad event listener
+    script.onload = () => {
+      console.log("Script loaded!");
+      initializeLlamaTree(10); // Call your function after the script is loaded
     };
 
-    // Call the function to load the script
-    loadScript();
+    // Append the script to the document head
+    document.head.appendChild(script);
 
     // Optional: Clean up function to remove the script when the component unmounts
     return () => {
