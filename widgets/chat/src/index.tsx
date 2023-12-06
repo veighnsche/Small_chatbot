@@ -118,7 +118,7 @@ class ChatWidgetElement extends HTMLElement {
 
   onLlamaReady(callback: () => void): () => void {
     console.log("on llama ready")
-    return llamaEventBus.on("ready", callback);
+    return llamaEventBus.on("llama-chat-initialized", callback);
   }
 
   onFunctionCall(callback: (functionCall: ChatCompletionMessage.FunctionCall) => void): () => void {

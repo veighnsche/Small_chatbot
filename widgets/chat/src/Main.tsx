@@ -73,6 +73,9 @@ const Main = () => {
       llamaEventBus.on("chat-id", handleSetCurrentChat_id),
     ];
 
+    // TODO: This is fired twice
+    llamaEventBus.emit("llama-chat-initialized");
+
     return () => {
       subs.forEach((unsub) => unsub());
     };
@@ -97,9 +100,10 @@ const Main = () => {
 
   const isOpen = useLlamaSelector((state) => state.llamaChatView.isOpen);
 
-  useEffect(() => {
-    llamaEventBus.emit("llama-chat-initialized");
-  }, []);
+  // useEffect(() => {
+  //   console.log("llama-chat-initialized");
+  //   llamaEventBus.emit("llama-chat-initialized");
+  // }, []);
 
   return (
     <>

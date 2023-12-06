@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useRef, useState } from "react";
+import React, { createContext, useCallback, useContext, useRef } from "react";
 
 import { IChatWidgetElement, LlamaQueueAction, LlamaTreeContextType, LlamaTreeProviderProps } from "./llamaTypes";
 import { useLlamaProxy } from "./services/useLlamaProxy";
@@ -14,15 +14,30 @@ export const useLlamaTree = (): IChatWidgetElement => {
 };
 
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
-  const [llamaTree, setLlamaTree] = useState<IChatWidgetElement | null>(null);
+  const llamaTree = useRef<IChatWidgetElement | null>(null);
   const llamaQueue = useRef<LlamaQueueAction[]>([]);
 
-  const runQueue = useCallback(async (llamaTree: IChatWidgetElement) => {
+  const runQueue = useCallback(async (llamaTreeElement: IChatWidgetElement) => {
     console.log("runQueue", llamaQueue);
     for await (const { method, args } of llamaQueue.current) {
-      if (typeof llamaTree[method] === "function") {
+      if (typeof llamaTreeElement[method] === "function" && method !== "setUser") {
         try {
-          await (llamaTree[method] as Function)(...args);
+          await (llamaTreeElement[method] as Function)(...args);
+        } catch (e) {
+          console.trace("failed to call a possible method: " + e);
+        }
+      }
+    }
+
+    llamaQueue.current = [];
+  }, []);
+
+  const runQueueSetUser = useCallback(async (llamaTreeElement: IChatWidgetElement) => {
+    console.log("runQueueSetUser", llamaQueue);
+    for await (const { method, args } of llamaQueue.current) {
+      if (typeof llamaTreeElement[method] === "function" && method === "setUser") {
+        try {
+          await (llamaTreeElement[method] as Function)(...args);
         } catch (e) {
           console.trace("failed to call a possible method: " + e);
         }
@@ -33,8 +48,8 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
   }, []);
 
   async function initializeLlamaTree(retries = 10) {
-    const llamaTreeCheck: IChatWidgetElement | null = document.querySelector("llama-tree-chat-widget");
-    if (!llamaTreeCheck) {
+    llamaTree.current = document.querySelector("llama-tree-chat-widget");
+    if (!llamaTree.current) {
       if (retries <= 0) {
         console.error("LlamaTree not found");
         return;
@@ -47,18 +62,14 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
       return;
     }
 
-    console.log("LlamaTree found");
-
-    setLlamaTree(llamaTreeCheck);
-
-    await runQueue(llamaTreeCheck);
-
-    llamaTreeCheck.onLlamaReady(() => {
-      console.log("LlamaTree ready");
+    llamaTree.current.onLlamaReady(async () => {
       if (onInitialize) {
-        onInitialize(llamaTreeCheck);
+        await runQueue(llamaTree.current!);
+        onInitialize(llamaTree.current!);
       }
     });
+
+    await runQueueSetUser(llamaTree.current);
   }
 
   useLlamaScript({
@@ -68,7 +79,7 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
 
   return (
     <LlamaTreeContext.Provider value={{
-      llamaTree,
+      llamaTree: llamaTree.current,
       llamaQueue,
     }}>
       {children}
