@@ -51,8 +51,22 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   async setUser(user: User) {
-    this.user = user;
-    await this.renderWidget();
+    console.log("setting user, in the widget", user)
+    try {
+      this.user = user;
+    } catch (e) {
+      console.trace("failed to set user");
+      console.error(e);
+    }
+    // await this.renderWidget();
+
+    try {
+      console.log("setting user, in the widget", user)
+      await this.renderWidget();
+    } catch (e) {
+      console.trace("failed to render widget");
+      console.error(e);
+    }
   }
 
   async setCustomCssUrl(url: string) {
@@ -128,6 +142,8 @@ class ChatWidgetElement extends HTMLElement {
     if (!this.root || !this.reactRoot || !this.url || !this.user) {
       return;
     }
+
+    console.log("rendering widget", this.user)
 
     const token = await this.user.getIdToken();
     const firebaseConfig = await this.fetchChatConfig(token, this.user.uid);

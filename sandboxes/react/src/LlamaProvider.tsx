@@ -8,7 +8,6 @@ import React, {
   useMemo,
   useState,
 } from "react";
-import { Helmet } from "react-helmet";
 
 import { IChatWidgetElement } from "./llamaTypes";
 
@@ -81,8 +80,8 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
   function initializeLlamaTree(retries = 10) {
     const llamaTreeCheck: IChatWidgetElement | null = document.querySelector("llama-tree-chat-widget");
     if (!llamaTreeCheck) {
+      console.error("LlamaTree not found");
       if (retries <= 0) {
-        console.error("LlamaTree not found");
         return;
       }
 
@@ -104,7 +103,13 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
     for await (const { method, args } of llamaQueue) {
       const possibleMethod = llamaTree[method];
       if (typeof possibleMethod === "function") {
-        await (possibleMethod as Function)(...args);
+        try {
+          console.log(possibleMethod)
+          console.log("calling a possible method: " + method, args)
+          await (possibleMethod as Function)(...args);
+        } catch (e) {
+          console.trace("failed to call a possible method: " + e);
+        }
       }
     }
 
@@ -119,22 +124,41 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
     runQueue().catch(console.error);
   }, [llamaTree]);
 
+  useEffect(() => {
+    // Function to dynamically load a script
+    const loadScript = () => {
+      const script = document.createElement("script");
+      script.src = `${url}/module`; // Replace `${url}/module` with your script URL
+      script.type = "module";
+      script.async = true;
+
+      // Optional: Add an onLoad event listener
+      script.onload = () => {
+        console.log("Script loaded!");
+        initializeLlamaTree(10); // Call your function after the script is loaded
+      };
+
+      // Append the script to the document head
+      document.head.appendChild(script);
+    };
+
+    // Call the function to load the script
+    loadScript();
+
+    // Optional: Clean up function to remove the script when the component unmounts
+    return () => {
+      document.head.removeChild(document.head.lastChild!);
+    };
+  }, []); // Empty dependency array ensures this runs once on mount
+
+
   return (
-    <>
-      <Helmet>
-        <script
-          type="module"
-          src={`${url}/module`}
-          onLoad={() => initializeLlamaTree(10)}
-        />
-      </Helmet>
-      <LlamaTreeContext.Provider value={{
-        llamaTree,
-        llamaQueue,
-        setLlamaQueue,
-      }}>
-        {children}
-      </LlamaTreeContext.Provider>
-    </>
+    <LlamaTreeContext.Provider value={{
+      llamaTree,
+      llamaQueue,
+      setLlamaQueue,
+    }}>
+      {children}
+    </LlamaTreeContext.Provider>
   );
 };

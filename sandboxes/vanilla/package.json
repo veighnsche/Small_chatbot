@@ -1,0 +1,9 @@
+{
+  "name": "vanilla",
+  "version": "1.0.0",
+  "dependencies": {
+  },
+  "scripts": {
+    "dev:vanilla": "cd ../../widgets/chat && npm run dev:widget"
+  }
+}
