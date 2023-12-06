@@ -3,6 +3,7 @@ import { useEffect } from "react";
 import { useLlamaTree } from "../../../src";
 import { auth } from "../firebase";
 import { GoogleLoginButton } from "./GoogleLoginButton";
+import { OpenChatButton } from "./OpenChatButton";
 
 export function ControlContainer() {
   const { setUser } = useLlamaTree();
@@ -22,7 +23,8 @@ export function ControlContainer() {
 
   return (
     <div>
-      <GoogleLoginButton />
+      <GoogleLoginButton/>
+      <OpenChatButton/>
     </div>
   );
 }

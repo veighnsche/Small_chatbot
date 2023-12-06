@@ -1,6 +1,23 @@
 import type { User } from "firebase/auth";
 import type { ChatCompletionMessage, ChatCompletionMessageParam } from "openai/resources/chat";
 import type { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
+import { MutableRefObject, ReactNode } from "react";
+
+export interface LlamaTreeProviderProps {
+  children: ReactNode;
+  url: string;
+  onInitialize?: (llamaTree: IChatWidgetElement) => void;
+}
+
+export interface LlamaQueueAction {
+  method: keyof IChatWidgetElement;
+  args: any[];
+}
+
+export interface LlamaTreeContextType {
+  llamaTree: IChatWidgetElement | null;
+  llamaQueue: MutableRefObject<LlamaQueueAction[]>;
+}
 
 export interface LlamaTreeProps {
   user: User;
@@ -109,6 +126,13 @@ export interface IChatWidgetElement extends HTMLElement {
    * @returns A promise that resolves to a LlamaMessage object.
    */
   sendLlamaMessage(message: string, params?: Partial<LlamaChatParams>): Promise<LlamaMessage>;
+
+  /**
+   * Subscribes to when the chat widget is initialized.
+   * @param callback The callback to execute when the chat widget is initialized.
+   * @returns A function to unsubscribe from the event.
+   */
+  onLlamaReady(callback: () => void): () => void;
 
   /**
    * Subscribes to function call events.

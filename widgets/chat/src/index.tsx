@@ -51,17 +51,14 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   async setUser(user: User) {
-    console.log("setting user, in the widget", user)
     try {
       this.user = user;
     } catch (e) {
       console.trace("failed to set user");
       console.error(e);
     }
-    // await this.renderWidget();
 
     try {
-      console.log("setting user, in the widget", user)
       await this.renderWidget();
     } catch (e) {
       console.trace("failed to render widget");
@@ -119,6 +116,11 @@ class ChatWidgetElement extends HTMLElement {
     return llamaEventBus.onceAsync("assistant_uid: " + assistantUid);
   }
 
+  onLlamaReady(callback: () => void): () => void {
+    console.log("on llama ready")
+    return llamaEventBus.on("ready", callback);
+  }
+
   onFunctionCall(callback: (functionCall: ChatCompletionMessage.FunctionCall) => void): () => void {
     return llamaEventBus.on("function-call", callback);
   }
@@ -138,12 +140,14 @@ class ChatWidgetElement extends HTMLElement {
     this.root?.appendChild(this.styleLink);
   }
 
-  private async renderWidget() {
+  /**
+   *
+   * @returns a promise of the element to be rendered
+   */
+  private async renderWidget(): Promise<void> {
     if (!this.root || !this.reactRoot || !this.url || !this.user) {
       return;
     }
-
-    console.log("rendering widget", this.user)
 
     const token = await this.user.getIdToken();
     const firebaseConfig = await this.fetchChatConfig(token, this.user.uid);
