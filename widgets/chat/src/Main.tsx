@@ -73,10 +73,11 @@ const Main = () => {
       llamaEventBus.on("chat-id", handleSetCurrentChat_id),
     ];
 
-    // TODO: This is fired twice
-    llamaEventBus.emit("llama-chat-initialized");
 
     return () => {
+      // this is a dirty hack, this is because this effect is called twice.
+      // meaning that the return function is called once.
+      llamaEventBus.emit("llama-chat-initialized");
       subs.forEach((unsub) => unsub());
     };
   }, []);

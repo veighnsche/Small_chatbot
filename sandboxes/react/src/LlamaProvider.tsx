@@ -17,35 +17,16 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
   const llamaTree = useRef<IChatWidgetElement | null>(null);
   const llamaQueue = useRef<LlamaQueueAction[]>([]);
 
-  const runQueue = useCallback(async (llamaTreeElement: IChatWidgetElement) => {
-    console.log("runQueue", llamaQueue);
-    for await (const { method, args } of llamaQueue.current) {
-      if (typeof llamaTreeElement[method] === "function" && method !== "setUser") {
-        try {
-          await (llamaTreeElement[method] as Function)(...args);
-        } catch (e) {
-          console.trace("failed to call a possible method: " + e);
-        }
+  const invokeAction = useCallback(async ({ method, args }: LlamaQueueAction) => {
+    console.log("invokeAction", method);
+    if (llamaTree.current && typeof llamaTree.current[method] === "function") {
+      try {
+        await (llamaTree.current[method] as Function)(...args);
+      } catch (e) {
+        console.trace("failed to call a possible method: " + e);
       }
     }
-
-    llamaQueue.current = [];
-  }, []);
-
-  const runQueueSetUser = useCallback(async (llamaTreeElement: IChatWidgetElement) => {
-    console.log("runQueueSetUser", llamaQueue);
-    for await (const { method, args } of llamaQueue.current) {
-      if (typeof llamaTreeElement[method] === "function" && method === "setUser") {
-        try {
-          await (llamaTreeElement[method] as Function)(...args);
-        } catch (e) {
-          console.trace("failed to call a possible method: " + e);
-        }
-      }
-    }
-
-    llamaQueue.current = [];
-  }, []);
+  }, [llamaTree.current]);
 
   async function initializeLlamaTree(retries = 10) {
     llamaTree.current = document.querySelector("llama-tree-chat-widget");
@@ -63,13 +44,22 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
     }
 
     llamaTree.current.onLlamaReady(async () => {
+      for await (const action of llamaQueue.current) {
+        if (action.method === "setUser") {
+          continue;
+        }
+        await invokeAction(action);
+      }
       if (onInitialize) {
-        await runQueue(llamaTree.current!);
         onInitialize(llamaTree.current!);
       }
     });
 
-    await runQueueSetUser(llamaTree.current);
+    const setUserAction = llamaQueue.current.find((action) => action.method === "setUser");
+    if (!setUserAction) {
+      throw new Error("setUser should not be called before llama tree is initialized");
+    }
+    await invokeAction(setUserAction);
   }
 
   useLlamaScript({
