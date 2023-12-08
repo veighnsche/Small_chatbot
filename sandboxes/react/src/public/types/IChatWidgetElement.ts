@@ -1,54 +1,12 @@
 import type { User } from "firebase/auth";
-import type { ChatCompletionMessage, ChatCompletionMessageParam } from "openai/resources/chat";
-import type { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
-import { MutableRefObject, ReactNode } from "react";
-
-export interface LlamaTreeProviderProps {
-  children: ReactNode;
-  url: string;
-  onInitialize?: (llamaTree: IChatWidgetElement) => void;
-}
-
-export interface LlamaQueueAction {
-  method: keyof IChatWidgetElement;
-  args: any[];
-}
-
-export interface LlamaTreeContextType {
-  llamaTree: IChatWidgetElement | null;
-  llamaQueue: MutableRefObject<LlamaQueueAction[]>;
-}
-
-export interface LlamaTreeProps {
-  user: User;
-  customCssUrl?: string;
-  onLlamaAction?: (action: { type: string; payload: Record<string, any> }) => void;
-  onFunctionCall?: (functionCall: ChatCompletionMessage.FunctionCall) => void;
-}
-
-export interface LlamaLoadedSystemMessage {
-  title: string;
-  content: string;
-}
-
-export interface LlamaChatViewSliceState {
-  isOpen: boolean;
-  isLarge: boolean;
-  isHistoryDrawerOpen: boolean;
-}
-
-export interface LlamaMessage extends ChatCompletionMessageParam {
-  id: string;
-  parent_id: string;
-}
-
-export interface LlamaChatParams extends ChatCompletionCreateParamsBase {
-}
-
-export interface LlamaActions {
-  type: string;
-  payload: Record<string, any>;
-}
+import type { ChatCompletionMessage } from "openai/resources/chat";
+import {
+  LlamaActions,
+  LlamaChatParams,
+  LlamaChatViewSliceState,
+  LlamaLoadedSystemMessage,
+  LlamaMessage,
+} from "./llamaTypes";
 
 /**
  * Interface for the ChatWidgetElement.

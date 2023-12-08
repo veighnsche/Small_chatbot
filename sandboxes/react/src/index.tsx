@@ -1,10 +1,12 @@
-export { LlamaTreeProvider, useLlamaTree } from "./LlamaProvider";
+export { IChatWidgetElement } from "./public/types/IChatWidgetElement";
+export { LlamaTreeProvider } from "./public/providers/LlamaProvider";
 export {
-  IChatWidgetElement,
   LlamaChatParams,
-  LlamaActions,
-  LlamaChatViewSliceState,
   LlamaMessage,
-  LlamaTreeProps,
+  LlamaChatViewSliceState,
+  LlamaActions,
+  LlamaTreeProviderProps,
   LlamaLoadedSystemMessage,
-} from "./llamaTypes";
+} from "./public/types/llamaTypes";
+export { useLlamaTree } from "./public/hooks/useLlamaTree";
+export { useLlamaFunctionListener } from "./public/hooks/useLlamaFunctionListener";

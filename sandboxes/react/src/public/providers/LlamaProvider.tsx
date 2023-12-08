@@ -1,17 +1,11 @@
-import React, { createContext, useCallback, useContext, useRef } from "react";
-
-import { IChatWidgetElement, LlamaQueueAction, LlamaTreeContextType, LlamaTreeProviderProps } from "./llamaTypes";
-import { useLlamaProxy } from "./services/useLlamaProxy";
-import { useLlamaScript } from "./services/useLlamaScript";
+import React, { createContext, useCallback, useRef } from "react";
+import { useLlamaScript } from "../../private/hooks/useLlamaScript";
+import { LlamaTreeContextType } from "../../private/types/context";
+import { LlamaQueueAction } from "../../private/types/llamaQueue";
+import { IChatWidgetElement } from "../types/IChatWidgetElement";
+import { LlamaTreeProviderProps } from "../types/llamaTypes";
 
 export const LlamaTreeContext = createContext<LlamaTreeContextType>({} as LlamaTreeContextType);
-
-export const useLlamaTree = (): IChatWidgetElement => {
-  const { llamaTree } = useContext(LlamaTreeContext);
-  const llamaTreeProxy = useLlamaProxy();
-
-  return llamaTree || llamaTreeProxy;
-};
 
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
   const llamaTree = useRef<IChatWidgetElement | null>(null);

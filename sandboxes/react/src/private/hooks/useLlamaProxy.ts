@@ -1,6 +1,6 @@
 import { useContext, useMemo } from "react";
-import { LlamaTreeContext } from "../LlamaProvider";
-import { IChatWidgetElement } from "../llamaTypes";
+import { LlamaTreeContext } from "../../public/providers/LlamaProvider";
+import { IChatWidgetElement } from "../../public/types/IChatWidgetElement";
 
 export const useLlamaProxy = () => {
   const { llamaQueue } = useContext(LlamaTreeContext);
