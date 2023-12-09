@@ -1,11 +1,11 @@
 import { useEffect } from "react";
 
-interface UseLlamaScriptParams {
+interface _UseLlamaScriptParams {
   scriptUrl: string;
   initializeLlamaTree: (retries: number) => void;
 }
 
-export const useLlamaScript = ({ scriptUrl, initializeLlamaTree }: UseLlamaScriptParams) => {
+export const _useLlamaScript = ({ scriptUrl, initializeLlamaTree }: _UseLlamaScriptParams) => {
   useEffect(() => {
     const script = document.createElement("script");
     script.src = `${scriptUrl}/module`;

@@ -1,5 +1,5 @@
-export { IChatWidgetElement } from "./public/types/IChatWidgetElement";
-export { LlamaTreeProvider } from "./public/providers/LlamaProvider";
+export { IChatWidgetElement } from "./types/IChatWidgetElement";
+export { LlamaTreeProvider } from "./providers/LlamaProvider";
 export {
   LlamaChatParams,
   LlamaMessage,
@@ -7,6 +7,7 @@ export {
   LlamaActions,
   LlamaTreeProviderProps,
   LlamaLoadedSystemMessage,
-} from "./public/types/llamaTypes";
-export { useLlamaTree } from "./public/hooks/useLlamaTree";
-export { useLlamaFunctionListener } from "./public/hooks/useLlamaFunctionListener";
+} from "./types/llamaTypes";
+export { useLlamaTree } from "./hooks/useLlamaTree";
+export { useLlamaFunctionListener } from "./hooks/useLlamaFunctionListener";
+export { toValidAssistantString } from "./utils/toValidAssistantString";

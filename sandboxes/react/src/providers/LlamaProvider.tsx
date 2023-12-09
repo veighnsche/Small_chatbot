@@ -1,17 +1,17 @@
 import React, { createContext, useCallback, useRef } from "react";
-import { useLlamaScript } from "../../private/hooks/useLlamaScript";
-import { LlamaTreeContextType } from "../../private/types/context";
-import { LlamaQueueAction } from "../../private/types/llamaQueue";
+import { _useLlamaScript } from "../hooks/_useLlamaScript";
+import { _LlamaTreeContextType } from "../types/_LlamaTreeContextType";
+import { _LlamaQueueAction } from "../types/_LlamaQueue";
 import { IChatWidgetElement } from "../types/IChatWidgetElement";
 import { LlamaTreeProviderProps } from "../types/llamaTypes";
 
-export const LlamaTreeContext = createContext<LlamaTreeContextType>({} as LlamaTreeContextType);
+export const LlamaTreeContext = createContext<_LlamaTreeContextType>({} as _LlamaTreeContextType);
 
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
   const llamaTree = useRef<IChatWidgetElement | null>(null);
-  const llamaQueue = useRef<LlamaQueueAction[]>([]);
+  const llamaQueue = useRef<_LlamaQueueAction[]>([]);
 
-  const invokeAction = useCallback(async ({ method, args }: LlamaQueueAction) => {
+  const invokeAction = useCallback(async ({ method, args }: _LlamaQueueAction) => {
     console.log("invokeAction", method);
     if (llamaTree.current && typeof llamaTree.current[method] === "function") {
       try {
@@ -56,7 +56,7 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
     await invokeAction(setUserAction);
   }
 
-  useLlamaScript({
+  _useLlamaScript({
     scriptUrl: url,
     initializeLlamaTree,
   });

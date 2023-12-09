@@ -26,7 +26,8 @@ export interface LlamaMessage extends ChatCompletionMessageParam {
   parent_id: string;
 }
 
-export interface LlamaChatParams extends Omit<ChatCompletionCreateParamsBase, 'messages' | 'functions'> {
+export interface LlamaChatParams extends Omit<ChatCompletionCreateParamsBase, 'messages' | 'functions' | 'model'> {
+  model?: ChatCompletionCreateParamsBase['model'];
   functions?: LlamaFunction[];
 }
 
