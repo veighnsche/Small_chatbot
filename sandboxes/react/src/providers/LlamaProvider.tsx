@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useRef } from "react";
+import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
 import { _useLlamaScript } from "../hooks/_useLlamaScript";
 import { _LlamaTreeContextType } from "../types/_LlamaTreeContextType";
 import { _LlamaQueueAction } from "../types/_LlamaQueue";
@@ -8,23 +8,24 @@ import { LlamaTreeProviderProps } from "../types/llamaTypes";
 export const LlamaTreeContext = createContext<_LlamaTreeContextType>({} as _LlamaTreeContextType);
 
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
-  const llamaTree = useRef<IChatWidgetElement | null>(null);
+  const [llamaTree, setLlamaTree] = useState<IChatWidgetElement | null>(null);
   const llamaQueue = useRef<_LlamaQueueAction[]>([]);
 
   const invokeAction = useCallback(async ({ method, args }: _LlamaQueueAction) => {
-    console.log("invokeAction", method);
-    if (llamaTree.current && typeof llamaTree.current[method] === "function") {
+    if (llamaTree && typeof llamaTree[method] === "function") {
       try {
-        await (llamaTree.current[method] as Function)(...args);
+        await (llamaTree[method] as Function)(...args);
       } catch (e) {
         console.trace("failed to call a possible method: " + e);
       }
     }
-  }, [llamaTree.current]);
+  }, [llamaTree]);
 
   async function initializeLlamaTree(retries = 10) {
-    llamaTree.current = document.querySelector("llama-tree-chat-widget");
-    if (!llamaTree.current) {
+    const llamaTreeElement: IChatWidgetElement | null = document.querySelector("llama-tree-chat-widget");
+    setLlamaTree(llamaTreeElement);
+
+    if (!llamaTreeElement) {
       if (retries <= 0) {
         console.error("LlamaTree not found");
         return;
@@ -36,25 +37,30 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
 
       return;
     }
-
-    llamaTree.current.onLlamaReady(async () => {
-      for await (const action of llamaQueue.current) {
-        if (action.method === "setUser") {
-          continue;
-        }
-        await invokeAction(action);
-      }
-      if (onInitialize) {
-        onInitialize(llamaTree.current!);
-      }
-    });
-
-    const setUserAction = llamaQueue.current.find((action) => action.method === "setUser");
-    if (!setUserAction) {
-      throw new Error("setUser should not be called before llama tree is initialized");
-    }
-    await invokeAction(setUserAction);
   }
+
+  useEffect(() => {
+    if (llamaTree) {
+      llamaTree.onLlamaReady(async () => {
+        for await (const action of llamaQueue.current) {
+          if (action.method === "setUser") {
+            continue;
+          }
+          await invokeAction(action);
+        }
+        if (onInitialize) {
+          onInitialize(llamaTree!);
+        }
+      });
+
+      const setUserAction = llamaQueue.current.find((action) => action.method === "setUser");
+      if (!setUserAction) {
+        throw new Error("setUser should not be called before llama tree is initialized");
+      }
+
+      invokeAction(setUserAction).catch(console.trace);
+    }
+  }, [llamaTree])
 
   _useLlamaScript({
     scriptUrl: url,
@@ -63,7 +69,7 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
 
   return (
     <LlamaTreeContext.Provider value={{
-      llamaTree: llamaTree.current,
+      llamaTree,
       llamaQueue,
     }}>
       {children}
