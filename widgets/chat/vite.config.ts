@@ -1,19 +1,21 @@
 import react from "@vitejs/plugin-react";
+import * as fs from "fs";
 import { defineConfig } from "vite";
+import path from "path";
 
 export default defineConfig(({ mode }) => {
-  console.log('mode', mode)
+  console.log("mode", mode);
 
   const config = {
     plugins: [react()],
-  }
+  };
 
-  if (mode === 'production') {
+  if (mode === "production") {
     return {
       ...config,
       define: {
         "process.env": {
-          NODE_ENV: '"production"',
+          NODE_ENV: "\"production\"",
         },
       },
       build: {
@@ -26,9 +28,17 @@ export default defineConfig(({ mode }) => {
       },
     };
   } else {
+    const projectRoot = path.resolve(__dirname, '../../');
+    const vanillaPublicDir = path.resolve(projectRoot, 'sandboxes/vanilla');
+
     return {
       ...config,
-      publicDir: "../../sandbox/vanilla",
+      define: {
+        "process.env": {
+          NODE_ENV: "\"development\"",
+        },
+      },
+      publicDir: vanillaPublicDir,
     };
   }
 });
