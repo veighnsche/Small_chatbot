@@ -1,23 +1,42 @@
-import { ChatCompletionMessage } from "openai/resources/chat";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { IChatWidgetElement } from "../types/IChatWidgetElement";
+import { LlamaFunctionCall } from "../types/llamaTypes";
 import { useLlamaTree } from "./useLlamaTree";
 
-export const useLlamaFunctionListener = (slugs: string[]) => {
-  const [assistantMessage, setAssistantMessage] = useState<ChatCompletionMessage.FunctionCall | null>(null);
-  const { onFunctionCall } = useLlamaTree();
+export const useLlamaFunctionListener = <ArgumentsType extends Record<string, any>>(
+  functionNames: string | string[],
+  selector: (functionCall: LlamaFunctionCall<ArgumentsType>, llamaTree: IChatWidgetElement) => any,
+) => {
+  const [value, setValue] = useState<any>(null);
+  const llamaTree = useLlamaTree();
 
+  const functionNamesArray = useMemo(() => {
+    return Array.isArray(functionNames) ? functionNames : [functionNames];
+  }, [functionNames]);
 
   useEffect(() => {
-    const unsubscribe = onFunctionCall((functionCall) => {
-      if (slugs.includes(functionCall.name)) {
-        setAssistantMessage(functionCall);
+    const unsubscribe = llamaTree.onFunctionCall((functionCall: any) => {
+      if (functionNamesArray.includes(functionCall.name)) {
+        const unparsedArguments = functionCall.arguments;
+        const parsedArguments: ArgumentsType = JSON.parse(unparsedArguments);
+        const parsedFunctionCall: LlamaFunctionCall<ArgumentsType> = {
+          ...functionCall,
+          arguments: parsedArguments,
+        };
+        const selectedArguments = selector(parsedFunctionCall, llamaTree);
+        if (selectedArguments) {
+          setValue(selectedArguments);
+        }
       }
     });
 
     return () => {
-      unsubscribe();
+      if (typeof unsubscribe === "function") {
+        unsubscribe();
+      }
     };
-  }, []);
+  }, [llamaTree, functionNames, selector]);
 
-  return assistantMessage;
+  return value;
 };
+
