@@ -10,7 +10,11 @@ export const useLlamaFunction = (
   const { setChatParams } = useLlamaTree();
   const slugs = functions.map((f) => f.name);
 
+  // Calculate a digest and set as useEffect dependency
+  const functionsDigest = JSON.stringify(slugs);
+
   useEffect(() => {
+    console.log("adding functions", slugs)
     setChatParams(oldParams => {
       const oldFunction = oldParams.functions;
       if (!oldFunction) {
@@ -26,6 +30,7 @@ export const useLlamaFunction = (
     });
 
     return () => {
+      console.log("removing functions", slugs)
       setChatParams(oldParams => {
         const oldFunction = oldParams.functions;
         if (!oldFunction) {
@@ -37,7 +42,6 @@ export const useLlamaFunction = (
         };
       });
     };
-  }, [functions]);
-
+  }, [functionsDigest]);
   return useLlamaFunctionListener(slugs, selector);
 };

@@ -4,6 +4,7 @@ import { useLlamaTree } from "../../../src";
 import { auth } from "../firebase";
 import { GoogleLoginButton } from "./GoogleLoginButton";
 import { OpenChatButton } from "./OpenChatButton";
+import { SendMessageButton } from "./SendMessageButton";
 
 export function ControlContainer() {
   const { setUser } = useLlamaTree();
@@ -25,6 +26,7 @@ export function ControlContainer() {
     <div>
       <GoogleLoginButton/>
       <OpenChatButton/>
+      <SendMessageButton/>
     </div>
   );
 }

@@ -1,5 +1,6 @@
 import mw from "../middlewares";
 import { llamaRouter } from "../services/router";
+import { AssistantParamsBody } from "../types/api/bodies";
 
 const router = llamaRouter();
 
@@ -20,6 +21,9 @@ router.postSse(
 
 router.postSse(
   "/:chat_id",
+  mw.log("chat params", {
+    body: (body: AssistantParamsBody) => body.assistantParams.functions,
+  }),
   mw.chat.clientMessages.add,
   mw.assistant.default.stream,
 );

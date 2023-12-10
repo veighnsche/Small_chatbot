@@ -1,7 +1,8 @@
-import React, { createContext, useCallback, useEffect, useRef, useState } from "react";
+import React, { createContext, useEffect, useRef, useState } from "react";
 import { _useLlamaScript } from "../hooks/_useLlamaScript";
-import { _LlamaTreeContextType } from "../types/_LlamaTreeContextType";
+import { _useLlamaTreeInvoker } from "../hooks/_useLlamaTreeProxy";
 import { _LlamaQueueAction } from "../types/_LlamaQueue";
+import { _LlamaTreeContextType } from "../types/_LlamaTreeContextType";
 import { IChatWidgetElement } from "../types/IChatWidgetElement";
 import { LlamaTreeProviderProps } from "../types/llamaTypes";
 
@@ -10,16 +11,7 @@ export const LlamaTreeContext = createContext<_LlamaTreeContextType>({} as _Llam
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
   const [llamaTree, setLlamaTree] = useState<IChatWidgetElement | null>(null);
   const llamaQueue = useRef<_LlamaQueueAction[]>([]);
-
-  const invokeAction = useCallback(async ({ method, args }: _LlamaQueueAction) => {
-    if (llamaTree && typeof llamaTree[method] === "function") {
-      try {
-        await (llamaTree[method] as Function)(...args);
-      } catch (e) {
-        console.trace("failed to call a possible method: " + e);
-      }
-    }
-  }, [llamaTree]);
+  const invokeAction = _useLlamaTreeInvoker(llamaTree);
 
   async function initializeLlamaTree(retries = 10) {
     const llamaTreeElement: IChatWidgetElement | null = document.querySelector("llama-tree-chat-widget");
@@ -60,7 +52,7 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
 
       invokeAction(setUserAction).catch(console.trace);
     }
-  }, [llamaTree])
+  }, [llamaTree]);
 
   _useLlamaScript({
     scriptUrl: url,
