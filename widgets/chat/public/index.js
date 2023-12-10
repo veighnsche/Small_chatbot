@@ -31,6 +31,7 @@ function initializeLlamaTree() {
   }
 
   document.getElementById('send-message-btn').addEventListener('click', sendMessage)
+
   async function sendMessage() {
     const input = document.getElementById('message-input')
     const message = input.value
@@ -43,18 +44,18 @@ function initializeLlamaTree() {
   document.getElementById('load-system-message-btn').addEventListener('click', loadSystemMessage)
 
   function loadSystemMessage() {
-    const titleInput = document.getElementById('system-message-title-input');
-    const title = titleInput.value;
-    titleInput.value = '';
+    const titleInput = document.getElementById('system-message-title-input')
+    const title = titleInput.value
+    titleInput.value = ''
 
-    const contentTextArea = document.getElementById('system-message-content-input');
-    let content = contentTextArea.value;
-    contentTextArea.value = '';
+    const contentTextArea = document.getElementById('system-message-content-input')
+    let content = contentTextArea.value
+    contentTextArea.value = ''
 
     llamaTree.loadSystemMessage({
       title,
       content,
-    });
+    })
   }
 
   document.getElementById('set-function-call-btn').addEventListener('click', setFunctionCall)
@@ -72,38 +73,37 @@ function initializeLlamaTree() {
         '- Communicates effectively and collaborates seamlessly with colleagues from diverse teams, indicating strong interpersonal skills and the ability to work collaboratively.\n' +
         '\n' +
         '```',
-    });
+    })
 
     await llamaTree.sendLlamaMessage('Translate into Dutch', {
       model: 'gpt-3.5-turbo',
-      function_call: { name: "set_motivation" },
+      function_call: {name: 'set_motivation'},
       functions: [
         {
-          name: "set_motivation",
-          description: "Set the motivation in the edit form of the user",
+          name: 'set_motivation',
+          description: 'Set the motivation in the edit form of the user',
           parameters: {
-            type: "object",
+            type: 'object',
             properties: {
               updated_motivation: {
-                type: "object",
+                type: 'object',
                 description:
-                  "The updated motivation based on the user's input.",
+                  'The updated motivation based on the user\'s input.',
                 properties: {
                   markdown: {
-                    type: "string",
-                    description: "The updated motivation in markdown format",
+                    type: 'string',
+                    description: 'The updated motivation in markdown format',
                   },
                 },
-                required: ["markdown"],
+                required: ['markdown'],
               },
             },
-            required: ["updated_motivation"],
+            required: ['updated_motivation'],
           },
         },
       ],
-    });
+    })
   }
-
 
   auth.onAuthStateChanged(async (user) => {
     if (user) {
@@ -113,7 +113,23 @@ function initializeLlamaTree() {
         isOpen: true,
         isHistoryDrawerOpen: true,
         isLarge: true,
-      });
+      })
+    }
+  })
+
+  llamaTree.onFunctionArgumentsStream('set_motivation', (args) => {
+    if (args && 'updated_motivation' in args) {
+      const updatedMotivation = args.updated_motivation
+      if (updatedMotivation && 'markdown' in updatedMotivation) {
+        const markdown = updatedMotivation.markdown
+        if (markdown) {
+          /**
+           * @type {HTMLDivElement}
+           */
+          const textContainer = document.getElementById('text-container')
+          textContainer.innerHTML = markdown
+        }
+      }
     }
   })
 }

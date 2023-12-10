@@ -92,7 +92,7 @@ const Main = () => {
   useEffect(() => {
     return () => {
       // this is a dirty hack, this is because this effect is called twice.
-      // meaning that the return function is called once.
+      // meaning that the return function (aka the useEffect cleanup function) is called once.
       llamaEventBus.emit("llama-chat-initialized");
     }
   }, []);

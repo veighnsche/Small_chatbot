@@ -125,6 +125,10 @@ class ChatWidgetElement extends HTMLElement {
     return llamaEventBus.on("function-call", callback);
   }
 
+  onFunctionArgumentsStream(functionName: string, callback: (args: Record<string, any>) => void): () => void {
+    return llamaEventBus.on(`stream-arguments: ${functionName}`, callback);
+  }
+
   onLlamaAction(callback: (action: LlamaActions) => void): () => void {
     return llamaEventBus.on("llama-action", callback);
   }
