@@ -33,7 +33,7 @@ export class LlamaMessage implements ILlamaMessage {
         arguments: JSON.stringify(newArgs),
       };
 
-      return new LlamaMessage(args.explanation, timestamp, parent_id, message.role, parsedFunctionCall);
+      return new LlamaMessage(args.explanation || "Done!", timestamp, parent_id, message.role, parsedFunctionCall);
     }
 
     console.trace("fromChatCompletionMessage: Message must have content or function call", { message });

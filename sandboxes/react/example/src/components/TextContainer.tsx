@@ -2,7 +2,7 @@ import * as React from "react";
 import { useLlamaFunction, useLlamaFunctionListener } from "../../../src";
 
 export const TextContainer = () => {
-  const text = "Dynamic and results-driven marketing professional with over five years of comprehensive experience in digital marketing, brand management, and strategic planning. Adept at leveraging data-driven strategies to increase market share and boost brand loyalty. Proven track record in leading cross-functional teams to exceed business objectives while fostering innovative thinking. Seeking a challenging role in a forward-thinking company where I can contribute my expertise in marketing analytics and customer engagement to drive business growth and success.";
+  const text = "Hi, I’m new to the job market and looking for my first real job. I studied business in school and did pretty well. I like working with people and am good at using computers. I worked on some group projects in school and did a part-time job at a local store. I’m excited to start working and learn new things. I’m hardworking and want to do a job where I can help and be part of a team.";
 
   useLlamaFunctionListener<{
     section: string;

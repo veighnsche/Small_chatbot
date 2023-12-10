@@ -2,12 +2,9 @@ import { useEffect } from "react";
 import { useLlamaTree } from "../../../src";
 
 export const SetterOfThings = () => {
-  const { loadSystemMessage } = useLlamaTree();
+  const { setChatParams } = useLlamaTree();
   useEffect(() => {
-    loadSystemMessage({
-      content: "Hello, world!",
-      title: "info",
-    }).setChatParams({
+    setChatParams({
       functions: [
         {
           name: "fetchSection",
