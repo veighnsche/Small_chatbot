@@ -7,7 +7,7 @@ export {
   LlamaActions,
   LlamaTreeProviderProps,
   LlamaLoadedSystemMessage,
-  LlamaFunctionsToFunctionCall,
+  // LlamaFunctionsToFunctionCall,
 } from "./types/llamaTypes";
 export { useLlamaTree } from "./hooks/useLlamaTree";
 export { useLlamaFunction } from "./hooks/useLlamaFunction";

@@ -1,5 +1,5 @@
 import type { JSONSchema7 as JSONSchema } from "json-schema";
-import type { FromSchema } from "json-schema-to-ts";
+// import type { FromSchema } from "json-schema-to-ts";
 import type { ChatCompletionMessage, ChatCompletionMessageParam } from "openai/resources/chat";
 import type { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
 import type { ReactNode } from "react";
@@ -67,4 +67,4 @@ export interface LlamaActions {
   payload: Record<string, any>;
 }
 
-export type LlamaFunctionsToFunctionCall<LlamaFunctionDefinition extends LlamaFunction> = FromSchema<LlamaFunctionDefinition["parameters"]>
+// export type LlamaFunctionsToFunctionCall<LlamaFunctionDefinition extends LlamaFunction> = FromSchema<LlamaFunctionDefinition["parameters"]>
