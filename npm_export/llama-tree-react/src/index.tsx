@@ -12,4 +12,5 @@ export {
 export { useLlamaTree } from "./hooks/useLlamaTree";
 export { useLlamaFunction } from "./hooks/useLlamaFunction";
 export { useLlamaFunctionListener } from "./hooks/useLlamaFunctionListener";
+export { useLlamaFunctionStream } from "./hooks/useLlamaFunctionStream";
 export { toValidAssistantString } from "./utils/toValidAssistantString";

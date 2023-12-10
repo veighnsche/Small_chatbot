@@ -4,7 +4,7 @@ import { createContext, Dispatch, ReactNode, SetStateAction, useContext, useEffe
 import { llamaEventBus } from "../services/llamaEventBus.ts";
 import { LlamaMessage } from "../types/LlamaMessage.ts";
 import { removeKeys } from "../utils/objects.ts";
-import { replaceApostrophe } from "../utils/strings.ts";
+import { jsonWorkable } from "../utils/strings.ts";
 
 type LlamaStreamingContext = [LlamaMessage | null, Dispatch<SetStateAction<LlamaMessage | null>>];
 
@@ -68,7 +68,7 @@ export const LlamaStreamingProvider = ({ children }: {
         const nextArguments = message.function_call.arguments + args;
 
         try {
-          const workableArguments = replaceApostrophe(nextArguments);
+          const workableArguments = jsonWorkable(nextArguments);
           const repairedArguments = jsonrepair(workableArguments);
           const parsedArguments = safeJSON(repairedArguments);
           if (parsedArguments) {

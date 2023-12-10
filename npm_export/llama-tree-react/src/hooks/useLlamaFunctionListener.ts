@@ -14,6 +14,8 @@ export const useLlamaFunctionListener = <ArgumentsType extends Record<string, an
     return Array.isArray(functionNames) ? functionNames : [functionNames];
   }, [functionNames]);
 
+  const functionNamesDigest = JSON.stringify(functionNamesArray);
+
   useEffect(() => {
     const unsubscribe = llamaTree.onFunctionCall((functionCall: any) => {
       if (functionNamesArray.includes(functionCall.name)) {
@@ -23,9 +25,9 @@ export const useLlamaFunctionListener = <ArgumentsType extends Record<string, an
           ...functionCall,
           arguments: parsedArguments,
         };
-        const selectedArguments = selector(parsedFunctionCall, llamaTree);
-        if (selectedArguments) {
-          setValue(selectedArguments);
+        const selected = selector(parsedFunctionCall, llamaTree);
+        if (selected) {
+          setValue(selected);
         }
       }
     });
@@ -35,7 +37,8 @@ export const useLlamaFunctionListener = <ArgumentsType extends Record<string, an
         unsubscribe();
       }
     };
-  }, [llamaTree, functionNames, selector]);
+  }, [llamaTree, functionNamesDigest, selector]);
+
 
   return value;
 };

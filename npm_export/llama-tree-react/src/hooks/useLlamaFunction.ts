@@ -1,11 +1,13 @@
 import { useEffect } from "react";
 import { LlamaFunction, LlamaFunctionCall } from "../types/llamaTypes";
 import { useLlamaFunctionListener } from "./useLlamaFunctionListener";
+import { useLlamaFunctionStream } from "./useLlamaFunctionStream";
 import { useLlamaTree } from "./useLlamaTree";
 
 export const useLlamaFunction = (
   functions: LlamaFunction[],
   selector: (functionCall: LlamaFunctionCall<any>) => any,
+  stream?: true,
 ) => {
   const { setChatParams } = useLlamaTree();
   const slugs = functions.map((f) => f.name);
@@ -43,5 +45,8 @@ export const useLlamaFunction = (
       });
     };
   }, [functionsDigest]);
+  if (stream) {
+    return useLlamaFunctionStream(slugs, selector);
+  }
   return useLlamaFunctionListener(slugs, selector);
 };

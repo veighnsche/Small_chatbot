@@ -31,6 +31,7 @@ export const TextContainer = () => {
           properties: {
             text: {
               type: "string",
+              description: "Warning: the usage of the characters \"'\" (asterisks) and \",\" (comma) will kill the system and is not allowed.",
             },
           },
         },
@@ -40,6 +41,7 @@ export const TextContainer = () => {
       console.log("setting introduction text", { functionCall });
       return functionCall.arguments.text;
     },
+    true,
   );
 
   return (
