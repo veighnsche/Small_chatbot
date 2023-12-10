@@ -1,4 +1,4 @@
-import { LlamaAsserts } from "../decorators/asserts";
+import { LlamaGuard } from "../decorators/LlamaGuard";
 import { connectionsEventBus } from "../services/eventBus";
 import { SseLocals } from "../types/api/locals";
 import { LlamaReq, LlamaReqP, LlamaRes } from "../types/api/middleware";
@@ -7,7 +7,7 @@ import { createEventData } from "../utils/stream";
 import { generateUniqueID } from "../utils/uid";
 
 class SSEMiddleware {
-  @LlamaAsserts()
+  @LlamaGuard()
   static initialize(_: LlamaReq, res: LlamaRes<SseLocals>): void {
     res.setHeader("Content-Type", "text/event-stream");
     res.setHeader("Cache-Control", "no-cache");
@@ -31,13 +31,13 @@ class SSEMiddleware {
     };
   }
 
-  @LlamaAsserts("sse_id")
+  @LlamaGuard("sse_id")
   static stop(req: LlamaReqP<Sse_idParams>): void {
     const id = req.params.sse_id;
     connectionsEventBus.emit(id);
   }
 
-  @LlamaAsserts("sse")
+  @LlamaGuard("sse")
   static finalize(_: LlamaReq, res: LlamaRes<SseLocals>): void {
     connectionsEventBus.offAll(res.locals.sse.id);
     res.write(`data: ${JSON.stringify({ cleanup: true })}\n\n`);

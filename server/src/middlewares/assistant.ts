@@ -1,5 +1,5 @@
 import { ChatCompletionCreateParamsNonStreaming } from "openai/resources/chat/completions";
-import { LlamaAsserts } from "../decorators/asserts";
+import { LlamaGuard } from "../decorators/LlamaGuard";
 import { LlamaMessage } from "../models/chatMessage";
 import { callAssistantStream, callChatTitleAssistant } from "../services/assistant";
 import { AssistantParamsBody, AssistantUniqueIDBody } from "../types/api/bodies";
@@ -12,7 +12,7 @@ import { createEventData } from "../utils/stream";
 
 
 class AssistantMiddleware {
-  @LlamaAsserts("thread", "assistantParams", "assistant_id", "chatDocRepo", "sse")
+  @LlamaGuard("thread", "assistantParams", "assistant_id", "chatDocRepo", "sse")
   static async streamAssistantResponse(
     req: LlamaReq<AssistantParamsBody & AssistantUniqueIDBody>,
     res: LlamaRes<ThreadLocals & ChatDocLocals & SseLocals>,
@@ -60,7 +60,7 @@ class AssistantMiddleware {
      */
   }
 
-  @LlamaAsserts("thread", "chatDocRepo")
+  @LlamaGuard("thread", "chatDocRepo")
   static async generateTitle(_: LlamaReq, res: LlamaRes<ThreadLocals & ChatDocLocals>): Promise<void> {
     const messages = res.locals.thread;
 

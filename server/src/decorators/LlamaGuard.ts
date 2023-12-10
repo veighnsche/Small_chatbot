@@ -11,7 +11,7 @@ type propsParams = "sse_id" | "chat_id";
 type propsBody = "clientMessages" | "assistantParams" | "title" | "assistant_id";
 type propsLocals = "thread" | "chatColRepo" | "chatDocRepo" | "sse";
 
-export function LlamaAsserts(...asserts: (propsAuth | propsParams | propsBody | propsLocals)[]) {
+export function LlamaGuard(...asserts: (propsAuth | propsParams | propsBody | propsLocals)[]) {
   return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
     const name = `${target.constructor.name} ${propertyKey}`;
     const originalMethod = descriptor.value;
