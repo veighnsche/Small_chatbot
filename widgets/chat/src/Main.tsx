@@ -66,9 +66,6 @@ const Main = () => {
     ];
 
     return () => {
-      // this is a dirty hack, this is because this effect is called twice.
-      // meaning that the return function is called once.
-      llamaEventBus.emit("llama-chat-initialized");
       subs.forEach((unsub) => unsub());
     };
   }, []);
@@ -92,10 +89,13 @@ const Main = () => {
 
   const isOpen = useLlamaSelector((state) => state.llamaChatView.isOpen);
 
-  // useEffect(() => {
-  //   console.log("llama-chat-initialized");
-  //   llamaEventBus.emit("llama-chat-initialized");
-  // }, []);
+  useEffect(() => {
+    return () => {
+      // this is a dirty hack, this is because this effect is called twice.
+      // meaning that the return function is called once.
+      llamaEventBus.emit("llama-chat-initialized");
+    }
+  }, []);
 
   return (
     <>

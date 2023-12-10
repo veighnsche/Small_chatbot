@@ -1,8 +1,9 @@
-import type { ChatCompletionMessageParam } from "openai/resources/chat";
+import type { JSONSchema7 as JSONSchema } from "json-schema";
+import type { FromSchema } from "json-schema-to-ts";
+import type { ChatCompletionMessage, ChatCompletionMessageParam } from "openai/resources/chat";
 import type { ChatCompletionCreateParamsBase } from "openai/resources/chat/completions";
-import { ReactNode } from "react";
-import { IChatWidgetElement } from "./IChatWidgetElement";
-import { JSONSchema7 as JSONSchema } from "json-schema";
+import type { ReactNode } from "react";
+import type { IChatWidgetElement } from "./IChatWidgetElement";
 
 export interface LlamaTreeProviderProps {
   children: ReactNode;
@@ -26,8 +27,8 @@ export interface LlamaMessage extends ChatCompletionMessageParam {
   parent_id: string;
 }
 
-export interface LlamaChatParams extends Omit<ChatCompletionCreateParamsBase, 'messages' | 'functions' | 'model'> {
-  model?: ChatCompletionCreateParamsBase['model'];
+export interface LlamaChatParams extends Omit<ChatCompletionCreateParamsBase, "messages" | "functions" | "model"> {
+  model?: ChatCompletionCreateParamsBase["model"];
   functions?: LlamaFunction[];
 }
 
@@ -57,8 +58,13 @@ export interface LlamaFunction {
   description?: string;
 }
 
+export interface LlamaFunctionCall<ArgumentsType = Record<string, any>> extends Omit<ChatCompletionMessage.FunctionCall, "arguments"> {
+  arguments: ArgumentsType;
+}
+
 export interface LlamaActions {
   type: string;
   payload: Record<string, any>;
 }
 
+export type LlamaFunctionsToFunctionCall<LlamaFunctionDefinition extends LlamaFunction> = FromSchema<LlamaFunctionDefinition["parameters"]>

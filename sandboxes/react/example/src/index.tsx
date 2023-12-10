@@ -4,6 +4,7 @@ import { LlamaTreeProvider } from "../../src";
 import { ControlContainer } from "./components/ControlContainer";
 import { SetterOfThings } from "./components/SetterOfThings";
 import "./firebase";
+import { TextContainer } from "./components/TextContainer";
 
 const App = () => {
   return (
@@ -16,6 +17,7 @@ const App = () => {
     }}>
       <ControlContainer/>
       <SetterOfThings/>
+      <TextContainer/>
     </LlamaTreeProvider>
   );
 };
