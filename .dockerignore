@@ -7,9 +7,13 @@
 /screenshot-21-11-23.webp
 /LICENSE
 /docker-compose.yaml
+
 .gitignore
 
 coverage
 dist
 node_modules
 __test__
+
+/npm_export
+/widgets/chat/sandbox

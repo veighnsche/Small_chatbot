@@ -6,7 +6,7 @@ body {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background-image: url("./llama-tree.webp");
+    background-image: url("llama-tree.webp");
     background-size: cover;
     background-position: center;
 }

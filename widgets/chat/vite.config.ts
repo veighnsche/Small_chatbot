@@ -28,8 +28,6 @@ export default defineConfig(({ mode }) => {
       },
     };
   } else {
-    const projectRoot = path.resolve(__dirname, '../../');
-    const vanillaPublicDir = path.resolve(projectRoot, 'sandboxes/vanilla');
 
     return {
       ...config,
@@ -38,7 +36,7 @@ export default defineConfig(({ mode }) => {
           NODE_ENV: "\"development\"",
         },
       },
-      publicDir: vanillaPublicDir,
+      publicDir: "sandbox/public",
     };
   }
 });

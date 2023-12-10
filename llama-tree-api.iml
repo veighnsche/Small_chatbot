@@ -8,9 +8,9 @@
       <excludeFolder url="file://$MODULE_DIR$/widgets/chat/dist" />
       <excludeFolder url="file://$MODULE_DIR$/server/coverage" />
       <excludeFolder url="file://$MODULE_DIR$/server/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/sandboxes/react/dist" />
-      <excludeFolder url="file://$MODULE_DIR$/sandboxes/react/example/.cache" />
-      <excludeFolder url="file://$MODULE_DIR$/sandboxes/react/example/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/npm_export/llama-tree-react/dist" />
+      <excludeFolder url="file://$MODULE_DIR$/npm_export/llama-tree-react/example/.cache" />
+      <excludeFolder url="file://$MODULE_DIR$/npm_export/llama-tree-react/example/dist" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
   </component>
