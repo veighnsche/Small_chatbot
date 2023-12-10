@@ -15,7 +15,8 @@ export const _useLlamaProxy = () => {
 
   // make a proxy that queues up actions until the llamaTree is loaded
   return useMemo(() => {
-    return new Proxy({} as IChatWidgetElement, {
+    let proxy: IChatWidgetElement;
+    const { proxy: createdProxy } = Proxy.revocable({} as IChatWidgetElement, {
       get(_, prop: keyof IChatWidgetElement) {
         return (...args: any[]) => {
           if (prop === "setUser") {
@@ -23,8 +24,11 @@ export const _useLlamaProxy = () => {
           } else {
             queueAction(prop, args);
           }
+          return proxy;
         };
       },
-    }) as IChatWidgetElement;
+    });
+    proxy = createdProxy as IChatWidgetElement;
+    return proxy;
   }, []);
 };
