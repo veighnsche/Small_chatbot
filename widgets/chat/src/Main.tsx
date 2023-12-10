@@ -8,13 +8,14 @@ import { Input } from "./components/Input/Input.tsx";
 import { IconButton } from "./components/utils/IconButton/IconButton.tsx";
 import "./Main.css";
 import { llamaEventBus } from "./services/llamaEventBus.ts";
-import { editLlamaChatParams, LlamaChatParams, updateLlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
+import { LlamaChatParams } from "./slices/llamaChatParamsSlice.ts";
 import { emptyLoadedSystemMessages, loadSystemMessages, removeSystemMessages } from "./slices/llamaChatSlice.ts";
 import { editChatView, LlamaChatViewSliceState, toggleChatView } from "./slices/llamaChatViewSlice.ts";
 import { useLlamaDispatch, useLlamaSelector } from "./stores/llamaStore.ts";
 import { llamaOnMessagesSnapshot } from "./thunks/llamaOnMessagesSnapshot.ts";
 import { llamaSseAddMessage } from "./thunks/llamaSseAddMessage.ts";
 import { LlamaLoadedSystemMessage } from "./types/LlamaLoadedSystemMessage.ts";
+import { ChatParamSetter } from "./components/utils/ChatParamSetter/ChatParamSetter.tsx";
 
 const Main = () => {
   const dispatch = useLlamaDispatch();
@@ -46,14 +47,6 @@ const Main = () => {
     }));
   };
 
-  const handleEditChatParams = (params: Partial<LlamaChatParams> | ((params: LlamaChatParams) => Partial<LlamaChatParams>)) => {
-    if (typeof params === "function") {
-      dispatch(updateLlamaChatParams(params));
-    } else {
-      dispatch(editLlamaChatParams(params));
-    }
-  };
-
   const handleEditChatView = (view: Partial<LlamaChatViewSliceState>) => {
     dispatch(editChatView(view));
   };
@@ -68,11 +61,9 @@ const Main = () => {
       llamaEventBus.on("remove-system-messages", handleRemoveLoadedSystemMessages),
       llamaEventBus.on("empty-system-messages", handleEmptyLoadedSystemMessages),
       llamaEventBus.on("user-message", handleAddMessage),
-      llamaEventBus.on("chat-params", handleEditChatParams),
       llamaEventBus.on("chat-view", handleEditChatView),
       llamaEventBus.on("chat-id", handleSetCurrentChat_id),
     ];
-
 
     return () => {
       // this is a dirty hack, this is because this effect is called twice.
@@ -108,6 +99,7 @@ const Main = () => {
 
   return (
     <>
+      <ChatParamSetter/>
       <IconButton
         style={{ display: isOpen ? "none" : "flex" }}
         className="open-chat-button"
