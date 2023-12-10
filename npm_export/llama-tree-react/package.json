@@ -17,10 +17,12 @@
     "lint": "tsdx lint",
     "prepare": "tsdx build",
     "size": "size-limit",
-    "analyze": "size-limit --why"
+    "analyze": "size-limit --why",
+    "link": "npm link"
   },
   "peerDependencies": {
-    "react": ">=16"
+    "react": ">=16",
+    "firebase": ">=10"
   },
   "husky": {
     "hooks": {

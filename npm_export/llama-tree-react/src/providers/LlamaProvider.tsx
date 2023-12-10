@@ -46,11 +46,9 @@ export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProv
       });
 
       const setUserAction = llamaQueue.current.find((action) => action.method === "setUser");
-      if (!setUserAction) {
-        throw new Error("setUser should not be called before llama tree is initialized");
+      if (setUserAction) {
+        invokeAction(setUserAction).catch(console.trace);
       }
-
-      invokeAction(setUserAction).catch(console.trace);
     }
   }, [llamaTree]);
 

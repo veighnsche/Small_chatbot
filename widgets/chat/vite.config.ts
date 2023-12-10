@@ -1,7 +1,5 @@
 import react from "@vitejs/plugin-react";
-import * as fs from "fs";
 import { defineConfig } from "vite";
-import path from "path";
 
 export default defineConfig(({ mode }) => {
   console.log("mode", mode);
@@ -28,7 +26,6 @@ export default defineConfig(({ mode }) => {
       },
     };
   } else {
-
     return {
       ...config,
       define: {
@@ -36,7 +33,7 @@ export default defineConfig(({ mode }) => {
           NODE_ENV: "\"development\"",
         },
       },
-      publicDir: "sandbox/public",
+      publicDir: "public",
     };
   }
 });
