@@ -2,7 +2,7 @@ import { useEffect } from "react";
 
 interface _UseLlamaScriptParams {
   scriptUrl: string;
-  initializeLlamaTree: (retries: number) => void;
+  initializeLlamaTree: (retries?: number) => void;
 }
 
 export const _useLlamaScript = ({ scriptUrl, initializeLlamaTree }: _UseLlamaScriptParams) => {
@@ -15,7 +15,7 @@ export const _useLlamaScript = ({ scriptUrl, initializeLlamaTree }: _UseLlamaScr
 
     // Optional: Add an onLoad event listener
     script.onload = () => {
-      initializeLlamaTree(10);
+      initializeLlamaTree();
     };
 
     document.head.appendChild(script);
