@@ -10,6 +10,8 @@ import {
 
 /**
  * Interface for the ChatWidgetElement.
+ *
+ * @extends HTMLElement
  */
 export interface IChatWidgetElement extends HTMLElement {
   /**
@@ -94,10 +96,20 @@ export interface IChatWidgetElement extends HTMLElement {
 
   /**
    * Subscribes to function call events.
-   * @param callback The callback to execute on a function call event.
-   * @returns A function to unsubscribe from the event.
+   *
+   * @param {Function} callback - The callback to execute on a function call event.
+   * @returns {Function} - A function to unsubscribe from the event.
    */
   onFunctionCall(callback: (functionCall: ChatCompletionMessage.FunctionCall) => void): () => void;
+
+  /**
+   * Creates a stream of function arguments and invokes the provided callback function with each set of arguments.
+   *
+   * @param {string} functionName - The name of the function.
+   * @param {(args: Record<string, any>) => void} callback - The callback function to be invoked with each set of arguments.
+   * @return {() => void} - A function that can be called to stop the stream of function arguments.
+   */
+  onFunctionArgumentsStream(functionName: string, callback: (args: Record<string, any>) => void): () => void;
 
   /**
    * Subscribes to llama action events.
