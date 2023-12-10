@@ -1,6 +1,5 @@
 import mw from "../middlewares";
 import { llamaRouter } from "../services/router";
-import { AssistantParamsBody } from "../types/api/bodies";
 
 const router = llamaRouter();
 
