@@ -21,9 +21,6 @@ router.postSse(
 
 router.postSse(
   "/:chat_id",
-  mw.log("chat params", {
-    body: (body: AssistantParamsBody) => body.assistantParams.functions,
-  }),
   mw.chat.clientMessages.add,
   mw.assistant.default.stream,
 );
