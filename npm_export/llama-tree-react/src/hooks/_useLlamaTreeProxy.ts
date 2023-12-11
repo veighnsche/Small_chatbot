@@ -22,7 +22,9 @@ export const _useLlamaTreeProxy = () => {
         return (...args: any[]) => {
           // if prop start with "on" then it's an event handler and should not be queued
           if (prop.startsWith("on")) {
-            return proxy;
+            return () => {
+              queueAction(prop, args);
+            };
           }
           if (prop === "setUser") {
             queueAction(prop, args, 0);
