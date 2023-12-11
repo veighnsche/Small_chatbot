@@ -22,19 +22,25 @@ export function parseArguments(args: string): any {
     try {
       return JSON.parse(newArgs);
     } catch (err) {
-      console.trace("makeArgs: could not parse args by removing text before first {");
     }
   }
 
   try {
-    console.log("trying to fix JSON");
     const repairedJson = jsonrepair(args);
     const json = JSON.parse(repairedJson);
     if (json) {
       return json;
     }
   } catch (err) {
-    console.trace("makeArgs: could not fix JSON");
+  }
+
+  try {
+    const repairedJson = jsonrepair(args + "\"");
+    const json = JSON.parse(repairedJson);
+    if (json) {
+      return json;
+    }
+  } catch (err) {
   }
 
   console.log(args);
