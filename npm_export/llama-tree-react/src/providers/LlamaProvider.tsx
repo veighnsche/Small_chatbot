@@ -1,12 +1,11 @@
-import React, { createContext, useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { _useLlamaScript } from "../hooks/_useLlamaScript";
 import { _useLlamaTreeInvoker } from "../hooks/_useLlamaTreeProxy";
 import { _LlamaQueueAction } from "../types/_LlamaQueue";
-import { _LlamaTreeContextType } from "../types/_LlamaTreeContextType";
 import { IChatWidgetElement } from "../types/IChatWidgetElement";
 import { LlamaTreeProviderProps } from "../types/llamaTypes";
+import { LlamaTreeContext } from "../context/LlamaTreeContext";
 
-export const LlamaTreeContext = createContext<_LlamaTreeContextType>({} as _LlamaTreeContextType);
 
 export const LlamaTreeProvider = ({ children, url, onInitialize }: LlamaTreeProviderProps) => {
   const [llamaTree, setLlamaTree] = useState<IChatWidgetElement | null>(null);

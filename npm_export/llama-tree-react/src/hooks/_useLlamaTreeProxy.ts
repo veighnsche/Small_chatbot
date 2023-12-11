@@ -1,5 +1,5 @@
 import { useCallback, useContext, useMemo } from "react";
-import { LlamaTreeContext } from "../providers/LlamaProvider";
+import { LlamaTreeContext } from "../context/LlamaTreeContext";
 import { _LlamaQueueAction } from "../types/_LlamaQueue";
 import { IChatWidgetElement } from "../types/IChatWidgetElement";
 

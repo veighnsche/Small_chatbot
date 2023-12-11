@@ -1,6 +1,6 @@
 import { useContext } from "react";
+import { LlamaTreeContext } from "../context/LlamaTreeContext";
 import { _useLlamaTreeProxy } from "./_useLlamaTreeProxy";
-import { LlamaTreeContext } from "../providers/LlamaProvider";
 import { IChatWidgetElement } from "../types/IChatWidgetElement";
 
 export const useLlamaTree = (): IChatWidgetElement => {
