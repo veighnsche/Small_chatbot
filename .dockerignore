@@ -16,4 +16,4 @@ node_modules
 __test__
 
 /npm_export
-/widgets/chat/sandbox
+/widgets/chat/public
