@@ -111,9 +111,9 @@ class ChatWidgetElement extends HTMLElement {
   }
 
   async sendLlamaMessage(message: string, params?: Partial<LlamaChatParams>): Promise<LlamaMessage> {
-    const assistantUid = generateUnique_id();
-    llamaEventBus.emit("user-message", { message, params, assistantUid });
-    return llamaEventBus.onceAsync("assistant_uid: " + assistantUid);
+    const assistant_uid = generateUnique_id();
+    llamaEventBus.emit("user-message", { message, params, assistant_uid });
+    return llamaEventBus.onceAsync("assistant_uid: " + assistant_uid);
   }
 
   onLlamaReady(callback: () => void): () => void {
