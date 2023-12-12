@@ -2,6 +2,72 @@
 
 <img alt="A screenshot of the llama tree chat widget in the sandbox" src="screenshot-21-11-23.webp" title="Screenshot"/>
 
+## LlamaTree: Simplifying AI Integration in Your Projects
+
+**Effortless Integration, Focused Innovation**
+
+**Introduction**
+
+Welcome to LlamaTree, the internal library that streamlines the integration of AI chat assistants into your application. Designed to bypass the repetitive groundwork, LlamaTree lets your team jump directly into the creative and interactive aspects of AI development.
+
+### Bypassing the Boredom with LlamaTree
+
+LlamaTree is designed to eliminate the setup tasks in AI chat integration, allowing teams to focus on the exciting parts of AI Assistant development. Here’s a concise overview of its key features:
+
+- **Streamlined Chat Functionality:** LlamaTree not only saves user and assistant messages and function calls but also allows for the regeneration of assistant messages and editing of user messages. It supports real-time message streaming and pre-loading of data messages for responsive assistant interactions.
+- **Enhanced User Experience:** Automatically generates concise conversation titles for easy reference and maintains user-specific chat histories, all secured through robust authentication mechanisms.
+- **Seamless Integration and Compatibility:** Flexible to work with any AI of your choice, LlamaTree streamlines function calls to the host application. It’s readily available as a React library on NPM and can be integrated into any HTML/JS environment, living in the DOM for easy front-end control.
+- **Robust System Management:** With advanced error handling and the ability to control the chat flow, including stopping the stream and sending signals to the AI vendor, LlamaTree ensures a smooth and reliable operation.
+
+LlamaTree offers a comprehensive solution that covers every aspect of AI chat integration, from user interaction to system management, ensuring that your focus remains on innovation and creativity.
+
+**LlamaTree's Core Features**
+
+- **Simplified Function Calls:** LlamaTree uniquely enables AI to interact with your existing project through JSON responses. These responses include the function name and its arguments, allowing for seamless integration and interaction.
+- **Customizable AI Options:** Choose to implement your own AI model or your client's, with easy adaptability to different requirements.
+- **Rich Chat Functionalities:** Besides managing function calls, LlamaTree comes equipped with a wide array of chatting features to enhance user interaction.
+
+**The Technical Edge**
+
+LlamaTree makes AI responses more than just text replies; it turns them into actionable insights directly linked to your application's functions. This direct link between AI output and application response paves the way for more dynamic and interactive AI experiences.
+
+**Benefits**
+
+- **Direct Focus on Innovation:** With the foundational setup taken care of, your team can immediately start working on the engaging parts of AI development.
+- **Seamless Application Interaction:** LlamaTree’s ability to handle function calls ensures that AI can effectively interact with and enhance your existing project.
+- **Time and Resource Efficiency:** Reduce the time spent on setup and allocate more resources towards innovation and user experience enhancement.
+
+**Conclusion**
+
+Adopt LlamaTree and transform the way you integrate AI into your projects. It’s not just about adding AI; it’s about making AI work in harmony with your application, effortlessly and effectively.
+
+**Get Started with LlamaTree**
+
+Incorporate LlamaTree in your project today and focus on what’s truly exciting about AI development. Experience the ease of AI integration that aligns perfectly with your project's needs.
+
+### Feature List for LlamaTree
+
+#### 1. Chat Functionality
+- **Saves User and Assistant Messages and Function Calls:** Efficiently records all interactions and function calls for easy reference.
+- **Regenerate Assistant Messages and Edit User Messages:** Offers flexibility in message management, allowing iteration between changes.
+- **Streams Assistant Message:** Real-time streaming of assistant messages for dynamic interaction.
+- **Load Data Messages in Chat for the Assistant:** Pre-loads data messages that are sent when the user interacts, enhancing the assistant's responsiveness.
+
+#### 2. User Experience
+- **Automated Three-Word Conversation Title in History:** Generates concise and meaningful titles for each conversation in the history log.
+- **Lists History of Chats for Logged-In User:** Provides a user-specific chat history for easy tracking and reference.
+- **Authentication:** Ensures secure access and user verification.
+
+#### 3. Integration and Compatibility
+- **Bring Your Own AI:** Offers the flexibility to integrate any AI of your choice or the client's preference.
+- **Function Calls Stream to the Host:** Seamlessly sends function calls to the host application, facilitating dynamic interactions.
+- **React Library Available on NPM:** Easily accessible for React developers, with support for integration into any HTML/JS environment.
+- **Llama-Tree Lives in the DOM and Is Controllable Through the Front-End:** Offers front-end control for seamless integration into the web environment.
+
+#### 4. System Management
+- **Error Handling:** Robust error management for smoother operation and reliability.
+- **Stopping the Stream and Sending a Stop Signal to the AI Vendor:** Provides control over the chat flow, including the ability to halt interactions as needed.
+
 ## Overview
 
 ### Introduction to Llama Tree
