@@ -17,3 +17,4 @@ export { useLlamaFunctionListener } from "./hooks/useLlamaFunctionListener";
 export { useLlamaFunctionStream } from "./hooks/useLlamaFunctionStream";
 export { toValidAssistantString } from "./utils/toValidAssistantString";
 export { toValidAssistantString as v } from "./utils/toValidAssistantString";
+export { LlamaIcon } from "./components/LlamaIcon";
