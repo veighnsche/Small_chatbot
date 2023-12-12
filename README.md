@@ -12,14 +12,7 @@ Welcome to LlamaTree, the internal library that streamlines the integration of A
 
 ### Bypassing the Boredom with LlamaTree
 
-LlamaTree is designed to eliminate the setup tasks in AI chat integration, allowing teams to focus on the exciting parts of AI Assistant development. Here’s a concise overview of its key features:
-
-- **Streamlined Chat Functionality:** LlamaTree not only saves user and assistant messages and function calls but also allows for the regeneration of assistant messages and editing of user messages. It supports real-time message streaming and pre-loading of data messages for responsive assistant interactions.
-- **Enhanced User Experience:** Automatically generates concise conversation titles for easy reference and maintains user-specific chat histories, all secured through robust authentication mechanisms.
-- **Seamless Integration and Compatibility:** Flexible to work with any AI of your choice, LlamaTree streamlines function calls to the host application. It’s readily available as a React library on NPM and can be integrated into any HTML/JS environment, living in the DOM for easy front-end control.
-- **Robust System Management:** With advanced error handling and the ability to control the chat flow, including stopping the stream and sending signals to the AI vendor, LlamaTree ensures a smooth and reliable operation.
-
-LlamaTree offers a comprehensive solution that covers every aspect of AI chat integration, from user interaction to system management, ensuring that your focus remains on innovation and creativity.
+LlamaTree streamlines AI chat integration by removing initial setup tasks, enabling teams to concentrate on the more thrilling aspects of AI Assistant development. It features real-time message streaming for smooth chats, personalized chat histories to enhance user experience, and DOM-based functionality with robust JavaScript control, including support for the React library, facilitating effortless integration. Additionally, LlamaTree's advanced error handling ensures a robust and reliable system. This comprehensive solution addresses all facets of AI chat integration, from user interactions to system management, allowing your team to focus primarily on innovation and creativity.
 
 **LlamaTree's Core Features**
 
@@ -48,23 +41,27 @@ Incorporate LlamaTree in your project today and focus on what’s truly exciting
 ### Feature List for LlamaTree
 
 #### 1. Chat Functionality
+
 - **Saves User and Assistant Messages and Function Calls:** Efficiently records all interactions and function calls for easy reference.
 - **Regenerate Assistant Messages and Edit User Messages:** Offers flexibility in message management, allowing iteration between changes.
 - **Streams Assistant Message:** Real-time streaming of assistant messages for dynamic interaction.
 - **Load Data Messages in Chat for the Assistant:** Pre-loads data messages that are sent when the user interacts, enhancing the assistant's responsiveness.
 
 #### 2. User Experience
+
 - **Automated Three-Word Conversation Title in History:** Generates concise and meaningful titles for each conversation in the history log.
 - **Lists History of Chats for Logged-In User:** Provides a user-specific chat history for easy tracking and reference.
 - **Authentication:** Ensures secure access and user verification.
 
 #### 3. Integration and Compatibility
+
 - **Bring Your Own AI:** Offers the flexibility to integrate any AI of your choice or the client's preference.
 - **Function Calls Stream to the Host:** Seamlessly sends function calls to the host application, facilitating dynamic interactions.
 - **React Library Available on NPM:** Easily accessible for React developers, with support for integration into any HTML/JS environment.
 - **Llama-Tree Lives in the DOM and Is Controllable Through the Front-End:** Offers front-end control for seamless integration into the web environment.
 
 #### 4. System Management
+
 - **Error Handling:** Robust error management for smoother operation and reliability.
 - **Stopping the Stream and Sending a Stop Signal to the AI Vendor:** Provides control over the chat flow, including the ability to halt interactions as needed.
 
