@@ -1,6 +1,7 @@
 import express from "express";
 import chatRouter from "../api/chat";
 import pingRouter from "../api/ping";
+import stateRouter from "../api/state";
 import { errorHandler } from "../middlewares/error";
 
 
@@ -13,9 +14,11 @@ export const setupRoutes = (app: express.Application) => {
   // Chat routes
   app.use("/api/v1/chat", chatRouter);
 
+  // State routes
+  app.use("/api/v1/state", stateRouter);
+
   // Dev routes
   app.use("/api/v1/ping", pingRouter);
-
 
   app.use(errorHandler);
 };
